@@ -6,7 +6,7 @@ Six recipes cover the editorial looks (openai.com/news gradients, claude.com str
 
 No network, no telemetry, no DOM. It runs in Node at build time.
 
-![gridTitle, light and dark](docs/gridTitle.webp)
+![gridTitle, light and dark](https://raw.githubusercontent.com/arraypress/covers/main/docs/gridTitle.webp)
 
 ## Install
 
@@ -50,7 +50,7 @@ const svg = await renderSvg({
 });
 ```
 
-![a hand-built stack](docs/manual.webp)
+![a hand-built stack](https://raw.githubusercontent.com/arraypress/covers/main/docs/manual.webp)
 
 ## API
 
@@ -191,32 +191,32 @@ Every recipe takes an optional `title` and `label`.
 ### `aurora`
 Layers `bg`, `mesh`, `grain` (+ `title`). A soft mesh with grain.
 
-![aurora](docs/aurora.webp)
+![aurora](https://raw.githubusercontent.com/arraypress/covers/main/docs/aurora.webp)
 
 ### `gridTitle`
 Layers `bg`, `mesh`, `grid`, `grain`, `title`. A mesh under a fine grid that fades toward the edges, with the headline lower left.
 
-![gridTitle](docs/gridTitle.webp)
+![gridTitle](https://raw.githubusercontent.com/arraypress/covers/main/docs/gridTitle.webp)
 
 ### `iconTile`
 Layers `bg`, `glow`, `rings`, `icon`, `grain` (+ `title`). An icon on a raised tile over a soft tint of the accent, a glow and faint rings. With a title, the tile moves to the top left. `icon` is an Iconify name (a spark when none is given).
 
-![iconTile](docs/iconTile.webp)
+![iconTile](https://raw.githubusercontent.com/arraypress/covers/main/docs/iconTile.webp)
 
 ### `bigType`
 Layers `bg`, `wash`, `grain`, `label`, `title`. The headline is the cover: large, tight (−0.045em), shrinking to fit four lines; the label in the accent at the top.
 
-![bigType](docs/bigType.webp)
+![bigType](https://raw.githubusercontent.com/arraypress/covers/main/docs/bigType.webp)
 
 ### `stripes`
 Layers `bg`, `stripes`, `spot`, `icon`, `grain`, `title`. A tonal band of tapering stripes down one side (`side: 'left' | 'right'`), a disc riding its edge with an optional `icon`, and the title on the open side.
 
-![stripes](docs/stripes.webp)
+![stripes](https://raw.githubusercontent.com/arraypress/covers/main/docs/stripes.webp)
 
 ### `duotone`
 Layers `image`, `scrim`, `grain`, `title`. A photo (`image`: a path or bytes) mapped to the palette's shadow and highlight colours, with a scrim under the title.
 
-![duotone](docs/duotone.webp)
+![duotone](https://raw.githubusercontent.com/arraypress/covers/main/docs/duotone.webp)
 
 ### Your own
 
