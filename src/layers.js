@@ -168,7 +168,8 @@ export function mesh(layer, ctx) {
   const max = Math.max(w, h);
   // A few hues read as a colour story; every hue at once reads as a rainbow.
   const pool = rng.shuffle(colorList(layer.colors, p.colors));
-  let colors = pool.slice(0, Math.max(1, layer.hues ?? (layer.colors?.length ? pool.length : 3)));
+  const want = Math.max(1, layer.hues ?? (layer.colors?.length ? pool.length : 3));
+  let colors = layer.hueSpan ? neighbours(pool, want, layer.hueSpan) : pool.slice(0, want);
   if (layer.tone) colors = colors.map((c) => toneColor(c, /** @type {any} */ (layer.tone)));
   const count = layer.blobs?.length ?? layer.count ?? 4;
   const sweep = (layer.arrangement ?? 'sweep') === 'sweep';
@@ -294,8 +295,38 @@ export function mesh(layer, ctx) {
 }
 
 /**
+ * Neighbouring hues only: the first colour, then others whose OKLCH hue is
+ * within `span`° of it; when the pool has too few, more are made by turning
+ * the first colour's hue (keeping its lightness and chroma) inside the span.
+ * Blue with violet, teal with blue, orange with pink, never olive with teal.
+ *
+ * @param {string[]} pool - Candidate colours (already shuffled).
+ * @param {number} want - How many.
+ * @param {number} span - Degrees of hue the colours may spread over.
+ * @returns {string[]}
+ */
+function neighbours(pool, want, span) {
+  const first = toOklch(pool[0]);
+  const dist = (/** @type {number} */ h) => Math.abs((((h - first.h) % 360) + 540) % 360 - 180);
+  const chosen = [pool[0]];
+  if (first.c >= 0.02) {
+    for (const c of pool.slice(1)) {
+      const o = toOklch(c);
+      if (chosen.length < want && o.c >= 0.02 && dist(o.h) <= span * 0.45) chosen.push(c);
+    }
+  }
+  // Inside the span with a little room: gamut mapping can nudge a hue.
+  const turns = [span * 0.45, -span * 0.45, span * 0.22, -span * 0.22];
+  for (let i = 0; chosen.length < want && i < turns.length; i++) {
+    chosen.push(first.c < 0.02 ? pool[(i + 1) % pool.length] : fromOklch({ l: first.l, c: first.c, h: (first.h + turns[i] + 360) % 360 }));
+  }
+  return chosen;
+}
+
+/**
  * Pull a colour into a lightness / chroma band in OKLCH, keeping its hue.
  * Greys (chroma under 0.02) keep their chroma, since their hue means nothing.
+ * A yellow pulled dark is turned toward amber, since dark yellow is olive.
  *
  * @param {string} c - The colour.
  * @param {{ l?: [number, number], c?: [number, number] }} band - Ranges to clamp into.
@@ -304,7 +335,12 @@ export function mesh(layer, ctx) {
 export function toneColor(c, band) {
   const o = toOklch(c);
   const clamp = (/** @type {number} */ v, /** @type {[number, number] | undefined} */ r) => (r ? Math.min(r[1], Math.max(r[0], v)) : v);
-  return fromOklch({ l: clamp(o.l, band.l), c: o.c < 0.02 ? o.c : clamp(o.c, band.c), h: o.h });
+  const l = clamp(o.l, band.l);
+  // Yellow can't be dark: below ~0.7 lightness it reads as olive. Turn it
+  // toward amber as it darkens instead.
+  let h = o.h;
+  if (o.c >= 0.02 && h > 70 && h < 115 && l < 0.7) h = 70 - (0.7 - l) * 60 * ((115 - h) / 45 + 0.5);
+  return fromOklch({ l, c: o.c < 0.02 ? o.c : clamp(o.c, band.c), h });
 }
 
 /**

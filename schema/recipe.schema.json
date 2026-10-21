@@ -40,6 +40,17 @@
         "$ref": "#/$defs/value"
       }
     },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The encoding this style prefers in renderImage (options passed to renderImage win).",
+      "properties": {
+        "lossless": {
+          "type": "boolean",
+          "description": "Lossless WebP/AVIF: for flat or 1-bit art (dither)."
+        }
+      }
+    },
     "layers": {
       "type": "array",
       "minItems": 1,
@@ -335,6 +346,19 @@
         },
         {
           "type": "object",
+          "description": "Characters in a string (a number's digits) or items in an array.",
+          "required": [
+            "length"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "length": {
+              "$ref": "#/$defs/value"
+            }
+          }
+        },
+        {
+          "type": "object",
           "description": "An array backwards.",
           "required": [
             "reverse"
@@ -375,7 +399,7 @@
       }
     },
     "condition": {
-      "description": "\"title\" (the option is set), { \"background\": \"gradient\" } (equals; \"mode\" is the palette's), { \"not\": … }, { \"all\": [...] }, { \"any\": [...] }.",
+      "description": "\"title\" (the option is set), { \"background\": \"gradient\" } (equals; \"mode\" is the palette's, \"aspect\" the canvas's: wide | square | tall), { \"not\": … }, { \"all\": [...] }, { \"any\": [...] }.",
       "anyOf": [
         {
           "type": "string"
@@ -684,6 +708,10 @@
                 "$ref": "#/$defs/value",
                 "description": "Distinct colours to use. Default 3."
               },
+              "hueSpan": {
+                "$ref": "#/$defs/value",
+                "description": "Keep the colours within this many degrees of hue (OKLCH): neighbouring hues only."
+              },
               "count": {
                 "$ref": "#/$defs/value",
                 "description": "Blobs. Default 4."
@@ -756,6 +784,7 @@
                 "when",
                 "colors",
                 "hues",
+                "hueSpan",
                 "count",
                 "blur",
                 "spread",

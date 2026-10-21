@@ -25,7 +25,7 @@ export const VERSION = JSON.parse(readFileSync(new URL('../package.json', import
 const built = new WeakSet();
 
 /** Options that belong to the cover itself, never to a recipe layer. */
-const COVER_KEYS = new Set(['width', 'height', 'aspect', 'seed', 'palette', 'recipe', 'layers', 'fonts', 'alt', 'radius']);
+const COVER_KEYS = new Set(['width', 'height', 'aspect', 'seed', 'palette', 'recipe', 'layers', 'fonts', 'alt', 'radius', 'output']);
 
 /**
  * Build a cover: resolve its size and palette and expand its recipe into a
@@ -48,6 +48,8 @@ export function cover(options) {
   const seed = String(o.seed ?? (typeof o.title === 'string' ? o.title : 'cover'));
 
   let layers;
+  /** @type {{ lossless?: boolean } | undefined} */
+  let output;
   if (o.recipe) {
     const recipe = typeof o.recipe === 'function'
       ? o.recipe
@@ -58,6 +60,7 @@ export function cover(options) {
     const ctx = { width, height, palette, rng: createRng(`${seed}:recipe`), u: unit({ width, height }), seed };
     const recipeOptions = Object.fromEntries(Object.entries(o).filter(([k]) => !COVER_KEYS.has(k)));
     layers = [...applyOverrides(recipe(/** @type {any} */ (recipeOptions), ctx), recipeOptions), ...(o.layers ?? [])];
+    output = /** @type {any} */ (recipe).json?.output;
   } else {
     layers = o.layers ?? [{ type: 'mesh' }, { type: 'grain' }];
   }
@@ -77,6 +80,8 @@ export function cover(options) {
     fonts: o.fonts ?? [],
     alt: o.alt ?? (typeof o.title === 'string' ? o.title : undefined),
     radius: o.radius,
+    // A recipe's preferred encoding (e.g. dither: lossless). renderImage options win.
+    output: o.output ?? output,
   };
   built.add(result);
   return result;
@@ -277,8 +282,9 @@ export async function renderImage(input, options = {}) {
   // aurora cover: WebP q82 keeps ~40% of the grain (11 KB), q90 ~60% (41 KB),
   // q94 ~78% (125 KB). 90 is the default; raise it for crisper grain.
   const quality = options.quality ?? DEFAULT_QUALITY[format];
-  if (format === 'webp') image = image.webp({ quality, effort: options.effort ?? 4 });
-  else if (format === 'avif') image = image.avif({ quality, effort: options.effort ?? 4 });
+  const lossless = options.lossless ?? c.output?.lossless ?? false;
+  if (format === 'webp') image = image.webp(lossless ? { lossless: true, effort: options.effort ?? 4 } : { quality, effort: options.effort ?? 4 });
+  else if (format === 'avif') image = image.avif(lossless ? { lossless: true, effort: options.effort ?? 4 } : { quality, effort: options.effort ?? 4 });
   else if (format === 'jpeg') image = image.flatten({ background: c.palette.bg }).jpeg({ quality, mozjpeg: true });
   else image = image.png({ compressionLevel: options.effort ?? 6 });
   const out = await image.toBuffer();
@@ -412,7 +418,7 @@ function applyGrain(pixels, grain, layer) {
 export async function coverKey(input, options = {}) {
   const c = cover(input);
   const h = createHash('sha256');
-  h.update(`covers@${VERSION}\n${options.format ?? 'webp'}:${options.quality ?? ''}:${options.effort ?? ''}\n`);
+  h.update(`covers@${VERSION}\n${options.format ?? 'webp'}:${options.quality ?? ''}:${options.effort ?? ''}:${options.lossless ?? c.output?.lossless ?? ''}\n`);
   // Files a layer reads (an image's src, a mesh's photo, a waveform's audio) are hashed by content.
   const file = async (/** @type {any} */ v) => (typeof v === 'string' && !v.startsWith('data:') ? digest(await readFile(v)) : v instanceof Uint8Array ? digest(v) : v);
   const layers = await Promise.all(c.layers.map(async (l) => {

@@ -67,6 +67,9 @@
       ]
     }
   },
+  "output": {
+    "lossless": true
+  },
   "layers": [
     {
       "id": "dither",

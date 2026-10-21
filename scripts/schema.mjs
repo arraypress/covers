@@ -30,6 +30,7 @@ const OPS = {
   max: ['Largest.', { type: 'array', minItems: 1, items: { $ref: '#/$defs/value' } }],
   ramp: ['[from, to, steps, amount?]: steps colours from one toward the other.', { type: 'array', minItems: 3, maxItems: 4, items: { $ref: '#/$defs/value' } }],
   taper: ['[ratio, steps]: [1, ratio, ratio², …].', { type: 'array', minItems: 2, maxItems: 2, items: { $ref: '#/$defs/value' } }],
+  length: ['Characters in a string (a number\'s digits) or items in an array.', { $ref: '#/$defs/value' }],
   reverse: ['An array backwards.', { $ref: '#/$defs/value' }],
 };
 
@@ -55,6 +56,7 @@ export function buildSchema() {
       params: { type: 'object', description: 'Options this recipe reads, with defaults. Cover options of the same name override them; use them as "{name}".', additionalProperties: { $ref: '#/$defs/value' } },
       requires: { type: 'array', items: { type: 'string' }, description: 'Options that must be set (e.g. "image").' },
       vars: { type: 'object', description: 'Named values, resolved in order (draws use the recipe stream); use them as "$name".', additionalProperties: { $ref: '#/$defs/value' } },
+      output: { type: 'object', additionalProperties: false, description: 'The encoding this style prefers in renderImage (options passed to renderImage win).', properties: { lossless: { type: 'boolean', description: 'Lossless WebP/AVIF: for flat or 1-bit art (dither).' } } },
       layers: { type: 'array', minItems: 1, items: { $ref: '#/$defs/layer' } },
     },
     $defs: {
@@ -82,7 +84,7 @@ export function buildSchema() {
         properties: { if: { $ref: '#/$defs/condition' }, then: { $ref: '#/$defs/value' }, else: { $ref: '#/$defs/value' } },
       },
       condition: {
-        description: '"title" (the option is set), { "background": "gradient" } (equals; "mode" is the palette\'s), { "not": … }, { "all": [...] }, { "any": [...] }.',
+        description: '"title" (the option is set), { "background": "gradient" } (equals; "mode" is the palette\'s, "aspect" the canvas\'s: wide | square | tall), { "not": … }, { "all": [...] }, { "any": [...] }.',
         anyOf: [
           { type: 'string' },
           { type: 'boolean' },

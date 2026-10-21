@@ -132,7 +132,7 @@ test('new recipes: titles clear 4.5:1 where they sit, on every preset', async ()
     ['riso', [0, 0.72, 0.7, 1]],
     ['waveform', [0, 0, 0.7, 0.22]],
     ['bauhaus', [0, 0.74, 0.7, 1]],
-    ['issue', [0, 0.14, 0.5, 0.3]],
+    ['issue', [0.55, 0.14, 0.95, 0.3]],
   ];
   for (const [recipe, [x0, y0, x1, y1]] of cases) {
     for (const palette of Object.keys(palettes)) {
@@ -165,4 +165,75 @@ test('marks clear 3:1: waveform bars on their field', () => {
       assert.ok(contrastRatio(c.layers.find((l) => l.id === 'wave').color, c.layers[0].color) >= 3, `${palette} ${field}`);
     }
   }
+});
+
+test('issue: the numeral stays mostly on the canvas, and never covers "No.", on every aspect', async () => {
+  const W = 300;
+  for (const aspect of ['16:9', 'og', '1:1', '4:5', '9:16']) {
+    for (const [number, title] of [[1], [3], [7], [14], [128], [4077], [7, 'The quiet issue, in two lines of type']]) {
+      const c = cover({ recipe: 'issue', seed: 's', palette: 'moss', aspect, width: W, number, title });
+      const acc = c.layers.find((l) => l.id === 'number').color;
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(acc.slice(i, i + 2), 16));
+      const only = (ids) => ({ ...c, layers: c.layers.filter((l) => ids.includes(l.id)) });
+      // Count the numeral's pixels on the canvas, and on a canvas grown 50% each way.
+      const count = async (svg, pad) => {
+        const big = pad ? svg.replace(/<svg ([^>]*)width="(\d+)" height="(\d+)" viewBox="0 0 (\d+) (\d+)"/, (_, a, w, h) => `<svg ${a}width="${w * 2}" height="${h * 2}" viewBox="${-w / 2} ${-h / 2} ${w * 2} ${h * 2}"`) : svg;
+        const { data } = await sharp(Buffer.from(big)).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+        let n = 0;
+        for (let i = 0; i < data.length; i += 3) if (Math.abs(data[i] - r) + Math.abs(data[i + 1] - g) + Math.abs(data[i + 2] - b) < 30) n++;
+        return n;
+      };
+      const svg = await renderSvg(only(['bg', 'number']));
+      const visible = (await count(svg, false)) / (await count(svg, true));
+      assert.ok(visible >= 0.7, `${aspect} ${number}: ${(visible * 100).toFixed(0)}% of the numeral visible`);
+      // "No." never shares pixels with the numeral (or the title).
+      const no = await sharp(Buffer.from(await renderSvg(only(['no'])))).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+      const ttl = title ? await sharp(Buffer.from(await renderSvg(only(['title'])))).ensureAlpha().raw().toBuffer({ resolveWithObject: true }) : null;
+      if (ttl) {
+        let clash = 0;
+        for (let i = 3; i < no.data.length; i += 4) if (no.data[i] > 40 && ttl.data[i] > 40) clash++;
+        assert.equal(clash, 0, `${aspect}: the title covers "No."`);
+      }
+      const num = await sharp(Buffer.from(svg.replace(/<rect width="\d+" height="\d+" fill="[^"]+"\/>/, ''))).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+      let overlap = 0;
+      for (let i = 3; i < no.data.length; i += 4) if (no.data[i] > 40 && num.data[i] > 40) overlap++;
+      assert.equal(overlap, 0, `${aspect} ${number}: the numeral covers "No."`);
+    }
+  }
+});
+
+test('dither prefers lossless: the default WebP is pixel-exact and tiny', async () => {
+  const o = { recipe: 'dither', palette: 'paper', seed: 'a', width: 300 };
+  const webp = await renderImage(o);
+  const png = await renderImage(o, { format: 'png' });
+  const a = await sharp(webp).removeAlpha().raw().toBuffer();
+  const b = await sharp(png).removeAlpha().raw().toBuffer();
+  assert.ok(a.equals(b), 'exact');
+  const lossy = await renderImage(o, { lossless: false });
+  assert.ok(webp.length < lossy.length);
+  const { defineRecipe } = await import('../src/index.js');
+  assert.throws(() => defineRecipe({ output: { quality: 9 }, layers: [{ type: 'solid' }] }), /output: is \{ "lossless"/);
+});
+
+test('mesh hueSpan keeps to neighbouring hues', async () => {
+  const { toOklch } = await import('../src/index.js');
+  for (const palette of Object.keys(palettes)) {
+    for (const seed of ['a', 'b', 'c']) {
+      const svg = await renderSvg({ seed, palette, width: 200, layers: [{ type: 'mesh', hueSpan: 60, hues: 3, base: null }] });
+      const fills = [...new Set([...svg.matchAll(/<ellipse[^>]*fill="(#[0-9a-f]{6})"/g)].map((m) => m[1]))];
+      const hues = fills.map((f) => toOklch(f)).filter((o) => o.c >= 0.02).map((o) => o.h);
+      for (const h of hues) for (const k of hues) {
+        const d = Math.abs((((h - k) % 360) + 540) % 360 - 180);
+        assert.ok(d <= 60.5, `${palette} ${seed}: hues ${h.toFixed(0)} and ${k.toFixed(0)} are ${d.toFixed(0)}° apart`);
+      }
+    }
+  }
+});
+
+test('the aspect condition', () => {
+  const doc = { layers: [{ id: 'w', type: 'solid', when: { aspect: 'wide' } }, { id: 's', type: 'solid', when: { aspect: 'square' } }, { id: 't', type: 'solid', when: { aspect: 'tall' } }] };
+  const ids = (aspect) => cover({ recipe: doc, aspect }).layers.map((l) => l.id).join('');
+  assert.equal(ids('16:9'), 'w');
+  assert.equal(ids('1:1'), 's');
+  assert.equal(ids('9:16'), 't');
 });

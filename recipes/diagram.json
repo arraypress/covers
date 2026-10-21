@@ -40,7 +40,8 @@
             "sheen": 0
           }
         ]
-      }
+      },
+      "hueSpan": 60
     },
     {
       "id": "diagram",

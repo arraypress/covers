@@ -58,7 +58,7 @@ const svg = await renderSvg({
 |---|---|
 | `cover(options)` | Resolve size and palette and expand the recipe into a layer stack. Pure, synchronous; returns plain data you can inspect or tweak. |
 | `renderSvg(cover)` | `Promise<string>`: an SVG document. Byte-identical for the same input. |
-| `renderImage(cover, { format, quality, effort, cache })` | `Promise<Buffer>`: `'webp'` (default), `'png'`, `'avif'` or `'jpeg'`. |
+| `renderImage(cover, { format, quality, lossless, effort, cache })` | `Promise<Buffer>`: `'webp'` (default), `'png'`, `'avif'` or `'jpeg'`; `lossless` for WebP/AVIF (default: the recipe's preference). |
 | `coverKey(cover, options)` | The content-hash cache key (see [Caching](#caching)). |
 | `recipes` | The built-in recipes, by name. |
 | `defineRecipe(json)`, `loadRecipe(path)` | A recipe from a JSON document or file (see [JSON recipes](#json-recipes)). |
@@ -109,6 +109,7 @@ Full-bleed fields of blurred colour: the mesh-gradient look.
 | Option | Default | |
 |---|---|---|
 | `colors` | the palette's | |
+| `hueSpan` | — | Neighbouring hues only: keep the colours within this many degrees of OKLCH hue (blue with violet, teal with blue, orange with pink), turning the first colour's hue to make neighbours when the palette has too few. The gradient recipes use 60. |
 | `hues` | 3 | How many distinct colours to use. A few hues read as a colour story; every hue at once reads as a rainbow. |
 | `count` | 4 | Fields. |
 | `arrangement` | `'sweep'` | Long fields laid along one direction, their centres free to sit beyond the frame. `'ring'` spreads rounder blobs around the centre. |
@@ -301,7 +302,7 @@ Layers `bg`, `inkA`, `inkB` (+ `inkC`, `title`). Two flat inks (three with `thir
 ![riso](https://raw.githubusercontent.com/arraypress/covers/main/docs/riso.webp)
 
 ### `dither`
-Layers `dither` (+ `title`). A noise field, gradient, or lit sphere / circle / arch, 1-bit. Options `matrix`, `cell`, `source`, `shape`, `three` (two dithered bands). A title sets on a solid block in the page colour.
+Layers `dither` (+ `title`). A noise field, gradient, or lit sphere / circle / arch, 1-bit. Options `matrix`, `cell`, `source`, `shape`, `three` (two dithered bands). A title sets on a solid block in the page colour. Encodes lossless by default (exact cells, ~1 KB; see Performance).
 
 ![dither](https://raw.githubusercontent.com/arraypress/covers/main/docs/dither.webp)
 
@@ -325,7 +326,7 @@ Layers `bg`, `tiles` (+ `title` in a band below). `series` keeps a family's grid
 ![bauhaus](https://raw.githubusercontent.com/arraypress/covers/main/docs/bauhaus.webp)
 
 ### `issue`
-Layers `bg`, `masthead`, `date`, `rule`, `no`, `number` (+ `title`). A huge cropped issue `number` in the accent (held to 3:1), `masthead` and `date` above a hairline, `prefix: false` drops the "No.".
+Layers `bg`, `masthead`, `date`, `rule`, `no`, `number` (+ `title`). A huge issue `number` in the accent (held to 3:1), set from the left, sized by its digit count to fill the width and cropped at the bottom only (at least 70% of it stays on the canvas on every aspect, tested); `masthead` and `date` above a hairline; "No." always above the numeral (`prefix: false` drops it). On wide canvases a title sits top right.
 
 ![issue](https://raw.githubusercontent.com/arraypress/covers/main/docs/issue.webp)
 
@@ -418,14 +419,16 @@ A layer is any [layer](#layers) plus an optional `id` and `when`. Its option val
 | `{ "add" / "sub" / "mul" / "div" / "min" / "max": [...] }` | Arithmetic. Lengths (`"54vw"`, `"12vmin"`) become px first. |
 | `{ "ramp": [from, to, steps, amount?] }` | `steps` colours from `from` toward `to` (`amount` of the way). |
 | `{ "taper": [ratio, steps] }` | `[1, ratio, ratio², …]`, e.g. stripe widths. |
+| `{ "length": value }` | Characters in a string (a number's digits) or items in an array. |
 | `{ "reverse": array }` | |
 | `{ "if": condition, "then": a, "else": b }` | A choice. Only the chosen side is evaluated (and draws from the stream). |
 | `"@@x"`, `"$$x"` | A literal `@x` / `$x`. |
 
-Conditions (a layer's `when`, an `if`): `"title"` (the option is set; an override object counts when it has `content`, `name`, `svg` or `src`), `{ "background": "gradient" }` (equals; an array means any of; `mode` is the palette's), `{ "not": c }`, `{ "all": [...] }`, `{ "any": [...] }`.
+Conditions (a layer's `when`, an `if`): `"title"` (the option is set; an override object counts when it has `content`, `name`, `svg` or `src`), `{ "background": "gradient" }` (equals; an array means any of; `mode` is the palette's, `aspect` the canvas's: `'wide'`, `'square'` or `'tall'`), `{ "not": c }`, `{ "all": [...] }`, `{ "any": [...] }`.
 
 - **`params`** are the options a recipe reads, with defaults; a cover option of the same name overrides one. `title`, `label`, `icon` and `image` are always available. **`requires`** lists options that must be set (`["image"]`).
 - **`vars`** are resolved once, in order, before the layers; their draws use the cover's recipe stream. Draws inside a layer use that layer's own stream, so adding a layer never changes another's choices.
+- **`output`** (`{ "lossless": true }`) sets the encoding the style prefers in `renderImage`.
 - **Overrides by id** work exactly as for the built-ins (`grain: false`, `mesh: { blur: 30 }`), and so do extra `layers`.
 - **Validation** runs when the recipe is defined, and stops at the first problem with the recipe's name, the JSON path and what to do: `Recipe "house": layers[2] (grid).blurr: "pattern" layers have no option "blurr" (kind, size, …)`, `unknown token "@bgg"`, `unknown param "subtitle" (declare it in "params", or use "{opt.subtitle}")`.
 - The schema is exported as `@arraypress/covers/recipe.schema.json`, and the built-ins as `@arraypress/covers/recipes/<name>.json` to copy and edit.
@@ -535,7 +538,16 @@ How it rasterises, and why:
 - **Grain** is not. librsvg's `feTurbulence` costs ~200 ms at that size, so `renderImage` splits the stack at each grain layer: the layers below are rasterised, seeded noise (a triangular distribution, closer to film than flat noise) is blended in JS with the W3C formulas (~10 ms; sharp's own overlay blend flattens partly transparent noise to almost nothing), and the layers above are composited on top. `renderSvg` keeps `feTurbulence`, which browsers draw quickly; the two grains are matched in strength.
 - **Text** is shaped by HarfBuzz (`harfbuzzjs`, a 440 KB WebAssembly build) and written as path data. opentype.js was tried first and dropped: Inter's kerning lives in GPOS extension lookups that neither its 1.x nor 2.x reads, and 2.0 throws on Inter's contextual substitutions.
 
-**Grain versus file size.** Grain is the first thing a lossy encoder throws away. On a cover with grain, WebP quality 82 keeps about 40% of it, 90 about 60%, 94 about 78%, and the file grows each step (a dark aurora: 26 KB at 80, 60 KB at 85, 144 KB at 90; 19 KB at 90 without grain). The default is 90 for WebP (72 AVIF, 88 JPEG). For a grid of small thumbnails, `quality: 80` or `grain: false` is a quarter of the size; for crisp grain, raise it or use PNG.
+**Grain versus file size.** Grain is the first thing a lossy encoder throws away. On a cover with grain, WebP quality 82 keeps about 40% of it, 90 about 60%, 94 about 78%, and the file grows each step (a dark aurora: 26 KB at 80, 60 KB at 85, 144 KB at 90; 19 KB at 90 without grain). **The default stays at WebP 90** (72 AVIF, 88 JPEG): the owner compared 80 and 90 on the gallery and 80 visibly loses the grain and starts to band the gradients. For a grid of small thumbnails, pass `quality: 80` or `grain: false` knowingly; for crisp grain, raise it or use PNG.
+
+**Lossless where it wins.** A recipe can declare the encoding it prefers (`"output": { "lossless": true }` in its JSON; `renderImage` options still win). `dither` does: it's flat 1-bit art, so lossless WebP is both exact and tiny, while lossy WebP smears the cells. Measured at 1200×1200:
+
+| Recipe | PNG | WebP lossless | WebP q90 | WebP q80 |
+|---|---|---|---|---|
+| dither (3 palettes) | 42–45 KB | **~1 KB**, exact | 153–240 KB, 3–5% of pixels wrong | 125–196 KB, 3.5–5% wrong |
+| contour (3 palettes) | 808–1074 KB | 511–661 KB | **145–183 KB**, visually exact | 101–135 KB |
+
+Contour carries grain, so it stays lossy like the rest. Pass `lossless: true` to `renderImage` for any cover.
 
 ## Gallery
 

@@ -140,6 +140,8 @@ export interface MeshLayer extends BaseLayer {
   colors?: Color[];
   /** How many distinct colours to use (default 3 from the palette; all of `colors` when given). */
   hues?: number;
+  /** Neighbouring hues only: keep the colours within this many degrees (OKLCH), making neighbours when the palette has too few. */
+  hueSpan?: number;
   /** Number of fields. Default 4. */
   count?: number;
   /** `'sweep'` (default): long fields along one direction, centres free to leave the frame. `'ring'`: rounder blobs round the centre. */
@@ -634,6 +636,7 @@ export type RecipeValue =
   | { readable: RecipeValue }
   | { gradientUnder: [RecipeValue, RecipeValue, RecipeValue] }
   | { tone: [RecipeValue, RecipeValue] }
+  | { length: RecipeValue }
   | { pick: RecipeValue[] }
   | { range: [RecipeValue, RecipeValue] }
   | { int: [RecipeValue, RecipeValue] }
@@ -670,6 +673,8 @@ export interface RecipeJson {
   params?: Record<string, RecipeValue>;
   /** Options that must be set. */
   requires?: string[];
+  /** The encoding this style prefers (renderImage options win). */
+  output?: { lossless?: boolean };
   /** Named values, resolved in order; referenced as `"$name"`. */
   vars?: Record<string, RecipeValue>;
   layers: RecipeJsonLayer[];
@@ -761,6 +766,8 @@ export interface CoverOptions extends RecipeOptions {
   alt?: string;
   /** Round the cover's corners (transparent outside; use PNG/WebP/AVIF). */
   radius?: Length;
+  /** Preferred encoding, overriding the recipe's. */
+  output?: { lossless?: boolean };
 }
 
 /** A resolved cover (from {@link cover}). */
@@ -773,6 +780,8 @@ export interface Cover {
   fonts: FontSource[];
   alt?: string;
   radius?: Length;
+  /** Preferred encoding (from the recipe, or set here). */
+  output?: { lossless?: boolean };
 }
 
 export interface RenderImageOptions {
@@ -780,6 +789,8 @@ export interface RenderImageOptions {
   format?: 'webp' | 'png' | 'avif' | 'jpeg';
   /** Default 90 for WebP, 72 for AVIF, 88 for JPEG (high enough to keep the grain; see README). */
   quality?: number;
+  /** Lossless WebP / AVIF (default: the recipe's preference, else lossy). */
+  lossless?: boolean;
   /** Encoder effort (WebP/AVIF 0–9, PNG compression 0–9). */
   effort?: number;
   /** Cache renders by content hash: `true` for `node_modules/.cache/covers`, or a directory. */

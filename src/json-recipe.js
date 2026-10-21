@@ -31,12 +31,14 @@
  * | `{ "add" \| "sub" \| "mul" \| "div" \| "min" \| "max": [a, b, …] }` | arithmetic; lengths like `"54vw"` become pixels |
  * | `{ "ramp": [from, to, steps, amount?] }` | `steps` colours from `from` toward `to` |
  * | `{ "taper": [ratio, steps] }` | `[1, ratio, ratio², …]` |
+ * | `{ "length": value }` | characters in a string (or a number's digits), items in an array |
  * | `{ "reverse": [...] }` | the array backwards |
  * | `{ "if": cond, "then": a, "else": b }` | a choice (only the chosen side is evaluated) |
  *
  * Conditions (`when` on a layer, `if`): `"title"` (the option is set),
  * `{ "background": "gradient" }` (a param or option equals a value; `mode`
- * is the palette's), `{ "not": c }`, `{ "all": [...] }`, `{ "any": [...] }`.
+ * is the palette's, `aspect` the canvas's: `wide`, `square` or `tall`),
+ * `{ "not": c }`, `{ "all": [...] }`, `{ "any": [...] }`.
  *
  * Seeding: `vars` draw from the cover's recipe stream in order; draws inside
  * a layer use that layer's own stream, so adding a layer never changes
@@ -62,7 +64,7 @@ const CANVAS = ['width', 'height', 'u'];
 
 /** Value operators, by name, with their argument arity. */
 const OPS = /** @type {Record<string, [number, number]>} */ ({
-  mix: [3, 4], readable: [1, 3], gradientUnder: [3, 3], tone: [2, 2], pick: [1, Infinity], range: [2, 2], int: [2, 2],
+  mix: [3, 4], readable: [1, 3], gradientUnder: [3, 3], tone: [2, 2], length: [1, 1], pick: [1, Infinity], range: [2, 2], int: [2, 2],
   add: [1, Infinity], sub: [2, Infinity], mul: [1, Infinity], div: [2, 2], min: [1, Infinity], max: [1, Infinity],
   ramp: [3, 4], taper: [2, 2], reverse: [1, 1],
 });
@@ -71,7 +73,7 @@ const OPS = /** @type {Record<string, [number, number]>} */ ({
 const LAYER_META = new Set(['id', 'type', 'when']);
 
 /** Top-level keys of a recipe document. */
-const TOP = new Set(['$schema', 'name', 'description', 'params', 'requires', 'vars', 'layers']);
+const TOP = new Set(['$schema', 'name', 'description', 'params', 'requires', 'vars', 'output', 'layers']);
 
 /** Recipes defined from the same JSON object are reused. */
 const defined = new WeakMap();
@@ -287,6 +289,7 @@ function op(s, name, raw) {
       if (typeof args[1] === 'number') return onBackground(args[0], args[1], args[2] ?? 'white');
       return readableText(toHex(args[0]), args[1] ? toHex(args[1]) : '#ffffff', args[2] ? toHex(args[2]) : '#111111');
     }
+    case 'length': return Array.isArray(resolve(s, raw)) ? /** @type {unknown[]} */ (resolve(s, raw)).length : String(args[0] ?? '').length;
     case 'tone': return toneColor(toHex(args[0]), args[1] ?? {});
     case 'gradientUnder': {
       // The colours a centred square of `size` sits on in a linear gradient at `angle`.
@@ -334,7 +337,10 @@ function test(s, cond) {
   if ('all' in cond) return cond.all.every((/** @type {unknown} */ c) => test(s, c));
   if ('any' in cond) return cond.any.some((/** @type {unknown} */ c) => test(s, c));
   return Object.entries(cond).every(([k, want]) => {
-    const have = k === 'mode' ? s.c.palette.mode : valueOf(lookup(s, k));
+    const ratio = s.c.width / s.c.height;
+    const have = k === 'mode' ? s.c.palette.mode
+      : k === 'aspect' ? (ratio > 1.15 ? 'wide' : ratio < 0.87 ? 'tall' : 'square')
+      : valueOf(lookup(s, k));
     return Array.isArray(want) ? want.includes(have) : have === want;
   });
 }
@@ -359,6 +365,7 @@ export function validate(json) {
 
   for (const k of Object.keys(json)) if (!TOP.has(k)) fail(k, `unknown key (expected ${[...TOP].join(', ')})`);
   if (json.params !== undefined && !isPlain(json.params)) fail('params', 'must be an object of defaults');
+  if (json.output !== undefined && !(isPlain(json.output) && Object.keys(json.output).every((k) => k === 'lossless'))) fail('output', 'is { "lossless": true | false }');
   if (json.vars !== undefined && !isPlain(json.vars)) fail('vars', 'must be an object');
   if (json.requires !== undefined && !(Array.isArray(json.requires) && json.requires.every((/** @type {unknown} */ r) => typeof r === 'string'))) fail('requires', 'must be an array of option names');
   if (!Array.isArray(json.layers) || json.layers.length === 0) fail('layers', 'must be a non-empty array');
@@ -382,7 +389,7 @@ export function validate(json) {
         return c[k].forEach((/** @type {unknown} */ x, /** @type {number} */ i) => checkCond(`${path}.${k}[${i}]`, x));
       }
     }
-    for (const k of Object.keys(c)) if (k !== 'mode') checkName(`${path}.${k}`, k);
+    for (const k of Object.keys(c)) if (k !== 'mode' && k !== 'aspect') checkName(`${path}.${k}`, k);
   };
 
   const checkValue = (/** @type {string} */ path, /** @type {any} */ v) => {

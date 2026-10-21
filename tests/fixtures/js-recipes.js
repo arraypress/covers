@@ -67,7 +67,7 @@ const meshField = (o, c) => {
   // With a title, no folds or streaks: their light edges would cut its contrast.
   const r = createRng(`${c.seed}:recipe:mesh`);
   const titled = Boolean(contentOf(o.title));
-  return { id: 'mesh', type: 'mesh', count: 4, blur: '11vmax', size: [0.45, 0.8], streak: 1.8, tone: tone(o, c), fold: titled ? false : r.pick([false, false, true]), streaks: titled ? 0 : r.pick([0, 0, 0, 6]), hues: r.pick([2, 2, 3]) };
+  return { id: 'mesh', type: 'mesh', count: 4, blur: '11vmax', size: [0.45, 0.8], streak: 1.8, tone: tone(o, c), fold: titled ? false : r.pick([false, false, true]), streaks: titled ? 0 : r.pick([0, 0, 0, 6]), hues: r.pick([2, 2, 3]), hueSpan: 60 };
 };
 
 /** The title's label, in the title's colour (muted can't read on a mid-tone field). */

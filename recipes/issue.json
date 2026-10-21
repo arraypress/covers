@@ -1,7 +1,7 @@
 {
   "$schema": "../schema/recipe.schema.json",
   "name": "issue",
-  "description": "Type-led: a huge cropped issue number in the accent, an optional No., a masthead line with the date, a hairline.",
+  "description": "Type-led: a huge issue number in the accent, sized to the canvas and cropped at the bottom only, an optional No., a masthead line with the date, a hairline.",
   "params": {
     "number": null,
     "masthead": null,
@@ -24,6 +24,45 @@
         "@bg",
         3,
         "@accent"
+      ]
+    },
+    "size": {
+      "min": [
+        {
+          "mul": [
+            "@height",
+            1.04
+          ]
+        },
+        {
+          "div": [
+            {
+              "mul": [
+                "@width",
+                1.62
+              ]
+            },
+            {
+              "length": "$number"
+            }
+          ]
+        }
+      ]
+    },
+    "bleed": {
+      "add": [
+        1,
+        {
+          "div": [
+            {
+              "mul": [
+                "$size",
+                0.1
+              ]
+            },
+            "@height"
+          ]
+        }
       ]
     }
   },
@@ -95,7 +134,11 @@
       "anchor": "left",
       "position": {
         "x": 0.07,
-        "y": 0.345
+        "y": {
+          "if": "title",
+          "then": 0.31,
+          "else": 0.27
+        }
       },
       "size": {
         "mul": [
@@ -113,17 +156,12 @@
       "id": "number",
       "type": "text",
       "content": "$number",
-      "anchor": "bottom-right",
+      "anchor": "bottom-left",
       "position": {
-        "x": 1.04,
-        "y": 1.13
+        "x": 0.055,
+        "y": "$bleed"
       },
-      "size": {
-        "mul": [
-          "@height",
-          1.04
-        ]
-      },
+      "size": "$size",
       "weight": 600,
       "letterSpacing": -0.06,
       "lineHeight": 1,
@@ -137,7 +175,13 @@
       "type": "text",
       "when": "title",
       "content": "{title}",
-      "anchor": "top-left",
+      "anchor": {
+        "if": {
+          "aspect": "wide"
+        },
+        "then": "top-right",
+        "else": "top-left"
+      },
       "weight": 500,
       "size": {
         "mul": [
@@ -164,7 +208,14 @@
       "offset": {
         "y": "9vh"
       },
-      "maxWidth": "52vw"
+      "maxWidth": {
+        "if": {
+          "aspect": "wide"
+        },
+        "then": "40vw",
+        "else": "52vw"
+      },
+      "align": "left"
     }
   ]
 }

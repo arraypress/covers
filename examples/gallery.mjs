@@ -98,7 +98,7 @@ const issueSeeds = [
   { seed: 'i14', palette: 'paper', number: 14, masthead: 'Wren Street', date: 'October 2026' },
   { seed: 'i7', palette: 'dusk', number: 7, masthead: 'Wren Street', date: 'Autumn' },
   { seed: 'i128', palette: 'ember', number: 128 },
-  { seed: 'i3', palette: 'moss', number: 3, prefix: false },
+  { seed: 'i3', palette: 'moss', number: 3, masthead: 'Field Notes', date: 'Vol. 2' },
   { seed: 'i-notes', palette: 'mono', masthead: 'Field Notes', date: '2026' },
   { seed: 'i21', palette: 'ocean', number: 21, masthead: 'Wren Street', date: 'Nov 2026', title: 'The quiet issue', label: 'Issue' },
 ];
