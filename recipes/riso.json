@@ -1,0 +1,387 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "riso",
+  "description": "Two (or three) flat risograph inks overprinted on paper: big simple forms, slight misregistration, speckled or halftone texture, uneven density. Inks from the palette, or classic riso inks.",
+  "params": {
+    "inks": null,
+    "texture": "grain",
+    "third": false
+  },
+  "vars": {
+    "ground": {
+      "if": {
+        "mode": "dark"
+      },
+      "then": "@bg",
+      "else": "#f6f1e7"
+    },
+    "blend": {
+      "if": {
+        "mode": "dark"
+      },
+      "then": "screen",
+      "else": "multiply"
+    },
+    "inks": {
+      "if": "inks",
+      "then": "{inks}",
+      "else": [
+        {
+          "tone": [
+            "@accent",
+            {
+              "l": [
+                0.5,
+                0.72
+              ],
+              "c": [
+                0.14,
+                0.26
+              ]
+            }
+          ]
+        },
+        {
+          "tone": [
+            "@colors.1",
+            {
+              "l": [
+                0.5,
+                0.72
+              ],
+              "c": [
+                0.14,
+                0.26
+              ]
+            }
+          ]
+        },
+        {
+          "tone": [
+            "@colors.2",
+            {
+              "l": [
+                0.5,
+                0.72
+              ],
+              "c": [
+                0.14,
+                0.26
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "comp": {
+      "if": "title",
+      "then": {
+        "pick": [
+          [
+            [
+              {
+                "kind": "circle",
+                "x": {
+                  "range": [
+                    0.4,
+                    0.6
+                  ]
+                },
+                "y": 0.32,
+                "r": "24vmin"
+              }
+            ],
+            [
+              {
+                "kind": "band",
+                "y": 0.42,
+                "height": "16vmin",
+                "rotate": {
+                  "range": [
+                    -8,
+                    8
+                  ]
+                }
+              }
+            ]
+          ],
+          [
+            [
+              {
+                "kind": "arch",
+                "x": {
+                  "range": [
+                    0.34,
+                    0.42
+                  ]
+                },
+                "y": 0.34,
+                "width": "34vmin",
+                "height": "44vmin"
+              }
+            ],
+            [
+              {
+                "kind": "circle",
+                "x": {
+                  "range": [
+                    0.58,
+                    0.66
+                  ]
+                },
+                "y": 0.3,
+                "r": "16vmin"
+              }
+            ]
+          ],
+          [
+            [
+              {
+                "kind": "half",
+                "x": 0.5,
+                "y": 0.5,
+                "r": "32vmin"
+              }
+            ],
+            [
+              {
+                "kind": "circle",
+                "x": 0.5,
+                "y": 0.3,
+                "r": "14vmin"
+              }
+            ]
+          ]
+        ]
+      },
+      "else": {
+        "pick": [
+          [
+            [
+              {
+                "kind": "circle",
+                "x": {
+                  "range": [
+                    0.36,
+                    0.5
+                  ]
+                },
+                "y": {
+                  "range": [
+                    0.38,
+                    0.5
+                  ]
+                },
+                "r": "34vmin"
+              }
+            ],
+            [
+              {
+                "kind": "band",
+                "y": {
+                  "range": [
+                    0.56,
+                    0.68
+                  ]
+                },
+                "height": "26vmin",
+                "rotate": {
+                  "range": [
+                    -14,
+                    14
+                  ]
+                }
+              }
+            ]
+          ],
+          [
+            [
+              {
+                "kind": "arch",
+                "x": {
+                  "range": [
+                    0.32,
+                    0.42
+                  ]
+                },
+                "y": 0.54,
+                "width": "46vmin",
+                "height": "66vmin"
+              }
+            ],
+            [
+              {
+                "kind": "circle",
+                "x": {
+                  "range": [
+                    0.6,
+                    0.68
+                  ]
+                },
+                "y": {
+                  "range": [
+                    0.34,
+                    0.44
+                  ]
+                },
+                "r": "22vmin"
+              }
+            ]
+          ],
+          [
+            [
+              {
+                "kind": "half",
+                "x": 0.5,
+                "y": {
+                  "range": [
+                    0.6,
+                    0.7
+                  ]
+                },
+                "r": "42vmin"
+              }
+            ],
+            [
+              {
+                "kind": "circle",
+                "x": {
+                  "range": [
+                    0.42,
+                    0.58
+                  ]
+                },
+                "y": {
+                  "range": [
+                    0.34,
+                    0.42
+                  ]
+                },
+                "r": "19vmin"
+              }
+            ]
+          ],
+          [
+            [
+              {
+                "kind": "ring",
+                "x": {
+                  "range": [
+                    0.4,
+                    0.48
+                  ]
+                },
+                "y": 0.48,
+                "r": "30vmin",
+                "thickness": "12vmin"
+              }
+            ],
+            [
+              {
+                "kind": "circle",
+                "x": {
+                  "range": [
+                    0.56,
+                    0.64
+                  ]
+                },
+                "y": {
+                  "range": [
+                    0.5,
+                    0.58
+                  ]
+                },
+                "r": "24vmin"
+              }
+            ]
+          ]
+        ]
+      }
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid",
+      "color": "$ground"
+    },
+    {
+      "id": "inkA",
+      "type": "ink",
+      "color": "$inks.0",
+      "shapes": "$comp.0",
+      "texture": "{texture}",
+      "blend": "$blend"
+    },
+    {
+      "id": "inkB",
+      "type": "ink",
+      "color": "$inks.1",
+      "shapes": "$comp.1",
+      "texture": "{texture}",
+      "blend": "$blend"
+    },
+    {
+      "id": "inkC",
+      "type": "ink",
+      "when": "third",
+      "color": "$inks.2",
+      "shapes": [
+        {
+          "kind": "circle",
+          "x": {
+            "range": [
+              0.2,
+              0.8
+            ]
+          },
+          "y": {
+            "range": [
+              0.2,
+              0.4
+            ]
+          },
+          "r": "7vmin"
+        }
+      ],
+      "texture": "{texture}",
+      "blend": "$blend"
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.062
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.046
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "@text",
+          "content": "{label}"
+        }
+      },
+      "color": "@text"
+    }
+  ]
+}

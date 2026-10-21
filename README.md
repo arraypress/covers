@@ -2,7 +2,7 @@
 
 Build-time cover images for posts, products and pages: soft mesh gradients, film grain, fine grids, stripes, shapes, icons and type, drawn from one **seed**. The same slug always gives the same image, and two posts never look alike.
 
-Nine recipes cover the editorial looks (full-bleed gradient fields, engineering-blog line diagrams, cut-paper collages with hand-drawn icons, stripe bands, a clean icon tile, big type, duotone photos, a single-icon mark), and every layer under them is yours to change, remove or add to. Recipes are data: the built-ins are JSON documents, and a theme can write its own cover style the same way, with no JavaScript (see [JSON recipes](#json-recipes)). Output is an SVG string (text as outlines, so it needs no fonts) or WebP / PNG / AVIF / JPEG via [sharp](https://sharp.pixelplumbing.com). Inter ships in the package, so it works with no setup. There's an Astro helper that turns a content collection into static covers in three lines.
+Sixteen recipes cover the editorial looks (full-bleed gradient fields, engineering-blog line diagrams, cut-paper collages, risograph prints, 1-bit dithers, topographic contours, podcast waveforms, Bauhaus grids, magazine issue numbers, palettes from photos, stripe bands, an icon tile, big type, duotone photos, a single-icon mark), and every layer under them is yours to change, remove or add to. Recipes are data: the built-ins are JSON documents, and a theme can write its own cover style the same way, with no JavaScript (see [JSON recipes](#json-recipes)). Output is an SVG string (text as outlines, so it needs no fonts) or WebP / PNG / AVIF / JPEG via [sharp](https://sharp.pixelplumbing.com). Inter ships in the package, so it works with no setup. There's an Astro helper that turns a content collection into static covers in three lines.
 
 No network, no telemetry, no DOM. It runs in Node at build time.
 
@@ -64,6 +64,8 @@ const svg = await renderSvg({
 | `defineRecipe(json)`, `loadRecipe(path)` | A recipe from a JSON document or file (see [JSON recipes](#json-recipes)). |
 | `palettes`, `resolvePalette(input)`, `derivePalette(tokens)` | Palettes (see [Palettes](#palettes)). |
 | `registerIcons(iconifySet)` | Use an icon set without installing its package. |
+| `extractPalette(image, { count })` | A photo's dominant colours (k-means in OKLab; needs sharp). |
+| `RISO_INKS` | Classic risograph inks by name. |
 | `toHex`, `toOklch`, `fromOklch`, `mixOklab`, `mixOklch`, `onBackground`, `gradientAt` | Colour helpers (`onBackground(bgs, 3, 'white')` is the icon-contrast rule). |
 | `createRng(seed)`, `hashString(str)` | The seeded randomness, for custom recipes. |
 | `resolveSize`, `ASPECTS`, `MIME`, `DEFAULT_QUALITY`, `VERSION` | |
@@ -118,6 +120,7 @@ Full-bleed fields of blurred colour: the mesh-gradient look.
 | `tone` | — | `{ l: [min, max], c: [min, max] }`: pull every colour into an OKLCH band, keeping its hue. Pastels become clear mid-tones; a dark palette can't fall to black between fields. |
 | `fold` | — | `true` or `{ color, to, position, bend, softness, sheen }`: a second field meeting the first along a soft curve, its edge sharper than the blur elsewhere, with a faint sheen along it (silk). |
 | `streaks` | 0 | Thin light motion streaks along the sweep. |
+| `from` | — | A photo (path or bytes): take the colours from it (needs sharp; see `extractPalette`). |
 | `base` | `'auto'` | Under the fields: a gradient across the sweep between the first two colours, so colour reaches every edge and corner. Or `'bg'`, a colour, or `null`. |
 | `blobs` | — | `[{ x, y, r, squash, rotate, color, opacity }]` to place them yourself. |
 
@@ -189,6 +192,24 @@ Cut-paper shapes: the outline is resampled into short straight cuts, each nudged
 
 ### `scribble`
 A hand-drawn line: an `icon` re-drawn by hand (its outline flattened, wobbled with smooth seeded noise, stroked in short runs whose width drifts, round caps), or `graph` (`true` or `{ nodes, dot }`: a polyline with filled dots). `color` (`#faf9f5`), `stroke` (`'1.3vmin'`), `size` (`'46vmin'`), `position`, `wobble` (0.5).
+
+### `ink`
+One risograph ink: flat `shapes` (`circle`, `ring`, `half`, `arch`, `band`, `rect`, or `text` with any text-layer options), printed with `multiply` (`screen` on dark paper) and slightly misregistered (`offset`, default seeded 0.3–1% of the short side). `color` is a colour or a classic ink by name: `'riso:pink'`, `blue`, `yellow`, `teal`, `red`, `green`, `orange`, `purple`, `navy`, `black` (`RISO_INKS`, approximations). `texture`: `'grain'` (speckle where the paper shows through; `speckle` 0.09), `'halftone'` (`cell`, `dot`, `angle` 0 or 45) or `'none'`. `density` (`[0.78, 1]`): the ink thins across the sheet.
+
+### `dither`
+A soft field rendered 1-bit at a visible pixel size (`cell`, `'0.9vmin'`): `source` (`'field'` noise, `'linear'`, `'radial'`), an optional `shape` (`'sphere'` lit from the upper left, `'circle'`, `'arch'`; `size`, `center`), `matrix` (`'bayer4'`, `'bayer8'`, `'noise'`), `colors` (`[ground, ink]`, or three for two dithered bands), `gamma`, `range`. It's a tiny PNG (one pixel per cell) drawn with `image-rendering: pixelated`, so the cells stay crisp at any size and the SVG stays small.
+
+### `contour`
+Topographic isolines of seeded noise (marching squares, joined and smoothed): `levels` (20), `color` and `stroke`, `opacity` (0.5), `index` (every Nth line thicker, 5), `highlight` (one level in the accent; seeded, or a number, or `false`), `scale`, `octaves`, `resolution`.
+
+### `waveform`
+An episode's waveform: `peaks` (any scale), or `audio` (a file decoded at build with [`@arraypress/waveform-gen`](https://www.npmjs.com/package/@arraypress/waveform-gen), an optional peer). `style` (`'mirrored'`, `'bars'`, `'line'`, `'dots'`), `bars` (88), `gap`, `round`, `color`, `region`, `caption` (`true` for the duration, from the audio or `duration`, or any text). **With neither peaks nor audio it draws seeded demo peaks** — a placeholder, not your audio.
+
+### `tiles`
+A Bauhaus grid: each cell a ground with one shape (`quarter`, `half`, `circle`, `square`, `triangle`), rotated by quarters, in `colors` plus `ground`. `series` seeds the grid's rhythm (columns, rows and a merged 2×2 cell), so covers in a series share a family look while each cover's seed fills the cells. `cols`, `rows`, `kinds`, `merge`, `region`.
+
+### `rule`
+A hairline: `y` (fraction), or `from` / `to` points; `inset`, `color`, `stroke`.
 
 ### `frame`
 `inset` (`'3.5vmin'`), `radius` (`'2vmin'`), `stroke` (`'0.15vmin'`), `color` (`text`, at opacity 0.22), `fill` (a colour, to make a card).
@@ -273,6 +294,45 @@ await renderImage({ recipe: 'mark', seed: 'podcast', icon: 'lucide:music', backg
 ```
 
 ![mark](https://raw.githubusercontent.com/arraypress/covers/main/docs/mark.webp)
+
+### `riso`
+Layers `bg`, `inkA`, `inkB` (+ `inkC`, `title`). Two flat inks (three with `third: true`) overprinted on paper: big simple forms, misregistration, speckle or `texture: 'halftone'`, uneven density. `inks`: colours or classic inks (`['riso:pink', 'riso:blue']`); by default the palette's, toned to ink. On a dark palette the paper is the page colour and the inks print with `screen`.
+
+![riso](https://raw.githubusercontent.com/arraypress/covers/main/docs/riso.webp)
+
+### `dither`
+Layers `dither` (+ `title`). A noise field, gradient, or lit sphere / circle / arch, 1-bit. Options `matrix`, `cell`, `source`, `shape`, `three` (two dithered bands). A title sets on a solid block in the page colour.
+
+![dither](https://raw.githubusercontent.com/arraypress/covers/main/docs/dither.webp)
+
+### `contour`
+Layers `bg`, `contour`, `grain` (+ `title`). Isolines on a faintly tinted field, an index contour every fifth line, one line in the accent. `levels` (seeded 14–30 by default).
+
+![contour](https://raw.githubusercontent.com/arraypress/covers/main/docs/contour.webp)
+
+### `waveform`
+Layers `bg`, `wave`, `grain` (+ `title`). `peaks` or `audio`, `style`, `field: 'flat' | 'toned'`, `duration` (seconds or text, shown under the wave). Bars clear 3:1 on the field; the title (top left) 4.5:1.
+
+```js
+await renderImage({ recipe: 'waveform', seed: episode.slug, audio: 'episodes/42.mp3', title: 'Episode 42', label: 'Podcast' });
+```
+
+![waveform](https://raw.githubusercontent.com/arraypress/covers/main/docs/waveform.webp)
+
+### `bauhaus`
+Layers `bg`, `tiles` (+ `title` in a band below). `series` keeps a family's grid rhythm: `cover({ recipe: 'bauhaus', seed: post.id, series: 'autumn-2026' })`.
+
+![bauhaus](https://raw.githubusercontent.com/arraypress/covers/main/docs/bauhaus.webp)
+
+### `issue`
+Layers `bg`, `masthead`, `date`, `rule`, `no`, `number` (+ `title`). A huge cropped issue `number` in the accent (held to 3:1), `masthead` and `date` above a hairline, `prefix: false` drops the "No.".
+
+![issue](https://raw.githubusercontent.com/arraypress/covers/main/docs/issue.webp)
+
+### `photo`
+Layers `bg`, `mesh` or `photo`, `grain` (+ `title`). The palette of a photo (`image`) as full-bleed sweeps, the photo itself not shown; `show: 'blur'` shows it heavily blurred instead. Needs sharp. `extractPalette(image)` is exported on its own.
+
+![photo](https://raw.githubusercontent.com/arraypress/covers/main/docs/photo.webp)
 
 ### Your own
 
@@ -370,7 +430,7 @@ Conditions (a layer's `when`, an `if`): `"title"` (the option is set; an overrid
 - **Validation** runs when the recipe is defined, and stops at the first problem with the recipe's name, the JSON path and what to do: `Recipe "house": layers[2] (grid).blurr: "pattern" layers have no option "blurr" (kind, size, …)`, `unknown token "@bgg"`, `unknown param "subtitle" (declare it in "params", or use "{opt.subtitle}")`.
 - The schema is exported as `@arraypress/covers/recipe.schema.json`, and the built-ins as `@arraypress/covers/recipes/<name>.json` to copy and edit.
 
-All nine built-ins are JSON, with no JS fallback. The tests check that six of them render byte-identical SVG to JavaScript versions kept as a fixture, across palettes, aspects and options, object overrides included (`mark`, `diagram` and `cutout` were written as JSON from the start).
+All sixteen built-ins are JSON, with no JS fallback. The tests check that six of them render byte-identical SVG to JavaScript versions kept as a fixture, across palettes, aspects and options, object overrides included (the other ten were written as JSON from the start).
 
 ## Astro
 
@@ -456,14 +516,22 @@ Measured on an Apple M3 Max, Node 26, 1200×1200 WebP at the default quality (me
 | mark | 1 ms | 73 ms | 38 KB |
 | diagram | <1 ms | 113 ms | 110 KB |
 | cutout | 1 ms | 71 ms | 37 KB |
+| riso | 29 ms | 171 ms | 311 KB |
+| dither | 3 ms | 70 ms | 156 KB |
+| contour | 11 ms | 120 ms | 117 KB |
+| waveform | 1 ms | 68 ms | 24 KB |
+| bauhaus | <1 ms | 44 ms | 12 KB |
+| issue | 1 ms | 43 ms | 16 KB |
+| photo | <1 ms | 124 ms | 147 KB |
 
-(The gradient fields are the heaviest files: saturated colour plus grain at WebP 90. See "Grain versus file size" below.)
+(The gradient fields and riso are the heaviest files: saturated colour or speckle plus grain at WebP 90. See "Grain versus file size" below.)
 
 A 1200×630 `og` card is about 70 ms. The first render in a process adds ~80 ms (HarfBuzz's WebAssembly and the fonts load once). Cached covers cost a file read.
 
 How it rasterises, and why:
 
 - **Blur** is SVG `feGaussianBlur`, through sharp's librsvg. librsvg clips a filter's input to the canvas, so a blur near an edge pulls in transparency and the field fades there (a vignette). `renderImage` renders each `mesh` layer on its own canvas padded by 3σ, at the smallest scale its finest blur allows (blur this heavy has no detail to lose), then crops and upscales it: full-bleed, and cheaper than the unpadded render. Browsers draw the plain SVG's filters without that clip.
+- **Textures are image tiles.** The riso speckle and halftone are small PNG tiles in an SVG `<pattern>`, and dithers are one PNG pixel per cell scaled with `image-rendering: pixelated` (a minimal in-library PNG encoder, so no sharp needed for SVG). Two librsvg slow paths are avoided on purpose: a pattern of one shape per cell (~1.5 s a canvas) and a mask under a transform (~10×), which is why misregistration moves the shapes, not the texture.
 - **Grain** is not. librsvg's `feTurbulence` costs ~200 ms at that size, so `renderImage` splits the stack at each grain layer: the layers below are rasterised, seeded noise (a triangular distribution, closer to film than flat noise) is blended in JS with the W3C formulas (~10 ms; sharp's own overlay blend flattens partly transparent noise to almost nothing), and the layers above are composited on top. `renderSvg` keeps `feTurbulence`, which browsers draw quickly; the two grains are matched in strength.
 - **Text** is shaped by HarfBuzz (`harfbuzzjs`, a 440 KB WebAssembly build) and written as path data. opentype.js was tried first and dropped: Inter's kerning lives in GPOS extension lookups that neither its 1.x nor 2.x reads, and 2.0 throws on Inter's contextual substitutions.
 

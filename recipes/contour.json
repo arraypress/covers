@@ -1,0 +1,109 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "contour",
+  "description": "Topographic isolines of seeded noise on a flat field: thin even lines, an index contour every fifth line, one line in the accent.",
+  "params": {
+    "levels": null
+  },
+  "vars": {
+    "field": {
+      "mix": [
+        "@bg",
+        "@accent",
+        {
+          "if": {
+            "mode": "dark"
+          },
+          "then": 0.08,
+          "else": 0.05
+        }
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid",
+      "color": "$field"
+    },
+    {
+      "id": "contour",
+      "type": "contour",
+      "levels": {
+        "if": "levels",
+        "then": "{levels}",
+        "else": {
+          "pick": [
+            14,
+            18,
+            22,
+            26,
+            30
+          ]
+        }
+      },
+      "color": "@text",
+      "opacity": 0.42,
+      "index": 5,
+      "scale": {
+        "range": [
+          1.8,
+          3.2
+        ]
+      }
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.035
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.062
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.046
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "@text",
+          "content": "{label}"
+        }
+      },
+      "background": {
+        "color": "$field",
+        "radius": 0,
+        "padding": [
+          {
+            "mul": [
+              "@u",
+              0.03
+            ]
+          },
+          {
+            "mul": [
+              "@u",
+              0.035
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

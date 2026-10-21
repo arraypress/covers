@@ -1,0 +1,170 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "issue",
+  "description": "Type-led: a huge cropped issue number in the accent, an optional No., a masthead line with the date, a hairline.",
+  "params": {
+    "number": null,
+    "masthead": null,
+    "date": null,
+    "prefix": true
+  },
+  "vars": {
+    "number": {
+      "if": "number",
+      "then": "{number}",
+      "else": {
+        "int": [
+          1,
+          64
+        ]
+      }
+    },
+    "numeral": {
+      "readable": [
+        "@bg",
+        3,
+        "@accent"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid"
+    },
+    {
+      "id": "masthead",
+      "type": "text",
+      "when": "masthead",
+      "content": "{masthead}",
+      "anchor": "top-left",
+      "size": {
+        "mul": [
+          "@u",
+          0.024
+        ]
+      },
+      "weight": 600,
+      "letterSpacing": 0.08,
+      "transform": "uppercase",
+      "maxLines": 1,
+      "balance": false,
+      "color": "@text"
+    },
+    {
+      "id": "date",
+      "type": "text",
+      "when": "date",
+      "content": "{date}",
+      "anchor": "top-right",
+      "size": {
+        "mul": [
+          "@u",
+          0.024
+        ]
+      },
+      "weight": 500,
+      "letterSpacing": 0.04,
+      "maxLines": 1,
+      "balance": false,
+      "color": "@text"
+    },
+    {
+      "id": "rule",
+      "type": "rule",
+      "y": {
+        "if": {
+          "any": [
+            "masthead",
+            "date"
+          ]
+        },
+        "then": 0.13,
+        "else": 0.1
+      }
+    },
+    {
+      "id": "no",
+      "type": "text",
+      "when": {
+        "not": {
+          "prefix": false
+        }
+      },
+      "content": "No.",
+      "anchor": "left",
+      "position": {
+        "x": 0.07,
+        "y": 0.345
+      },
+      "size": {
+        "mul": [
+          "@u",
+          0.05
+        ]
+      },
+      "weight": 500,
+      "letterSpacing": -0.02,
+      "color": "$numeral",
+      "maxLines": 1,
+      "balance": false
+    },
+    {
+      "id": "number",
+      "type": "text",
+      "content": "$number",
+      "anchor": "bottom-right",
+      "position": {
+        "x": 1.04,
+        "y": 1.13
+      },
+      "size": {
+        "mul": [
+          "@height",
+          1.04
+        ]
+      },
+      "weight": 600,
+      "letterSpacing": -0.06,
+      "lineHeight": 1,
+      "maxLines": 1,
+      "maxWidth": 100000,
+      "balance": false,
+      "color": "$numeral"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "top-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.05
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.04
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 2,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "@text",
+          "content": "{label}"
+        }
+      },
+      "offset": {
+        "y": "9vh"
+      },
+      "maxWidth": "52vw"
+    }
+  ]
+}

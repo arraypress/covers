@@ -1,0 +1,156 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "photo",
+  "description": "A palette taken from a photo, laid out as full-bleed sweeps like aurora (the photo itself not shown), or `show: 'blur'` for the photo heavily blurred.",
+  "params": {
+    "show": null
+  },
+  "requires": [
+    "image"
+  ],
+  "vars": {
+    "src": {
+      "if": "image",
+      "then": "{image}",
+      "else": null
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid"
+    },
+    {
+      "id": "mesh",
+      "type": "mesh",
+      "when": {
+        "not": {
+          "show": "blur"
+        }
+      },
+      "from": "$src",
+      "count": 4,
+      "blur": "11vmax",
+      "size": [
+        0.45,
+        0.8
+      ],
+      "streak": 1.8,
+      "hues": 3,
+      "tone": {
+        "if": "title",
+        "then": {
+          "if": {
+            "mode": "dark"
+          },
+          "then": {
+            "l": [
+              0.34,
+              0.5
+            ],
+            "c": [
+              0.08,
+              0.2
+            ]
+          },
+          "else": {
+            "l": [
+              0.66,
+              0.82
+            ],
+            "c": [
+              0.08,
+              0.18
+            ]
+          }
+        },
+        "else": {
+          "l": [
+            0.5,
+            0.85
+          ],
+          "c": [
+            0.08,
+            0.2
+          ]
+        }
+      },
+      "fold": {
+        "if": "title",
+        "then": false,
+        "else": {
+          "pick": [
+            false,
+            false,
+            true
+          ]
+        }
+      }
+    },
+    {
+      "id": "photo",
+      "type": "image",
+      "when": {
+        "show": "blur"
+      },
+      "src": "$src",
+      "blur": "7vmax"
+    },
+    {
+      "id": "scrim",
+      "type": "solid",
+      "when": {
+        "all": [
+          {
+            "show": "blur"
+          },
+          "title"
+        ]
+      },
+      "color": {
+        "if": {
+          "mode": "dark"
+        },
+        "then": "#000000",
+        "else": "#ffffff"
+      },
+      "opacity": 0.4
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.08
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.062
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.046
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "@text",
+          "content": "{label}"
+        }
+      },
+      "color": "@text"
+    }
+  ]
+}

@@ -99,6 +99,12 @@ const every = [
   { type: 'paper', items: [{ kind: 'arch', x: 0.3 }, { kind: 'pill', x: 0.7, width: 80, height: 30 }] },
   { type: 'scribble', icon: 'lucide:compass' },
   { type: 'scribble', graph: { nodes: 5 } },
+  { type: 'ink', color: 'riso:blue', shapes: [{ kind: 'circle' }, { kind: 'band' }] },
+  { type: 'dither', shape: 'sphere' },
+  { type: 'contour', levels: 12 },
+  { type: 'waveform', style: 'mirrored' },
+  { type: 'tiles', cols: 3 },
+  { type: 'rule', y: 0.2 },
 ];
 
 test('every layer type renders', async () => {

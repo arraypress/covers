@@ -52,17 +52,68 @@ const diagramSeeds = [
 ];
 const page = '#1f1e1d';
 const cutoutSeeds = [
-  { seed: 'graph', palette: { accent: '#8b80c9', bg: page }, graph: true },
-  { seed: 'cursor', palette: { accent: '#b5694f', bg: page }, panel: true, icon: 'lucide:mouse-pointer-2' },
-  { seed: 'leaf', palette: { accent: '#8a9a7b', bg: page }, icon: 'lucide:leaf', shapes: 0 },
-  { seed: 'compass', palette: { accent: '#c4a052', bg: page }, icon: 'lucide:compass' },
-  { seed: 'chat', palette: { accent: '#5f6f7f', bg: page }, panel: true, icon: 'lucide:message-circle' },
+  { seed: 'graph', name: 'lavender', palette: { accent: '#8b80c9', bg: page }, graph: true },
+  { seed: 'cursor', name: 'clay', palette: { accent: '#b5694f', bg: page }, panel: true, icon: 'lucide:mouse-pointer-2' },
+  { seed: 'leaf', name: 'sage', palette: { accent: '#8a9a7b', bg: page }, icon: 'lucide:leaf', shapes: 0 },
+  { seed: 'compass', name: 'ochre', palette: { accent: '#c4a052', bg: page }, icon: 'lucide:compass' },
+  { seed: 'chat', name: 'slate', palette: { accent: '#5f6f7f', bg: page }, panel: true, icon: 'lucide:message-circle' },
   { seed: 'paper-graph', palette: 'paper', graph: true, shapes: 4 },
   { seed: 'dusk-pen', palette: 'dusk', icon: 'lucide:pen-tool' },
 ];
-const seedsFor = (name) => ({ mark: markSeeds, aurora: fieldSeeds, gridTitle: fieldSeeds, diagram: diagramSeeds, cutout: cutoutSeeds })[name] ?? seeds;
+const lasers = join(here, 'photo-lasers.jpg');
+const studio = join(here, 'photo-studio.jpg');
+const risoSeeds = [
+  { seed: 'zine-1', palette: 'paper' },
+  { seed: 'zine-2', palette: 'dusk' },
+  { seed: 'pink-blue', palette: 'paper', inks: ['riso:pink', 'riso:blue'], name: 'pink + blue' },
+  { seed: 'yellow-teal', palette: 'paper', inks: ['riso:yellow', 'riso:teal'], texture: 'halftone', name: 'yellow + teal, halftone' },
+  { seed: 'red-navy', palette: 'paper', inks: ['riso:red', 'riso:navy', 'riso:yellow'], third: true, name: 'red + navy + yellow' },
+  { seed: 'print-room', palette: 'ocean', title: 'Notes from the print room', label: 'Zine' },
+];
+const ditherSeeds = [
+  { seed: 'sphere', palette: 'paper' },
+  { seed: 'night', palette: 'dusk' },
+  { seed: 'bayer8', palette: 'ocean', matrix: 'bayer8', name: 'ocean, bayer 8×8' },
+  { seed: 'noise', palette: 'ember', matrix: 'noise', name: 'ember, noise' },
+  { seed: 'three', palette: 'moss', three: true, name: 'moss, three colours' },
+  { seed: 'one-bit', palette: 'ink', title: 'One bit at a time', label: 'Essay' },
+];
+const contourSeeds = [
+  { seed: 'ridge', palette: 'paper' }, { seed: 'basin', palette: 'dusk' }, { seed: 'valley', palette: 'moss' },
+  { seed: 'shore', palette: 'ocean' }, { seed: 'peaks', palette: 'ink', levels: 28 },
+  { seed: 'terrain', palette: 'dawn', title: 'Mapping the terrain', label: 'Field notes' },
+];
+const waveformSeeds = [
+  { seed: 'ep-1', palette: 'paper' }, { seed: 'ep-2', palette: 'dusk', style: 'bars' },
+  { seed: 'ep-3', palette: 'ocean', style: 'bars', field: 'toned', name: 'ocean, toned' }, { seed: 'ep-4', palette: 'ember', style: 'dots' },
+  { seed: 'ep-5', palette: 'moss', style: 'line', duration: 2537 },
+  { seed: 'ep-42', palette: 'ink', title: 'Episode 42: Quiet software', label: 'Podcast', duration: '48:12' },
+];
+const bauhausSeeds = [
+  { seed: 'one', palette: 'paper', series: 'autumn', name: 'paper, series A' }, { seed: 'two', palette: 'paper', series: 'autumn', name: 'paper, series A' },
+  { seed: 'three', palette: 'dusk', series: 'winter' }, { seed: 'four', palette: 'dawn' }, { seed: 'five', palette: 'mono' },
+  { seed: 'form', palette: 'ocean', title: 'Form follows function', label: 'Design' },
+];
+const issueSeeds = [
+  { seed: 'i14', palette: 'paper', number: 14, masthead: 'Wren Street', date: 'October 2026' },
+  { seed: 'i7', palette: 'dusk', number: 7, masthead: 'Wren Street', date: 'Autumn' },
+  { seed: 'i128', palette: 'ember', number: 128 },
+  { seed: 'i3', palette: 'moss', number: 3, prefix: false },
+  { seed: 'i-notes', palette: 'mono', masthead: 'Field Notes', date: '2026' },
+  { seed: 'i21', palette: 'ocean', number: 21, masthead: 'Wren Street', date: 'Nov 2026', title: 'The quiet issue', label: 'Issue' },
+];
+const photoSeeds = [
+  { seed: 'lasers', palette: 'paper', image: lasers, name: 'lasers' }, { seed: 'studio', palette: 'dusk', image: studio, name: 'studio' },
+  { seed: 'synth', palette: 'paper', image: photo, name: 'synth' }, { seed: 'lasers-blur', palette: 'paper', image: lasers, show: 'blur', name: 'lasers, blur' },
+  { seed: 'studio-title', palette: 'paper', image: studio, title: 'After hours in the studio', label: 'Gear', name: 'studio' },
+  { seed: 'lasers-dark', palette: 'dusk', image: lasers, title: 'Light shows', name: 'lasers' },
+];
+const seedsFor = (name) => ({ mark: markSeeds, aurora: fieldSeeds, gridTitle: fieldSeeds, diagram: diagramSeeds, cutout: cutoutSeeds, riso: risoSeeds, dither: ditherSeeds, contour: contourSeeds, waveform: waveformSeeds, bauhaus: bauhausSeeds, issue: issueSeeds, photo: photoSeeds })[name] ?? seeds;
 const palettes = [['light', 'paper'], ['dark', 'dusk']];
-const palettesFor = (name) => (name === 'diagram' || name === 'cutout' ? [['set', undefined]] : palettes);
+const palettesFor = (name) => (['aurora', 'gridTitle', 'mark', 'iconTile', 'stripes', 'bigType', 'duotone'].includes(name) ? palettes : [['set', undefined]]);
+/** Caption info for the covers page, by file. */
+const manifest = {};
+const label = (s, palette) => s.name ?? (typeof (s.palette ?? palette) === 'string' ? (s.palette ?? palette) : 'custom');
 const aspects = ['1:1', '16:9'];
 
 const rows = [];
@@ -74,9 +125,11 @@ for (const name of Object.keys(recipes)) {
       for (const s of seedsFor(name)) {
         const file = `${name}-${mode}-${aspect.replace(':', 'x')}-${s.seed}.webp`;
         const t = performance.now();
-        const buf = await renderImage({ recipe: name, palette, aspect, image: photo, ...s, ...(s.palette ? { palette: s.palette } : {}) }, { format: 'webp' });
+        const { name: _n, ...opts } = s;
+        const buf = await renderImage({ recipe: name, palette, aspect, image: photo, ...opts, ...(s.palette ? { palette: s.palette } : {}) }, { format: 'webp' });
         timings.push(performance.now() - t);
         await writeFile(join(out, file), buf);
+        manifest[file] = { recipe: name, palette: label(s, palette), seed: s.seed };
         tiles.push({ file, buf, aspect, mode });
       }
     }
@@ -117,6 +170,7 @@ const html = `<!doctype html><meta charset="utf-8"><meta name="viewport" content
 <h1>@arraypress/covers</h1>
 ${rows.map((r) => `<h2>${r.name}</h2><div class="grid">${r.tiles.map((t) => `<figure><img src="${t.file}" loading="lazy" alt=""><figcaption>${t.file}</figcaption></figure>`).join('')}</div>`).join('\n')}`;
 await writeFile(join(out, 'index.html'), html);
+await writeFile(join(out, 'manifest.json'), JSON.stringify(manifest, null, 1));
 
 timings.sort((a, b) => a - b);
 console.log(`${timings.length} covers → ${out}`);

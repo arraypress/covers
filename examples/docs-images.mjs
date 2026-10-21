@@ -34,6 +34,13 @@ const examples = {
     { palette: 'ocean', seed: 'pipeline', nodes: [{ icon: 'lucide:send' }, { icon: 'lucide:settings' }, { icon: 'lucide:cpu' }], arrows: 'loop' },
     { palette: 'dusk', seed: 'storage', layout: 'hub', nodes: [{ icon: 'lucide:globe' }, { icon: 'lucide:database' }, { icon: 'lucide:database' }, { icon: 'lucide:database' }] },
   ],
+  riso: [{ palette: 'paper', seed: 'zine-1' }, { palette: 'paper', seed: 'pink-blue', inks: ['riso:pink', 'riso:blue'] }],
+  dither: [{ palette: 'paper', seed: 'sphere' }, { palette: 'dusk', seed: 'night' }],
+  contour: [{ palette: 'paper', seed: 'ridge' }, { palette: 'dusk', seed: 'basin' }],
+  waveform: [{ palette: 'paper', seed: 'ep-1', duration: 2537 }, { palette: 'ink', seed: 'ep-42', style: 'bars', title: 'Episode 42: Quiet software', label: 'Podcast', duration: '48:12' }],
+  bauhaus: [{ palette: 'paper', seed: 'one', series: 'autumn' }, { palette: 'dusk', seed: 'two', series: 'autumn' }],
+  issue: [{ palette: 'paper', seed: 'i14', number: 14, masthead: 'Wren Street', date: 'October 2026' }, { palette: 'dusk', seed: 'i7', number: 7, masthead: 'Wren Street', date: 'Autumn' }],
+  photo: [{ palette: 'paper', seed: 'lasers', image: join(root, 'examples', 'photo-lasers.jpg') }, { palette: 'dusk', seed: 'studio', image: join(root, 'examples', 'photo-studio.jpg') }],
   cutout: [
     { palette: { accent: '#8b80c9', bg: page }, seed: 'graph', graph: true },
     { palette: { accent: '#b5694f', bg: page }, seed: 'cursor', panel: true, icon: 'lucide:mouse-pointer-2' },
@@ -42,7 +49,7 @@ const examples = {
 
 for (const recipe of Object.keys(recipes)) {
   const pair = examples[recipe] ?? [{ palette: 'paper', seed: 'notes-light' }, { palette: 'dusk', seed: 'notes-dark' }];
-  const untitled = ['aurora', 'gridTitle', 'mark', 'diagram', 'cutout'].includes(recipe);
+  const untitled = ['aurora', 'gridTitle', 'mark', 'diagram', 'cutout', 'riso', 'dither', 'contour', 'waveform', 'bauhaus', 'issue', 'photo'].includes(recipe);
   const tiles = await Promise.all(pair.map((ex) => renderImage({ ...base, ...(untitled ? { title: undefined, label: undefined } : {}), recipe, ...ex }, { format: 'png' })));
   await sharp({ create: { width: 1616, height: 450, channels: 3, background: '#ffffff' } })
     .composite([{ input: tiles[0], left: 0, top: 0 }, { input: tiles[1], left: 816, top: 0 }])

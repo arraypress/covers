@@ -13,6 +13,7 @@ import { resolveSize, unit, len } from './geometry.js';
 import { resolvePalette } from './palette.js';
 import { bundledFonts } from './fonts.js';
 import { LAYERS, VARY_FLOOR, VARY_PEAK } from './layers.js';
+import { extractPalette } from './extract.js';
 import { recipes, applyOverrides } from './recipes.js';
 import { defineRecipe } from './json-recipe.js';
 import { attrs, esc, num } from './svg.js';
@@ -111,7 +112,11 @@ async function renderLayers(c, sharp) {
       fonts,
       sharp,
     };
-    const markup = await LAYERS[layer.type](/** @type {any} */ (layer), ctx);
+    // A mesh can take its colours from a photo (`from`), extracted at render.
+    const resolved = layer.type === 'mesh' && /** @type {any} */ (layer).from && !/** @type {any} */ (layer).colors
+      ? { ...layer, colors: await extractPalette(/** @type {any} */ (layer).from, { count: 4 }) }
+      : layer;
+    const markup = await LAYERS[layer.type](/** @type {any} */ (resolved), ctx);
     out.push({ layer, ...markup, ctx });
   }
   return out;
@@ -408,10 +413,14 @@ export async function coverKey(input, options = {}) {
   const c = cover(input);
   const h = createHash('sha256');
   h.update(`covers@${VERSION}\n${options.format ?? 'webp'}:${options.quality ?? ''}:${options.effort ?? ''}\n`);
+  // Files a layer reads (an image's src, a mesh's photo, a waveform's audio) are hashed by content.
+  const file = async (/** @type {any} */ v) => (typeof v === 'string' && !v.startsWith('data:') ? digest(await readFile(v)) : v instanceof Uint8Array ? digest(v) : v);
   const layers = await Promise.all(c.layers.map(async (l) => {
-    if (l.type !== 'image') return l;
-    const src = /** @type {any} */ (l).src;
-    return { ...l, src: typeof src === 'string' && !src.startsWith('data:') ? digest(await readFile(src)) : digest(src) };
+    const x = /** @type {any} */ (l);
+    if (l.type === 'image') return { ...l, src: await file(x.src) };
+    if (l.type === 'mesh' && x.from) return { ...l, from: await file(x.from) };
+    if (l.type === 'waveform' && x.audio) return { ...l, audio: await file(x.audio) };
+    return l;
   }));
   h.update(stable({
     width: c.width,

@@ -1,0 +1,167 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "dither",
+  "description": "A soft field (noise, a gradient, or a lit sphere / arch / circle) rendered 1-bit at a visible pixel size: Bayer 4\u00d74 / 8\u00d78 or blue-ish noise, in two colours or three.",
+  "params": {
+    "matrix": "bayer4",
+    "cell": "0.9vmin",
+    "source": null,
+    "shape": null,
+    "three": false
+  },
+  "vars": {
+    "ink": {
+      "tone": [
+        "@accent",
+        {
+          "if": {
+            "mode": "dark"
+          },
+          "then": {
+            "l": [
+              0.62,
+              0.85
+            ],
+            "c": [
+              0.1,
+              0.22
+            ]
+          },
+          "else": {
+            "l": [
+              0.3,
+              0.55
+            ],
+            "c": [
+              0.1,
+              0.24
+            ]
+          }
+        }
+      ]
+    },
+    "colors": {
+      "if": "three",
+      "then": [
+        "@bg",
+        {
+          "tone": [
+            "@colors.1",
+            {
+              "l": [
+                0.55,
+                0.75
+              ],
+              "c": [
+                0.1,
+                0.2
+              ]
+            }
+          ]
+        },
+        "$ink"
+      ],
+      "else": [
+        "@bg",
+        "$ink"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "dither",
+      "type": "dither",
+      "colors": "$colors",
+      "source": {
+        "if": "source",
+        "then": "{source}",
+        "else": {
+          "pick": [
+            "field",
+            "linear",
+            "radial"
+          ]
+        }
+      },
+      "shape": {
+        "if": "shape",
+        "then": "{shape}",
+        "else": {
+          "pick": [
+            "sphere",
+            "none",
+            "circle",
+            "arch",
+            "sphere"
+          ]
+        }
+      },
+      "matrix": "{matrix}",
+      "cell": "{cell}",
+      "center": {
+        "x": {
+          "range": [
+            0.4,
+            0.6
+          ]
+        },
+        "y": {
+          "range": [
+            0.38,
+            0.55
+          ]
+        }
+      },
+      "size": "28vmin"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.062
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.046
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "@text",
+          "content": "{label}"
+        }
+      },
+      "color": "@text",
+      "background": {
+        "color": "@bg",
+        "radius": 0,
+        "padding": [
+          {
+            "mul": [
+              "@u",
+              0.03
+            ]
+          },
+          {
+            "mul": [
+              "@u",
+              0.035
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

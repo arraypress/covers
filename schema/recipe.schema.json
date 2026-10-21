@@ -480,6 +480,12 @@
             "diagram",
             "paper",
             "scribble",
+            "ink",
+            "dither",
+            "contour",
+            "waveform",
+            "tiles",
+            "rule",
             "frame"
           ]
         },
@@ -722,6 +728,10 @@
                 "$ref": "#/$defs/value",
                 "description": "Thin light motion streaks along the sweep. Default 0."
               },
+              "from": {
+                "$ref": "#/$defs/value",
+                "description": "A photo (path or bytes) to take the colours from (needs sharp)."
+              },
               "blobs": {
                 "$ref": "#/$defs/value",
                 "description": "Explicit [{ x, y, r, squash, rotate, color, opacity }]."
@@ -757,6 +767,7 @@
                 "tone",
                 "fold",
                 "streaks",
+                "from",
                 "blobs",
                 "opacity",
                 "blend",
@@ -1663,6 +1674,519 @@
                 "size",
                 "position",
                 "wobble",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ink"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "The ink: a colour or riso:pink | blue | yellow | teal | red | green | orange | purple | navy | black."
+              },
+              "shapes": {
+                "$ref": "#/$defs/value",
+                "description": "[{ kind: circle | ring | half | arch | band | rect | text, x, y, r, size, width, height, thickness, rotate, content, … }]"
+              },
+              "offset": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y }: misregistration. Default seeded, 0.3–1% of the short side."
+              },
+              "texture": {
+                "$ref": "#/$defs/value",
+                "description": "grain (default) | halftone | none"
+              },
+              "speckle": {
+                "$ref": "#/$defs/value",
+                "description": "Grain: share of paper showing through. Default 0.09."
+              },
+              "cell": {
+                "$ref": "#/$defs/value",
+                "description": "Halftone cell. Length."
+              },
+              "dot": {
+                "$ref": "#/$defs/value",
+                "description": "Halftone dot radius, fraction of the cell."
+              },
+              "angle": {
+                "$ref": "#/$defs/value",
+                "description": "Halftone screen angle: 0 or 45 (default seeded)."
+              },
+              "density": {
+                "$ref": "#/$defs/value",
+                "description": "[min, max]: uneven ink across the sheet. Default [0.78, 1]."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "color",
+                "shapes",
+                "offset",
+                "texture",
+                "speckle",
+                "cell",
+                "dot",
+                "angle",
+                "density",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dither"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "colors": {
+                "$ref": "#/$defs/value",
+                "description": "[ground, ink] or [c0, c1, c2] (two dithered bands)."
+              },
+              "source": {
+                "$ref": "#/$defs/value",
+                "description": "field (default, noise) | linear | radial"
+              },
+              "shape": {
+                "$ref": "#/$defs/value",
+                "description": "none | circle | sphere | arch"
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Shape size. Length."
+              },
+              "center": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } fractions."
+              },
+              "matrix": {
+                "$ref": "#/$defs/value",
+                "description": "bayer4 (default) | bayer8 | noise"
+              },
+              "cell": {
+                "$ref": "#/$defs/value",
+                "description": "Pixel size. Length. Default \"0.9vmin\"."
+              },
+              "angle": {
+                "$ref": "#/$defs/value",
+                "description": "For linear."
+              },
+              "scale": {
+                "$ref": "#/$defs/value",
+                "description": "Noise feature size."
+              },
+              "gamma": {
+                "$ref": "#/$defs/value",
+                "description": "Tone curve."
+              },
+              "range": {
+                "$ref": "#/$defs/value",
+                "description": "[lo, hi] of the field."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "colors",
+                "source",
+                "shape",
+                "size",
+                "center",
+                "matrix",
+                "cell",
+                "angle",
+                "scale",
+                "gamma",
+                "range",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "contour"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "levels": {
+                "$ref": "#/$defs/value",
+                "description": "Isolines. Default 20."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default @text."
+              },
+              "stroke": {
+                "$ref": "#/$defs/value",
+                "description": "Default \"0.14vmin\"."
+              },
+              "highlight": {
+                "$ref": "#/$defs/value",
+                "description": "Level to draw in the accent (default seeded), or false."
+              },
+              "highlightColor": {
+                "$ref": "#/$defs/value",
+                "description": "Default @accent."
+              },
+              "index": {
+                "$ref": "#/$defs/value",
+                "description": "Every Nth line thicker. Default 5 (0: none)."
+              },
+              "indexWeight": {
+                "$ref": "#/$defs/value",
+                "description": "Index line weight multiple."
+              },
+              "scale": {
+                "$ref": "#/$defs/value",
+                "description": "Noise feature size."
+              },
+              "octaves": {
+                "$ref": "#/$defs/value",
+                "description": "Noise detail."
+              },
+              "resolution": {
+                "$ref": "#/$defs/value",
+                "description": "Grid cells across the short side."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "levels",
+                "color",
+                "stroke",
+                "highlight",
+                "highlightColor",
+                "index",
+                "indexWeight",
+                "scale",
+                "octaves",
+                "resolution",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "waveform"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "peaks": {
+                "$ref": "#/$defs/value",
+                "description": "Peak values (any scale)."
+              },
+              "audio": {
+                "$ref": "#/$defs/value",
+                "description": "An audio file to decode at build (needs @arraypress/waveform-gen)."
+              },
+              "bars": {
+                "$ref": "#/$defs/value",
+                "description": "Bars. Default 88."
+              },
+              "style": {
+                "$ref": "#/$defs/value",
+                "description": "mirrored (default) | bars | line | dots"
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default @accent."
+              },
+              "region": {
+                "$ref": "#/$defs/value",
+                "description": "Fractions."
+              },
+              "gap": {
+                "$ref": "#/$defs/value",
+                "description": "Gap between bars, fraction. Default 0.4."
+              },
+              "round": {
+                "$ref": "#/$defs/value",
+                "description": "Rounded bars. Default true."
+              },
+              "stroke": {
+                "$ref": "#/$defs/value",
+                "description": "Line style width."
+              },
+              "caption": {
+                "$ref": "#/$defs/value",
+                "description": "true (the duration) or text under the wave."
+              },
+              "duration": {
+                "$ref": "#/$defs/value",
+                "description": "Seconds (for the caption)."
+              },
+              "captionSize": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "captionColor": {
+                "$ref": "#/$defs/value",
+                "description": "Default @text."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "peaks",
+                "audio",
+                "bars",
+                "style",
+                "color",
+                "region",
+                "gap",
+                "round",
+                "stroke",
+                "caption",
+                "duration",
+                "captionSize",
+                "captionColor",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "tiles"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "cols": {
+                "$ref": "#/$defs/value",
+                "description": "Columns. Default from the series."
+              },
+              "rows": {
+                "$ref": "#/$defs/value",
+                "description": "Rows. Default to keep cells near square."
+              },
+              "series": {
+                "$ref": "#/$defs/value",
+                "description": "Seeds the grid rhythm shared by a series."
+              },
+              "colors": {
+                "$ref": "#/$defs/value",
+                "description": "Shape and cell colours."
+              },
+              "ground": {
+                "$ref": "#/$defs/value",
+                "description": "The page colour among them."
+              },
+              "kinds": {
+                "$ref": "#/$defs/value",
+                "description": "Subset of quarter, half, circle, square, triangle."
+              },
+              "merge": {
+                "$ref": "#/$defs/value",
+                "description": "A 2×2 merged cell. Default true."
+              },
+              "region": {
+                "$ref": "#/$defs/value",
+                "description": "Fractions."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "cols",
+                "rows",
+                "series",
+                "colors",
+                "ground",
+                "kinds",
+                "merge",
+                "region",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "rule"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "y": {
+                "$ref": "#/$defs/value",
+                "description": "Height, fraction. Default 0.15."
+              },
+              "from": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } fractions."
+              },
+              "to": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } fractions."
+              },
+              "inset": {
+                "$ref": "#/$defs/value",
+                "description": "Side inset. Length."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default @text."
+              },
+              "stroke": {
+                "$ref": "#/$defs/value",
+                "description": "Default \"0.12vmin\"."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "y",
+                "from",
+                "to",
+                "inset",
+                "color",
+                "stroke",
                 "opacity",
                 "blend",
                 "seed"

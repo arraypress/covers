@@ -15,3 +15,5 @@ export { registerIcons } from './icons.js';
 export { resolveSize, ASPECTS } from './geometry.js';
 export { createRng, hashString } from './rng.js';
 export { LAYERS as layers } from './layers.js';
+export { extractPalette } from './extract.js';
+export { RISO_INKS } from './print.js';

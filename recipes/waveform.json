@@ -1,0 +1,154 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "waveform",
+  "description": "An episode's waveform (peaks you pass, or audio decoded at build) as bars, mirrored bars, a line or dots, on a flat or toned field, with an optional duration and label. Without peaks or audio it draws seeded demo peaks.",
+  "params": {
+    "peaks": null,
+    "audio": null,
+    "duration": null,
+    "style": null,
+    "field": "flat"
+  },
+  "vars": {
+    "field": {
+      "if": {
+        "field": "toned"
+      },
+      "then": {
+        "tone": [
+          "@accent",
+          {
+            "if": {
+              "mode": "dark"
+            },
+            "then": {
+              "l": [
+                0.3,
+                0.4
+              ],
+              "c": [
+                0.06,
+                0.12
+              ]
+            },
+            "else": {
+              "l": [
+                0.88,
+                0.94
+              ],
+              "c": [
+                0.03,
+                0.06
+              ]
+            }
+          }
+        ]
+      },
+      "else": "@bg"
+    },
+    "wave": {
+      "readable": [
+        "$field",
+        3,
+        "@accent"
+      ]
+    },
+    "type": {
+      "readable": [
+        "$field",
+        4.5,
+        "@text"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid",
+      "color": "$field"
+    },
+    {
+      "id": "wave",
+      "type": "waveform",
+      "peaks": "{peaks}",
+      "audio": "{audio}",
+      "style": {
+        "if": "style",
+        "then": "{style}",
+        "else": {
+          "pick": [
+            "mirrored",
+            "bars",
+            "line",
+            "dots",
+            "mirrored"
+          ]
+        }
+      },
+      "color": "$wave",
+      "duration": "{duration}",
+      "caption": {
+        "if": {
+          "any": [
+            "duration",
+            "audio"
+          ]
+        },
+        "then": true,
+        "else": null
+      },
+      "captionColor": "$type",
+      "region": {
+        "if": "title",
+        "then": {
+          "x": 0.07,
+          "y": 0.42,
+          "width": 0.86,
+          "height": 0.3
+        },
+        "else": {
+          "x": 0.07,
+          "y": 0.3,
+          "width": 0.86,
+          "height": 0.4
+        }
+      }
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.04
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "top-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.062
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.046
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "$type",
+          "content": "{label}"
+        }
+      },
+      "color": "$type"
+    }
+  ]
+}

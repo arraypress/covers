@@ -1,0 +1,113 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "bauhaus",
+  "description": "A Bauhaus grid of quarter circles, half circles, circles, squares and triangles in the palette's colours and the page colour. A shared `series` keeps a family's grid rhythm while each cover's seed fills the cells.",
+  "params": {
+    "series": null
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid"
+    },
+    {
+      "id": "tiles",
+      "type": "tiles",
+      "series": "{series}",
+      "colors": [
+        {
+          "tone": [
+            "@accent",
+            {
+              "l": [
+                0.5,
+                0.75
+              ],
+              "c": [
+                0.12,
+                0.22
+              ]
+            }
+          ]
+        },
+        {
+          "tone": [
+            "@colors.1",
+            {
+              "l": [
+                0.5,
+                0.75
+              ],
+              "c": [
+                0.12,
+                0.22
+              ]
+            }
+          ]
+        },
+        {
+          "tone": [
+            "@colors.2",
+            {
+              "l": [
+                0.5,
+                0.75
+              ],
+              "c": [
+                0.12,
+                0.22
+              ]
+            }
+          ]
+        },
+        "@text"
+      ],
+      "ground": "@bg",
+      "region": {
+        "if": "title",
+        "then": {
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 0.72
+        },
+        "else": {
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 1
+        }
+      }
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.056
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.042
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 2,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "@text",
+          "content": "{label}"
+        }
+      }
+    }
+  ]
+}

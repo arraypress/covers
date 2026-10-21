@@ -24,6 +24,7 @@ import { resolveIcon, parseSvgIcon } from './icons.js';
 import { gridPath } from './grid.js';
 import { diagram } from './diagram.js';
 import { paper, scribble } from './handmade.js';
+import { ink, dither, contour, waveform, tiles, rule } from './print.js';
 
 /**
  * Everything a layer renderer needs.
@@ -375,6 +376,7 @@ export async function image(layer, ctx) {
   let bytes = typeof layer.src === 'string' ? await readSource(layer.src) : layer.src;
   let mime = sniff(bytes);
   let preserve = `${alignFor(focus)} ${fit === 'contain' ? 'meet' : 'slice'}`;
+  let sharpBlurred = false;
 
   if (ctx.sharp && mime !== 'image/svg+xml') {
     const w = Math.round(box.width);
@@ -383,6 +385,12 @@ export async function image(layer, ctx) {
     let img = ctx.sharp(bytes).rotate().resize(w, hgt, { fit, position, background: { r: 0, g: 0, b: 0, alpha: 0 } });
     // Stretch the tones first, so a duotone spans both of its colours.
     if (layer.normalize ?? Boolean(layer.duotone || layer.grayscale)) img = img.normalise();
+    // Blur here rather than in SVG: sharp clamps at the edges, where an SVG
+    // blur (in librsvg) fades the photo to transparent.
+    if (layer.blur) {
+      img = img.blur(Math.max(0.3, len(layer.blur, ctx.canvas)));
+      sharpBlurred = true;
+    }
     const meta = await ctx.sharp(bytes).metadata();
     const alpha = meta.hasAlpha || fit === 'contain';
     bytes = await (alpha ? img.png() : img.jpeg({ quality: 90 })).toBuffer();
@@ -395,7 +403,7 @@ export async function image(layer, ctx) {
   const p = ctx.palette;
   const id = `${ctx.id}f`;
   const filters = [];
-  if (layer.blur) filters.push(`<feGaussianBlur stdDeviation="${num(len(layer.blur, ctx.canvas))}" edgeMode="duplicate"/>`);
+  if (layer.blur && !sharpBlurred) filters.push(`<feGaussianBlur stdDeviation="${num(len(layer.blur, ctx.canvas))}" edgeMode="duplicate"/>`);
   if (layer.duotone || layer.grayscale) {
     filters.push('<feColorMatrix type="matrix" values=".2126 .7152 .0722 0 0 .2126 .7152 .0722 0 0 .2126 .7152 .0722 0 0 0 0 0 1 0"/>');
   }
@@ -925,4 +933,4 @@ export function frame(layer, ctx) {
 }
 
 /** Every layer type, by name. */
-export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame, diagram, paper, scribble });
+export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame, diagram, paper, scribble, ink, dither, contour, waveform, tiles, rule });

@@ -67,11 +67,15 @@
     "harfbuzzjs": "^1.6.3"
   },
   "peerDependencies": {
+    "@arraypress/waveform-gen": "^2.2.0",
     "@iconify-json/lucide": "*",
     "@iconify-json/simple-icons": "*",
     "sharp": ">=0.33.0"
   },
   "peerDependenciesMeta": {
+    "@arraypress/waveform-gen": {
+      "optional": true
+    },
     "@iconify-json/lucide": {
       "optional": true
     },
@@ -83,6 +87,7 @@
     }
   },
   "devDependencies": {
+    "@arraypress/waveform-gen": "^2.2.0",
     "@iconify-json/lucide": "^1.2.147",
     "@iconify-json/simple-icons": "^1.2.100",
     "@types/node": "^26.6.5",

@@ -160,6 +160,8 @@ export interface MeshLayer extends BaseLayer {
   fold?: boolean | { color?: Color; to?: Color; position?: number; bend?: number; softness?: number; sheen?: number };
   /** Thin light motion streaks along the sweep. Default 0. */
   streaks?: number;
+  /** Take the colours from a photo (path or bytes; needs sharp). */
+  from?: string | Uint8Array;
   /** Under the fields: `'auto'` (default, a gradient across the sweep between the first two colours), `'bg'`, a colour, or `null`. */
   base?: 'auto' | 'bg' | Color | null | false;
   /** Place fields explicitly (overrides `count`). */
@@ -477,13 +479,133 @@ export interface ScribbleLayer extends BaseLayer {
   wobble?: number;
 }
 
+export interface InkShape {
+  kind: 'circle' | 'ring' | 'half' | 'arch' | 'band' | 'rect' | 'text';
+  /** Centre, fractions of the canvas (bands use `y` only). */
+  x?: number;
+  y?: number;
+  /** Radius (circle, ring, half). Default `'30vmin'`. */
+  r?: Length;
+  size?: Length;
+  width?: Length;
+  height?: Length;
+  /** Ring thickness. */
+  thickness?: Length;
+  rotate?: number;
+  /** For `kind: 'text'`: the text, and any text-layer options. */
+  content?: string;
+  [option: string]: unknown;
+}
+
+export interface InkLayer extends BaseLayer {
+  type: 'ink';
+  /** A colour, or a riso ink: `'riso:pink'`, `'riso:blue'`, … (see `RISO_INKS`). */
+  color?: Color;
+  shapes?: InkShape[];
+  /** Misregistration. Default seeded, 0.3–1% of the short side. */
+  offset?: { x?: Length; y?: Length };
+  /** Default `'grain'` (speckle). */
+  texture?: 'grain' | 'halftone' | 'none';
+  /** Grain: share of paper showing through. Default 0.09. */
+  speckle?: number;
+  /** Halftone cell, dot radius (fraction of the cell) and screen angle (0 or 45). */
+  cell?: Length;
+  dot?: number;
+  angle?: 0 | 45;
+  /** `[min, max]`: ink density across the sheet. Default `[0.78, 1]`. */
+  density?: [number, number];
+}
+
+export interface DitherLayer extends BaseLayer {
+  type: 'dither';
+  /** `[ground, ink]`, or three colours for two dithered bands. */
+  colors?: Color[];
+  /** Default `'field'` (smooth noise). */
+  source?: 'field' | 'linear' | 'radial';
+  shape?: 'none' | 'circle' | 'sphere' | 'arch';
+  size?: Length;
+  center?: Point;
+  /** Default `'bayer4'`. */
+  matrix?: 'bayer4' | 'bayer8' | 'noise';
+  /** Pixel size. Default `'0.9vmin'`. */
+  cell?: Length;
+  angle?: number;
+  scale?: number;
+  gamma?: number;
+  range?: [number, number];
+}
+
+export interface ContourLayer extends BaseLayer {
+  type: 'contour';
+  /** Default 20. */
+  levels?: number;
+  color?: Color;
+  stroke?: Length;
+  /** The level drawn in the accent (default seeded), or `false`. */
+  highlight?: number | false;
+  highlightColor?: Color;
+  /** Every Nth line thicker. Default 5; 0 for none. */
+  index?: number;
+  indexWeight?: number;
+  scale?: number;
+  octaves?: number;
+  resolution?: number;
+}
+
+export interface WaveformLayer extends BaseLayer {
+  type: 'waveform';
+  /** Peak values (any scale). */
+  peaks?: number[] | null;
+  /** An audio file decoded at build (needs `@arraypress/waveform-gen`). */
+  audio?: string | null;
+  /** Default 88. */
+  bars?: number;
+  /** Default `'mirrored'`. */
+  style?: 'mirrored' | 'bars' | 'line' | 'dots';
+  color?: Color;
+  region?: Region;
+  gap?: number;
+  round?: boolean;
+  stroke?: Length;
+  /** `true`: the duration (from `audio` or `duration`); or any text. */
+  caption?: boolean | string | null;
+  /** Seconds, or text such as `'48:12'`. */
+  duration?: number | string | null;
+  captionSize?: Length;
+  captionColor?: Color;
+}
+
+export interface TilesLayer extends BaseLayer {
+  type: 'tiles';
+  cols?: number;
+  rows?: number;
+  /** Seeds the grid's rhythm, shared across a series. Default: the cover's own. */
+  series?: string | null;
+  colors?: Color[];
+  ground?: Color;
+  kinds?: ('quarter' | 'half' | 'circle' | 'square' | 'triangle')[];
+  merge?: boolean;
+  region?: Region;
+}
+
+export interface RuleLayer extends BaseLayer {
+  type: 'rule';
+  y?: number;
+  from?: Point;
+  to?: Point;
+  inset?: Length;
+  color?: Color;
+  stroke?: Length;
+}
+
 export type Layer =
+  | InkLayer | DitherLayer | ContourLayer | WaveformLayer | TilesLayer | RuleLayer
   | DiagramLayer | PaperLayer | ScribbleLayer
   | SolidLayer | LinearLayer | RadialLayer | MeshLayer | StripesLayer | ImageLayer
   | GrainLayer | PatternLayer | ShapesLayer | IconLayer | TextLayer | FrameLayer;
 
 /** Built-in recipe names. */
-export type RecipeName = 'aurora' | 'gridTitle' | 'iconTile' | 'bigType' | 'stripes' | 'duotone' | 'mark' | 'diagram' | 'cutout';
+export type RecipeName = 'aurora' | 'gridTitle' | 'iconTile' | 'bigType' | 'stripes' | 'duotone' | 'mark' | 'diagram' | 'cutout' | 'riso' | 'dither' | 'contour' | 'waveform' | 'bauhaus' | 'issue' | 'photo';
 
 /** What a recipe function receives besides the options. */
 export interface RecipeContext {
@@ -586,6 +708,33 @@ export interface RecipeOptions {
   graph?: boolean;
   /** `cutout`: line colour, light (paper) or dark (ink). Default from the composition. */
   stroke?: 'light' | 'dark';
+  /** `riso`: inks (colours or `'riso:<name>'`), texture, and a third ink. */
+  inks?: Color[];
+  texture?: 'grain' | 'halftone' | 'none';
+  third?: boolean;
+  /** `dither`: matrix, cell, source, shape, three colours. */
+  matrix?: 'bayer4' | 'bayer8' | 'noise';
+  cell?: Length;
+  source?: 'field' | 'linear' | 'radial';
+  shape?: 'none' | 'circle' | 'sphere' | 'arch';
+  three?: boolean;
+  /** `contour`: how many isolines. */
+  levels?: number;
+  /** `waveform`: peaks, or an audio file; duration; style; field. */
+  peaks?: number[];
+  audio?: string;
+  duration?: number | string;
+  style?: 'mirrored' | 'bars' | 'line' | 'dots';
+  field?: 'flat' | 'toned';
+  /** `bauhaus`: a series seed (shared grid rhythm). */
+  series?: string;
+  /** `issue`: number, masthead, date, and the "No." prefix. */
+  number?: number | string;
+  masthead?: string;
+  date?: string;
+  prefix?: boolean;
+  /** `photo`: `'blur'` shows the photo blurred instead of a field of its colours. */
+  show?: 'blur';
   /** `mark` icon colour. `'auto'` (default): white whenever it clears 3:1 against everything under the icon, else near-black. */
   iconColor?: 'auto' | 'white' | 'black' | Color;
   /** Any recipe layer by id: `mesh`, `grid`, `grain`, `bg`, `glow`, `rings`, `wash`, `stripes`, `spot`, `scrim`… */
@@ -723,6 +872,12 @@ export const ASPECTS: Readonly<{ '1:1': number; '16:9': number; '4:5': number; '
 
 /** A seeded random stream (for custom recipes). */
 export function createRng(seed: string | number): Rng;
+
+/** Dominant colours of a photo, most common first (needs sharp). */
+export function extractPalette(src: string | Uint8Array, options?: { count?: number }): Promise<string[]>;
+
+/** Classic risograph inks, by name (approximations). */
+export const RISO_INKS: Readonly<Record<'pink' | 'blue' | 'yellow' | 'teal' | 'red' | 'green' | 'orange' | 'purple' | 'navy' | 'black', string>>;
 
 /** Hash a string to a 32-bit unsigned integer. */
 export function hashString(str: string, salt?: number): number;
