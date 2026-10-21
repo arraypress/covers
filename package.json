@@ -1,0 +1,81 @@
+{
+  "name": "@arraypress/covers",
+  "version": "1.0.0",
+  "description": "Build-time cover images for posts and pages: soft mesh gradients, grain, grids, stripes, shapes, icons and type from one seed, as SVG or WebP/PNG/AVIF/JPEG. Recipes for the editorial looks, every layer customisable, an Astro endpoint helper. No network, no DOM.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./astro": {
+      "types": "./src/astro.d.ts",
+      "import": "./src/astro.js",
+      "default": "./src/astro.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "fonts",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "typecheck": "tsc --noEmit",
+    "gallery": "node examples/gallery.mjs"
+  },
+  "keywords": [
+    "cover-image",
+    "featured-image",
+    "og-image",
+    "mesh-gradient",
+    "grain",
+    "generative",
+    "svg",
+    "webp",
+    "sharp",
+    "harfbuzz",
+    "astro",
+    "build-time"
+  ],
+  "author": "ArrayPress Limited",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arraypress/covers.git"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "@arraypress/color-utils": "^1.3.0",
+    "harfbuzzjs": "^1.6.3"
+  },
+  "peerDependencies": {
+    "@iconify-json/lucide": "*",
+    "@iconify-json/simple-icons": "*",
+    "sharp": ">=0.33.0"
+  },
+  "peerDependenciesMeta": {
+    "@iconify-json/lucide": { "optional": true },
+    "@iconify-json/simple-icons": { "optional": true },
+    "sharp": { "optional": true }
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "^1.2.147",
+    "@iconify-json/simple-icons": "^1.2.100",
+    "@types/node": "^26.6.5",
+    "sharp": "^0.35.5",
+    "typescript": "^6.0.3"
+  }
+}
