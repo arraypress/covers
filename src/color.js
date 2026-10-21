@@ -173,3 +173,26 @@ function toLab(color) {
   const { l, c, h } = toOklch(color);
   return [l, c * Math.cos((h * Math.PI) / 180), c * Math.sin((h * Math.PI) / 180)];
 }
+
+/**
+ * Mix two colours in OKLCH: lightness and chroma linearly, hue the short
+ * way round. Unlike OKLab, a mix of two far-apart hues stays vivid instead
+ * of passing through grey (orange → blue goes by way of pink, not mud).
+ *
+ * @param {string} a - First colour.
+ * @param {string} b - Second colour.
+ * @param {number} t - 0 gives `a`, 1 gives `b`.
+ * @returns {string} `#rrggbb`.
+ *
+ * @example
+ * mixOklch('#c9502a', '#a9bdf2', 0.5); // a clear rose, not a muddy mauve
+ */
+export function mixOklch(a, b, t) {
+  const p = toOklch(a);
+  const q = toOklch(b);
+  // A near-grey has no meaningful hue: take the other colour's.
+  const ph = p.c < 0.02 ? q.h : p.h;
+  const qh = q.c < 0.02 ? p.h : q.h;
+  const dh = ((qh - ph + 540) % 360) - 180;
+  return fromOklch({ l: p.l + (q.l - p.l) * t, c: p.c + (q.c - p.c) * t, h: (ph + dh * t + 360) % 360 });
+}

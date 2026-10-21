@@ -261,7 +261,7 @@ test('every recipe renders at every aspect', async () => {
       assert.match(svg, /<svg/, `${recipe} ${aspect}`);
     }
   }
-  assert.throws(() => cover({ recipe: 'duotone' }), /needs an image/);
+  assert.throws(() => cover({ recipe: 'duotone' }), /needs the "image" option/);
 });
 
 test('a custom recipe function works', async () => {

@@ -16,11 +16,15 @@
       "import": "./src/astro.js",
       "default": "./src/astro.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./recipe.schema.json": "./schema/recipe.schema.json",
+    "./recipes/*.json": "./recipes/*.json"
   },
   "files": [
     "src",
     "fonts",
+    "recipes",
+    "schema",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
@@ -28,7 +32,8 @@
   "scripts": {
     "test": "node --test tests/*.test.js",
     "typecheck": "tsc --noEmit",
-    "gallery": "node examples/gallery.mjs"
+    "gallery": "node examples/gallery.mjs",
+    "schema": "node scripts/schema.mjs"
   },
   "keywords": [
     "cover-image",
@@ -67,14 +72,21 @@
     "sharp": ">=0.33.0"
   },
   "peerDependenciesMeta": {
-    "@iconify-json/lucide": { "optional": true },
-    "@iconify-json/simple-icons": { "optional": true },
-    "sharp": { "optional": true }
+    "@iconify-json/lucide": {
+      "optional": true
+    },
+    "@iconify-json/simple-icons": {
+      "optional": true
+    },
+    "sharp": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.147",
     "@iconify-json/simple-icons": "^1.2.100",
     "@types/node": "^26.6.5",
+    "ajv": "^8.20.0",
     "sharp": "^0.35.5",
     "typescript": "^6.0.3"
   }

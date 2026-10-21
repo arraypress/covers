@@ -26,6 +26,15 @@ const seeds = [
   { seed: 'field-notes-14', title: 'Field notes on building quieter software', label: 'Essay', icon: 'lucide:compass' },
   { seed: 'state-of-the-stack-2026', title: 'The state of the stack, 2026', label: 'Research', icon: 'lucide:sparkles' },
 ];
+// `mark` shows off icons and both backgrounds instead of headlines.
+const markSeeds = [
+  { seed: 'mark-feather', icon: 'lucide:feather' },
+  { seed: 'mark-music', icon: 'lucide:music', background: 'gradient' },
+  { seed: 'mark-github', icon: 'simple-icons:github', title: 'Open source, in the open', label: 'Engineering' },
+  { seed: 'mark-compass', icon: 'lucide:compass', background: 'gradient' },
+  { seed: 'mark-sparkles', icon: 'lucide:sparkles' },
+];
+const seedsFor = (name) => (name === 'mark' ? markSeeds : seeds);
 const palettes = [['light', 'paper'], ['dark', 'dusk']];
 const aspects = ['1:1', '16:9'];
 
@@ -35,7 +44,7 @@ for (const name of Object.keys(recipes)) {
   const tiles = [];
   for (const aspect of aspects) {
     for (const [mode, palette] of palettes) {
-      for (const s of seeds) {
+      for (const s of seedsFor(name)) {
         const file = `${name}-${mode}-${aspect.replace(':', 'x')}-${s.seed}.webp`;
         const t = performance.now();
         const buf = await renderImage({ recipe: name, palette, aspect, image: photo, ...s }, { format: 'webp' });
@@ -51,7 +60,7 @@ for (const name of Object.keys(recipes)) {
   const thumb = 360;
   const gap = 16;
   const heights = aspects.map((a) => Math.round(thumb / (a === '1:1' ? 1 : 16 / 9)));
-  const cols = palettes.length * seeds.length;
+  const cols = palettes.length * seedsFor(name).length;
   const sheetW = cols * thumb + (cols + 1) * gap;
   const sheetH = heights.reduce((a, b) => a + b, 0) + (aspects.length + 1) * gap;
   const composites = [];

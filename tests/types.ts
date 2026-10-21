@@ -1,5 +1,5 @@
 // Type-level usage check (`npm run typecheck`); never executed.
-import { cover, renderSvg, renderImage, derivePalette, recipes, type CoverOptions, type Layer } from '../src/index.js';
+import { cover, renderSvg, renderImage, derivePalette, recipes, defineRecipe, loadRecipe, type CoverOptions, type Layer, type RecipeJson } from '../src/index.js';
 import { coverEndpoint, coverUrl } from '../src/astro.js';
 
 const layers: Layer[] = [
@@ -21,7 +21,24 @@ const options: CoverOptions = {
   grain: false,
 };
 
+const house: RecipeJson = {
+  $schema: '../schema/recipe.schema.json',
+  name: 'house',
+  params: { background: 'solid' },
+  vars: { ink: { readable: '@accent' } },
+  layers: [
+    { id: 'bg', type: 'solid', color: '@accent', when: { background: 'solid' } },
+    { id: 'bg', type: 'linear', colors: ['@accent', { mix: ['@accent', '@colors.1', 0.5] }], when: { background: 'gradient' } },
+    { id: 'title', type: 'text', content: '{title}', color: '$ink', size: { mul: ['@u', 0.07] }, when: 'title' },
+  ],
+};
+
 export async function check(): Promise<void> {
+  const fromJson: string = await renderSvg({ recipe: house, seed: 'x', title: 'Hi', background: 'gradient' });
+  const loaded = loadRecipe('./house.json');
+  const named: string | undefined = defineRecipe(house).recipeName ?? loaded.recipeName;
+  const mark: string = await renderSvg({ recipe: 'mark', icon: 'lucide:music', background: 'gradient', angle: 120 });
+  void fromJson; void named; void mark;
   const svg: string = await renderSvg(options);
   const webp: Buffer = await renderImage({ layers }, { format: 'webp', quality: 80, cache: true });
   const c = cover({ recipe: 'aurora', palette: 'dusk' });

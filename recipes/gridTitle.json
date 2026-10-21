@@ -1,0 +1,70 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "gridTitle",
+  "description": "A mesh under a fine grid that fades toward the edges, grain, and a headline in the lower left (the openai.com/news look).",
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid"
+    },
+    {
+      "id": "mesh",
+      "type": "mesh",
+      "count": 4,
+      "blur": "10vmax",
+      "size": [
+        0.3,
+        0.5
+      ],
+      "spread": 0.9
+    },
+    {
+      "id": "grid",
+      "type": "pattern",
+      "kind": "grid",
+      "size": {
+        "div": [
+          "@u",
+          12
+        ]
+      },
+      "opacity": {
+        "if": {
+          "mode": "dark"
+        },
+        "then": 0.16,
+        "else": 0.13
+      },
+      "fade": "edges"
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.075
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.066
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.048
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": "{label}"
+    }
+  ]
+}

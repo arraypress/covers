@@ -14,6 +14,7 @@ import { resolvePalette } from './palette.js';
 import { bundledFonts } from './fonts.js';
 import { LAYERS } from './layers.js';
 import { recipes, applyOverrides } from './recipes.js';
+import { defineRecipe } from './json-recipe.js';
 import { attrs, esc, num } from './svg.js';
 
 /** The package version, part of every cache key. */
@@ -47,9 +48,13 @@ export function cover(options) {
 
   let layers;
   if (o.recipe) {
-    const recipe = typeof o.recipe === 'function' ? o.recipe : recipes[/** @type {keyof typeof recipes} */ (o.recipe)];
+    const recipe = typeof o.recipe === 'function'
+      ? o.recipe
+      : typeof o.recipe === 'object'
+        ? defineRecipe(o.recipe)
+        : Object.hasOwn(recipes, o.recipe) ? recipes[/** @type {keyof typeof recipes} */ (o.recipe)] : undefined;
     if (!recipe) throw new TypeError(`Unknown recipe "${o.recipe}". Recipes: ${Object.keys(recipes).join(', ')}`);
-    const ctx = { width, height, palette, rng: createRng(`${seed}:recipe`), u: unit({ width, height }) };
+    const ctx = { width, height, palette, rng: createRng(`${seed}:recipe`), u: unit({ width, height }), seed };
     const recipeOptions = Object.fromEntries(Object.entries(o).filter(([k]) => !COVER_KEYS.has(k)));
     layers = [...applyOverrides(recipe(/** @type {any} */ (recipeOptions), ctx), recipeOptions), ...(o.layers ?? [])];
   } else {

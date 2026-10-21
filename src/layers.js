@@ -570,10 +570,13 @@ export function shapes(layer, ctx) {
  */
 export function icon(layer, ctx) {
   const p = ctx.palette;
-  const data = layer.name
-    ? resolveIcon(layer.name)
-    : layer.svg
-      ? parseSvgIcon(layer.svg)
+  // A name that is markup is a raw SVG (so one `icon` option can carry either).
+  const name = typeof layer.name === 'string' ? layer.name.trim() : undefined;
+  const svg = layer.svg ?? (name?.startsWith('<') ? name : undefined);
+  const data = svg
+    ? parseSvgIcon(svg)
+    : name
+      ? resolveIcon(name)
       : layer.path
         ? { body: `<path fill="currentColor" d="${esc(layer.path)}"/>`, viewBox: /** @type {[number, number, number, number]} */ (layer.viewBox ?? [0, 0, 24, 24]) }
         : null;
@@ -646,7 +649,9 @@ function shadowPass(name, blur, dy, opacity) {
  * @returns {Promise<Markup>}
  */
 export async function text(layer, ctx) {
-  const content = transform(String(layer.content ?? ''), layer.transform);
+  // An override object in `content` (a recipe's "{title}") means its content.
+  const raw = layer.content && typeof layer.content === 'object' ? /** @type {any} */ (layer.content).content : layer.content;
+  const content = transform(String(raw ?? ''), layer.transform);
   if (!content.trim()) return { defs: '', body: '' };
   const hb = await harfbuzz();
   const p = ctx.palette;
@@ -675,7 +680,12 @@ export async function text(layer, ctx) {
   const titleH = cap + (set.lines.length - 1) * lh;
 
   // The label sits above, in its own face and size.
-  const labelOpts = layer.label ? (typeof layer.label === 'string' ? { content: layer.label } : layer.label) : null;
+  let labelOpts = layer.label ? (typeof layer.label === 'string' ? { content: layer.label } : layer.label) : null;
+  // A label whose content is itself an options object: its fields win.
+  if (labelOpts && labelOpts.content && typeof labelOpts.content === 'object') {
+    labelOpts = { ...labelOpts, ...labelOpts.content };
+    if (typeof labelOpts.content === 'object') labelOpts.content = undefined;
+  }
   let label = null;
   if (labelOpts?.content) {
     const lface = await loadFont(pickFont(ctx.fonts, labelOpts.font ?? layer.font ?? 'Inter', labelOpts.weight ?? 500, labelOpts.style));

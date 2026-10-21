@@ -2,7 +2,7 @@
 
 Build-time cover images for posts, products and pages: soft mesh gradients, film grain, fine grids, stripes, shapes, icons and type, drawn from one **seed**. The same slug always gives the same image, and two posts never look alike.
 
-Six recipes cover the editorial looks (openai.com/news gradients, claude.com stripe bands, a clean icon tile, big type, duotone photos), and every layer under them is yours to change, remove or add to. Output is an SVG string (text as outlines, so it needs no fonts) or WebP / PNG / AVIF / JPEG via [sharp](https://sharp.pixelplumbing.com). Inter ships in the package, so it works with no setup. There's an Astro helper that turns a content collection into static covers in three lines.
+Seven recipes cover the editorial looks (openai.com/news gradients, claude.com stripe bands, a clean icon tile, big type, duotone photos, a single-icon mark), and every layer under them is yours to change, remove or add to. Recipes are data: the built-ins are JSON documents, and a theme can write its own cover style the same way, with no JavaScript (see [JSON recipes](#json-recipes)). Output is an SVG string (text as outlines, so it needs no fonts) or WebP / PNG / AVIF / JPEG via [sharp](https://sharp.pixelplumbing.com). Inter ships in the package, so it works with no setup. There's an Astro helper that turns a content collection into static covers in three lines.
 
 No network, no telemetry, no DOM. It runs in Node at build time.
 
@@ -61,9 +61,10 @@ const svg = await renderSvg({
 | `renderImage(cover, { format, quality, effort, cache })` | `Promise<Buffer>`: `'webp'` (default), `'png'`, `'avif'` or `'jpeg'`. |
 | `coverKey(cover, options)` | The content-hash cache key (see [Caching](#caching)). |
 | `recipes` | The built-in recipes, by name. |
+| `defineRecipe(json)`, `loadRecipe(path)` | A recipe from a JSON document or file (see [JSON recipes](#json-recipes)). |
 | `palettes`, `resolvePalette(input)`, `derivePalette(tokens)` | Palettes (see [Palettes](#palettes)). |
 | `registerIcons(iconifySet)` | Use an icon set without installing its package. |
-| `toHex`, `toOklch`, `fromOklch`, `mixOklab` | Colour helpers. |
+| `toHex`, `toOklch`, `fromOklch`, `mixOklab`, `mixOklch` | Colour helpers. |
 | `createRng(seed)`, `hashString(str)` | The seeded randomness, for custom recipes. |
 | `resolveSize`, `ASPECTS`, `MIME`, `DEFAULT_QUALITY`, `VERSION` | |
 
@@ -74,7 +75,7 @@ const svg = await renderSvg({
 | `seed` | the title | Drives every random choice. Use the slug. |
 | `width` / `height` / `aspect` | 1200×1200 | `aspect`: `'1:1'`, `'16:9'`, `'4:5'`, `'3:2'`, `'4:3'`, `'2:1'`, `'9:16'`, `'og'` (1200×630), any `'w:h'`, or a number. One side plus an aspect gives the other. |
 | `palette` | `'paper'` | A preset, one colour, `[bg, ...colors]`, an object, or `derivePalette()`. |
-| `recipe` | — | A recipe name or your own function. |
+| `recipe` | — | A recipe name, your own function, or a JSON recipe document. |
 | `layers` | mesh + grain | Without a recipe: the stack. With one: extra layers on top. |
 | `fonts` | Inter | `[{ name, data, weight, style }]`, `.ttf`/`.otf`/`.woff` (not woff2). Inter 400/500/600/700 is always available. |
 | `alt` | the title | The SVG's `<title>`. |
@@ -218,6 +219,15 @@ Layers `image`, `scrim`, `grain`, `title`. A photo (`image`: a path or bytes) ma
 
 ![duotone](https://raw.githubusercontent.com/arraypress/covers/main/docs/duotone.webp)
 
+### `mark`
+Layers `bg`, `icon`, `grain` (+ `title`). One icon, centred, in white (near-black when the background is light) on the accent, or on a gradient with `background: 'gradient'` (135°, the accent toward the palette's second colour, mixed in OKLCH so it stays vivid; `angle` and `colors` override). `icon` is an Iconify name or raw SVG (the spark by default); the icon is `24vmin`; grain is 0.03 (`grain: false` removes it). A title appears bottom left only when given.
+
+```js
+await renderImage({ recipe: 'mark', seed: 'podcast', icon: 'lucide:music', background: 'gradient' });
+```
+
+![mark](docs/mark.webp)
+
 ### Your own
 
 ```js
@@ -238,7 +248,7 @@ await renderSvg({ recipe: poster, seed: 'x', title: 'Hello' });
 | `['#0c0d12', '#3d5afe', '#ff6b3d']` | `[bg, ...colors]`. |
 | `{ bg, colors, text, accent, muted, surface }` | Any subset; the rest is derived. |
 
-Resolved, a palette has `mode`, `bg`, `colors`, `text` (7:1 on `bg` when derived), `accent`, `muted` and `surface`.
+Resolved, a palette has `mode`, `bg`, `colors`, `text` (7:1 on `bg` when derived), `accent`, `onAccent` (white, or near-black when the accent is light), `muted` and `surface`.
 
 From a theme's tokens:
 
@@ -250,6 +260,68 @@ const palette = derivePalette({ accent: '#2563eb', bg: '#fdfdfd', text: '#1d1d1f
 ```
 
 The gradient colours are built in OKLCH around the accent's hue (the accent, two neighbours ±40° and a quiet complement), pastel on light backgrounds and deep on dark ones. Colours can be hex, `rgb()` or `hsl()`; alpha is ignored.
+
+## JSON recipes
+
+A cover style can be data: a JSON document, in a `.json` file or in a theme's config. The built-ins are written this way (`recipes/*.json`; read them for worked examples). Point `$schema` at the bundled schema for autocomplete and checking in your editor.
+
+```json
+{
+  "$schema": "https://unpkg.com/@arraypress/covers/schema/recipe.schema.json",
+  "name": "house",
+  "params": { "background": "solid", "angle": 135 },
+  "vars": {
+    "ink": { "readable": "@accent" },
+    "lean": { "range": [-8, 8] }
+  },
+  "layers": [
+    { "id": "bg", "type": "solid", "color": "@accent", "when": { "background": "solid" } },
+    { "id": "bg", "type": "linear", "when": { "background": "gradient" },
+      "angle": { "add": ["{angle}", "$lean"] },
+      "colors": ["@accent", { "mix": ["@accent", "@colors.1", 0.5, "oklch"] }] },
+    { "id": "grid", "type": "pattern", "kind": "grid", "color": "$ink", "fade": "edges",
+      "opacity": { "if": { "mode": "dark" }, "then": 0.16, "else": 0.12 } },
+    { "id": "grain", "type": "grain", "amount": 0.05 },
+    { "id": "title", "type": "text", "when": "title", "content": "{title}", "label": "{label}",
+      "color": "$ink", "size": { "mul": ["@u", 0.066] }, "maxLines": 3 }
+  ]
+}
+```
+
+```js
+import { loadRecipe, renderImage } from '@arraypress/covers';
+
+const house = loadRecipe('./src/covers/house.json'); // or defineRecipe(json), or pass the object as `recipe`
+await renderImage({ recipe: house, seed: 'my-post', title: 'Hello', background: 'gradient' });
+```
+
+A layer is any [layer](#layers) plus an optional `id` and `when`. Its option values can be literals or:
+
+| Form | Means |
+|---|---|
+| `"@bg"`, `"@text"`, `"@accent"`, `"@onAccent"`, `"@muted"`, `"@surface"`, `"@mode"`, `"@colors"`, `"@colors.N"` | The palette (`colors.N` wraps around). |
+| `"@width"`, `"@height"`, `"@u"` | The canvas in px (`u` = `sqrt(width × height)`, the unit the built-ins size type with). |
+| `"$name"`, `"$name.0"`, `"$name.x"` | A var (or an item or field of it). |
+| `"{title}"`, `"{label}"`, `"{icon}"`, `"{image}"`, `"{param}"`, `"{opt.anything}"` | A cover option. A whole-string token keeps the value's type (a number stays a number, a label object stays an object); inside longer text it's interpolated (`"Read {title}"`). An unset option drops the key. |
+| `{ "mix": [a, b, t] }`, `{ "mix": [a, b, t, "oklch"] }` | Two colours mixed in OKLab, or in OKLCH (hue the short way, so far-apart hues stay vivid). |
+| `{ "readable": c }`, `{ "readable": [c, light, dark] }` | White (or `light`), or near-black (or `dark`), whichever reads better on `c`. |
+| `{ "pick": [...] }`, `{ "range": [min, max] }`, `{ "int": [min, max] }` | Seeded choices. |
+| `{ "add" / "sub" / "mul" / "div" / "min" / "max": [...] }` | Arithmetic. Lengths (`"54vw"`, `"12vmin"`) become px first. |
+| `{ "ramp": [from, to, steps, amount?] }` | `steps` colours from `from` toward `to` (`amount` of the way). |
+| `{ "taper": [ratio, steps] }` | `[1, ratio, ratio², …]`, e.g. stripe widths. |
+| `{ "reverse": array }` | |
+| `{ "if": condition, "then": a, "else": b }` | A choice. Only the chosen side is evaluated (and draws from the stream). |
+| `"@@x"`, `"$$x"` | A literal `@x` / `$x`. |
+
+Conditions (a layer's `when`, an `if`): `"title"` (the option is set; an override object counts when it has `content`, `name`, `svg` or `src`), `{ "background": "gradient" }` (equals; an array means any of; `mode` is the palette's), `{ "not": c }`, `{ "all": [...] }`, `{ "any": [...] }`.
+
+- **`params`** are the options a recipe reads, with defaults; a cover option of the same name overrides one. `title`, `label`, `icon` and `image` are always available. **`requires`** lists options that must be set (`["image"]`).
+- **`vars`** are resolved once, in order, before the layers; their draws use the cover's recipe stream. Draws inside a layer use that layer's own stream, so adding a layer never changes another's choices.
+- **Overrides by id** work exactly as for the built-ins (`grain: false`, `mesh: { blur: 30 }`), and so do extra `layers`.
+- **Validation** runs when the recipe is defined, and stops at the first problem with the recipe's name, the JSON path and what to do: `Recipe "house": layers[2] (grid).blurr: "pattern" layers have no option "blurr" (kind, size, …)`, `unknown token "@bgg"`, `unknown param "subtitle" (declare it in "params", or use "{opt.subtitle}")`.
+- The schema is exported as `@arraypress/covers/recipe.schema.json`, and the built-ins as `@arraypress/covers/recipes/<name>.json` to copy and edit.
+
+All seven built-ins are JSON, with no JS fallback. The tests check that they render byte-identical SVG to the original JavaScript versions across palettes, aspects and options, object overrides included.
 
 ## Astro
 
@@ -265,6 +337,40 @@ export const { getStaticPaths, GET } = coverEndpoint({
 ```
 
 `astro build` writes `dist/covers/<id>.webp` for every post; `astro dev` renders on request. Link to one with `coverUrl(post.id)` (→ `/covers/<id>.webp`).
+
+A theme can keep its cover style in its config as JSON and pass it straight through:
+
+```ts
+// src/config/site.ts
+export const siteConfig = {
+  covers: {
+    palette: { accent: '#2563eb', bg: '#fdfdfd', text: '#1d1d1f' },
+    recipe: {
+      name: 'journal',
+      params: { background: 'gradient' },
+      layers: [
+        { id: 'bg', type: 'linear', angle: 135, colors: ['@accent', { mix: ['@accent', '@colors.1', 0.5, 'oklch'] }] },
+        { id: 'grain', type: 'grain', amount: 0.05 },
+        { id: 'title', type: 'text', when: 'title', content: '{title}', color: '@onAccent', size: { mul: ['@u', 0.07] } },
+      ],
+    },
+  },
+};
+
+// src/pages/covers/[slug].webp.ts
+import { getCollection } from 'astro:content';
+import { coverEndpoint } from '@arraypress/covers/astro';
+import { derivePalette } from '@arraypress/covers';
+import { siteConfig } from '../../config/site';
+
+const palette = derivePalette(siteConfig.covers.palette);
+export const { getStaticPaths, GET } = coverEndpoint({
+  getEntries: () => getCollection('posts'),
+  cover: (post) => ({ recipe: siteConfig.covers.recipe, seed: post.id, title: post.data.title, palette }),
+});
+```
+
+Or keep it in a file: `recipe: loadRecipe('./src/covers/journal.json')`.
 
 | Option | Default | |
 |---|---|---|
@@ -298,6 +404,7 @@ Measured on an Apple M3 Max, Node 26, 1200×1200 WebP at the default quality (me
 | bigType | 1 ms | 84 ms | 32 KB |
 | stripes | 1 ms | 89 ms | 69 KB |
 | duotone | 24 ms | 215 ms | 159 KB |
+| mark | 1 ms | 71 ms | 14 KB |
 
 A 1200×630 `og` card is about 70 ms. The first render in a process adds ~80 ms (HarfBuzz's WebAssembly and the fonts load once). Cached covers cost a file read.
 

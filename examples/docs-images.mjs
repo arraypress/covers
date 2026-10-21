@@ -26,7 +26,12 @@ const base = {
 
 for (const recipe of Object.keys(recipes)) {
   const tiles = await Promise.all(
-    [['paper', 'notes-light'], ['dusk', 'notes-dark']].map(([palette, seed]) => renderImage({ ...base, recipe, palette, seed }, { format: 'png' })),
+    [['paper', 'notes-light'], ['dusk', 'notes-dark']].map(([palette, seed], i) => renderImage(
+      recipe === 'mark'
+        ? { ...base, title: undefined, label: undefined, recipe, palette: i ? 'ink' : 'paper', seed, icon: i ? 'simple-icons:github' : 'lucide:music', background: i ? 'solid' : 'gradient' }
+        : { ...base, recipe, palette, seed },
+      { format: 'png' },
+    )),
   );
   await sharp({ create: { width: 1616, height: 450, channels: 3, background: '#ffffff' } })
     .composite([{ input: tiles[0], left: 0, top: 0 }, { input: tiles[1], left: 816, top: 0 }])

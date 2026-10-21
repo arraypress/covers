@@ -1,0 +1,121 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "mark",
+  "description": "One icon, centred, in white (or near-black on a light colour), on the accent or an accent gradient.",
+  "params": {
+    "background": "solid",
+    "angle": 135,
+    "colors": null
+  },
+  "vars": {
+    "gradient": {
+      "if": "colors",
+      "then": "{colors}",
+      "else": [
+        "@accent",
+        {
+          "mix": [
+            "@accent",
+            "@colors.1",
+            0.5,
+            "oklch"
+          ]
+        }
+      ]
+    },
+    "ink": {
+      "if": {
+        "background": "gradient"
+      },
+      "then": {
+        "readable": {
+          "mix": [
+            "$gradient.0",
+            "$gradient.1",
+            0.5
+          ]
+        }
+      },
+      "else": "@onAccent"
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid",
+      "when": {
+        "background": "solid"
+      },
+      "color": "@accent"
+    },
+    {
+      "id": "bg",
+      "type": "linear",
+      "when": {
+        "background": "gradient"
+      },
+      "angle": "{angle}",
+      "colors": "$gradient"
+    },
+    {
+      "id": "icon",
+      "type": "icon",
+      "name": "{icon}",
+      "path": {
+        "if": {
+          "not": "icon"
+        },
+        "then": "M12 2c.4 4.9 2.1 7.6 7 8.6l3 .4-3 .4c-4.9 1-6.6 3.7-7 8.6-.4-4.9-2.1-7.6-7-8.6L2 11l3-.4c4.9-1 6.6-3.7 7-8.6Z"
+      },
+      "viewBox": {
+        "if": {
+          "not": "icon"
+        },
+        "then": [
+          0,
+          0,
+          24,
+          24
+        ]
+      },
+      "size": "24vmin",
+      "color": "$ink"
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.03
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.066
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.048
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "$ink",
+          "content": "{label}"
+        }
+      },
+      "color": "$ink"
+    }
+  ]
+}

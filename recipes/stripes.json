@@ -1,0 +1,206 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "stripes",
+  "description": "A tonal band of tapering stripes down one side, a disc riding its edge (with an optional icon), and the title on the open side (the claude.com/resources look).",
+  "params": {
+    "side": "right"
+  },
+  "vars": {
+    "spotY": {
+      "add": [
+        {
+          "if": "title",
+          "then": 0.36,
+          "else": 0.5
+        },
+        {
+          "range": [
+            -0.06,
+            0.06
+          ]
+        }
+      ]
+    },
+    "steps": {
+      "int": [
+        5,
+        8
+      ]
+    },
+    "taper": {
+      "range": [
+        0.72,
+        0.86
+      ]
+    },
+    "ramp": {
+      "ramp": [
+        "@accent",
+        "@bg",
+        "$steps",
+        0.88
+      ]
+    },
+    "weights": {
+      "taper": [
+        "$taper",
+        "$steps"
+      ]
+    },
+    "edge": {
+      "if": {
+        "side": "right"
+      },
+      "then": {
+        "sub": [
+          1,
+          0.46
+        ]
+      },
+      "else": 0.46
+    },
+    "spot": {
+      "mul": [
+        {
+          "min": [
+            "@width",
+            "@height"
+          ]
+        },
+        0.34
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid"
+    },
+    {
+      "id": "stripes",
+      "type": "stripes",
+      "direction": "vertical",
+      "region": {
+        "if": {
+          "side": "right"
+        },
+        "then": {
+          "x": "$edge",
+          "y": 0,
+          "width": 0.46,
+          "height": 1
+        },
+        "else": {
+          "x": 0,
+          "y": 0,
+          "width": 0.46,
+          "height": 1
+        }
+      },
+      "widths": {
+        "if": {
+          "side": "right"
+        },
+        "then": {
+          "reverse": "$weights"
+        },
+        "else": "$weights"
+      },
+      "colors": {
+        "if": {
+          "side": "right"
+        },
+        "then": {
+          "reverse": "$ramp"
+        },
+        "else": "$ramp"
+      }
+    },
+    {
+      "id": "spot",
+      "type": "shapes",
+      "items": [
+        {
+          "kind": "circle",
+          "x": "$edge",
+          "y": "$spotY",
+          "size": "$spot",
+          "color": "@text"
+        }
+      ]
+    },
+    {
+      "id": "icon",
+      "type": "icon",
+      "when": "icon",
+      "name": "{icon}",
+      "size": {
+        "mul": [
+          "$spot",
+          0.4
+        ]
+      },
+      "position": {
+        "x": "$edge",
+        "y": "$spotY"
+      },
+      "color": "@bg"
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.06
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": {
+        "if": {
+          "side": "right"
+        },
+        "then": "bottom-left",
+        "else": "bottom-right"
+      },
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.058
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.044
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 4,
+      "label": "{label}",
+      "maxWidth": {
+        "sub": [
+          {
+            "mul": [
+              "@width",
+              {
+                "sub": [
+                  1,
+                  0.46
+                ]
+              }
+            ]
+          },
+          {
+            "mul": [
+              "@u",
+              0.12
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

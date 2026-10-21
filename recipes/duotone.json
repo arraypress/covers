@@ -1,0 +1,75 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "duotone",
+  "description": "A photo mapped to the palette's shadow and highlight colours, with grain, and a title over a scrim when given.",
+  "requires": [
+    "image"
+  ],
+  "vars": {
+    "shadow": {
+      "if": {
+        "mode": "dark"
+      },
+      "then": "@bg",
+      "else": "@text"
+    }
+  },
+  "layers": [
+    {
+      "id": "image",
+      "type": "image",
+      "src": "{image}",
+      "duotone": true
+    },
+    {
+      "id": "scrim",
+      "type": "linear",
+      "when": "title",
+      "angle": 180,
+      "colors": [
+        "$shadow",
+        "$shadow"
+      ],
+      "opacities": [
+        0,
+        0.62
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.07
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.066
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.048
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "#e9e9e9",
+          "content": "{label}"
+        }
+      },
+      "color": "#ffffff"
+    }
+  ]
+}

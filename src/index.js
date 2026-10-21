@@ -8,8 +8,9 @@
 
 export { cover, renderSvg, renderImage, coverKey, MIME, DEFAULT_QUALITY, VERSION } from './render.js';
 export { recipes } from './recipes.js';
+export { defineRecipe, loadRecipe } from './json-recipe.js';
 export { palettes, resolvePalette, derivePalette } from './palette.js';
-export { toHex, toOklch, fromOklch, mixOklab } from './color.js';
+export { toHex, toOklch, fromOklch, mixOklab, mixOklch } from './color.js';
 export { registerIcons } from './icons.js';
 export { resolveSize, ASPECTS } from './geometry.js';
 export { createRng, hashString } from './rng.js';

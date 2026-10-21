@@ -1,0 +1,1406 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unpkg.com/@arraypress/covers/schema/recipe.schema.json",
+  "title": "@arraypress/covers recipe",
+  "description": "A cover style as data: params, vars and a stack of layers. See the README, \"JSON recipes\".",
+  "type": "object",
+  "required": [
+    "layers"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "description": "Shown in error messages."
+    },
+    "description": {
+      "type": "string"
+    },
+    "params": {
+      "type": "object",
+      "description": "Options this recipe reads, with defaults. Cover options of the same name override them; use them as \"{name}\".",
+      "additionalProperties": {
+        "$ref": "#/$defs/value"
+      }
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Options that must be set (e.g. \"image\")."
+    },
+    "vars": {
+      "type": "object",
+      "description": "Named values, resolved in order (draws use the recipe stream); use them as \"$name\".",
+      "additionalProperties": {
+        "$ref": "#/$defs/value"
+      }
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/layer"
+      }
+    }
+  },
+  "$defs": {
+    "token": {
+      "type": "string",
+      "description": "@bg @text @accent @onAccent @muted @surface @mode @colors @colors.N @width @height @u · $var · {param} {title} {label} {icon} {image} {opt.x} · a length (\"12vmin\", \"4vw\") · a colour · any text"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/token"
+        },
+        {
+          "type": [
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/value"
+          }
+        },
+        {
+          "$ref": "#/$defs/if"
+        },
+        {
+          "type": "object",
+          "description": "Mix two colours: [a, b, t] in OKLab, or [a, b, t, \"oklch\"] (hue the short way, stays vivid).",
+          "required": [
+            "mix"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "mix": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 4,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "White, or near-black on a light colour: c or [c, light, dark].",
+          "required": [
+            "readable"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "readable": {
+              "$ref": "#/$defs/value"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "One item, seeded.",
+          "required": [
+            "pick"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "pick": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "A float in [min, max), seeded.",
+          "required": [
+            "range"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "range": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "An integer in [min, max], seeded.",
+          "required": [
+            "int"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "int": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Sum (lengths become px).",
+          "required": [
+            "add"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "add": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "First minus the rest.",
+          "required": [
+            "sub"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "sub": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Product.",
+          "required": [
+            "mul"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "mul": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "a / b.",
+          "required": [
+            "div"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "div": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Smallest.",
+          "required": [
+            "min"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Largest.",
+          "required": [
+            "max"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "max": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "[from, to, steps, amount?]: steps colours from one toward the other.",
+          "required": [
+            "ramp"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "ramp": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 4,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "[ratio, steps]: [1, ratio, ratio², …].",
+          "required": [
+            "taper"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "taper": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "An array backwards.",
+          "required": [
+            "reverse"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "reverse": {
+              "$ref": "#/$defs/value"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/value"
+          }
+        }
+      ]
+    },
+    "if": {
+      "type": "object",
+      "description": "A choice: only the chosen side is evaluated.",
+      "required": [
+        "if",
+        "then"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "if": {
+          "$ref": "#/$defs/condition"
+        },
+        "then": {
+          "$ref": "#/$defs/value"
+        },
+        "else": {
+          "$ref": "#/$defs/value"
+        }
+      }
+    },
+    "condition": {
+      "description": "\"title\" (the option is set), { \"background\": \"gradient\" } (equals; \"mode\" is the palette's), { \"not\": … }, { \"all\": [...] }, { \"any\": [...] }.",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "required": [
+            "not"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "not": {
+              "$ref": "#/$defs/condition"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "all"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "all": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/condition"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "any"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "any": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/condition"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "not"
+                ]
+              },
+              {
+                "required": [
+                  "all"
+                ]
+              },
+              {
+                "required": [
+                  "any"
+                ]
+              }
+            ]
+          },
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array"
+            ]
+          }
+        }
+      ]
+    },
+    "layer": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "solid",
+            "linear",
+            "radial",
+            "mesh",
+            "stripes",
+            "image",
+            "grain",
+            "pattern",
+            "shapes",
+            "icon",
+            "text",
+            "frame"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "description": "Names the layer for overrides (cover({ <id>: {...} | false }))."
+        },
+        "when": {
+          "$ref": "#/$defs/condition",
+          "description": "Include the layer only when this holds."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "solid"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Fill. Default @bg."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "color",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "linear"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "colors": {
+                "$ref": "#/$defs/value",
+                "description": "Two or more colours."
+              },
+              "opacities": {
+                "$ref": "#/$defs/value",
+                "description": "Per-stop opacity."
+              },
+              "angle": {
+                "$ref": "#/$defs/value",
+                "description": "CSS degrees (0 = up). Default seeded."
+              },
+              "ease": {
+                "$ref": "#/$defs/value",
+                "description": "Smoothstep stops. Default true."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "colors",
+                "opacities",
+                "angle",
+                "ease",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "radial"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "colors": {
+                "$ref": "#/$defs/value",
+                "description": "Centre → edge."
+              },
+              "x": {
+                "$ref": "#/$defs/value",
+                "description": "Centre x, 0–1."
+              },
+              "y": {
+                "$ref": "#/$defs/value",
+                "description": "Centre y, 0–1."
+              },
+              "radius": {
+                "$ref": "#/$defs/value",
+                "description": "Length. Default \"80vmax\"."
+              },
+              "ease": {
+                "$ref": "#/$defs/value",
+                "description": "Default true."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "colors",
+                "x",
+                "y",
+                "radius",
+                "ease",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mesh"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "colors": {
+                "$ref": "#/$defs/value",
+                "description": "Blob colours."
+              },
+              "hues": {
+                "$ref": "#/$defs/value",
+                "description": "Distinct colours to use. Default 3."
+              },
+              "count": {
+                "$ref": "#/$defs/value",
+                "description": "Blobs. Default 4."
+              },
+              "blur": {
+                "$ref": "#/$defs/value",
+                "description": "Length. Default \"11vmax\"."
+              },
+              "spread": {
+                "$ref": "#/$defs/value",
+                "description": "0–1. Default 0.7."
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "[min, max] radius, fractions of the longer side."
+              },
+              "base": {
+                "$ref": "#/$defs/value",
+                "description": "Fill under the blobs; null for none."
+              },
+              "blobs": {
+                "$ref": "#/$defs/value",
+                "description": "Explicit [{ x, y, r, squash, rotate, color, opacity }]."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "colors",
+                "hues",
+                "count",
+                "blur",
+                "spread",
+                "size",
+                "base",
+                "blobs",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "stripes"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "direction": {
+                "$ref": "#/$defs/value",
+                "description": "vertical | horizontal | diagonal"
+              },
+              "angle": {
+                "$ref": "#/$defs/value",
+                "description": "For diagonal."
+              },
+              "count": {
+                "$ref": "#/$defs/value",
+                "description": "Stripes. Default 8."
+              },
+              "widths": {
+                "$ref": "#/$defs/value",
+                "description": "even | random | taper | [weights]"
+              },
+              "taper": {
+                "$ref": "#/$defs/value",
+                "description": "Ratio for widths: taper."
+              },
+              "colors": {
+                "$ref": "#/$defs/value",
+                "description": "Cycled."
+              },
+              "gap": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "radius": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "region": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y, width, height } fractions."
+              },
+              "regionRadius": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "direction",
+                "angle",
+                "count",
+                "widths",
+                "taper",
+                "colors",
+                "gap",
+                "radius",
+                "region",
+                "regionRadius",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "image"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "src": {
+                "$ref": "#/$defs/value",
+                "description": "A local path, data: URI or bytes (\"{image}\")."
+              },
+              "fit": {
+                "$ref": "#/$defs/value",
+                "description": "cover | contain"
+              },
+              "focus": {
+                "$ref": "#/$defs/value",
+                "description": "An anchor, attention or entropy."
+              },
+              "region": {
+                "$ref": "#/$defs/value",
+                "description": "Fractions."
+              },
+              "duotone": {
+                "$ref": "#/$defs/value",
+                "description": "true or [shadow, highlight]."
+              },
+              "grayscale": {
+                "$ref": "#/$defs/value",
+                "description": "boolean"
+              },
+              "normalize": {
+                "$ref": "#/$defs/value",
+                "description": "Stretch tones first."
+              },
+              "tint": {
+                "$ref": "#/$defs/value",
+                "description": "A colour or { color, amount, blend }."
+              },
+              "blur": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "src",
+                "fit",
+                "focus",
+                "region",
+                "duotone",
+                "grayscale",
+                "normalize",
+                "tint",
+                "blur",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grain"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "amount": {
+                "$ref": "#/$defs/value",
+                "description": "0–1. Default 0.08."
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Grain px. Default 1."
+              },
+              "monochrome": {
+                "$ref": "#/$defs/value",
+                "description": "Default true."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "amount",
+                "size",
+                "monochrome",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pattern"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "kind": {
+                "$ref": "#/$defs/value",
+                "description": "grid | dots | lines | rings | waves"
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Cell. Length."
+              },
+              "stroke": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default @text."
+              },
+              "angle": {
+                "$ref": "#/$defs/value",
+                "description": "For lines."
+              },
+              "center": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } fractions."
+              },
+              "wavelength": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "amplitude": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "fade": {
+                "$ref": "#/$defs/value",
+                "description": "none | radial | edges | top | bottom | left | right"
+              },
+              "region": {
+                "$ref": "#/$defs/value",
+                "description": "Fractions."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "kind",
+                "size",
+                "stroke",
+                "color",
+                "angle",
+                "center",
+                "wavelength",
+                "amplitude",
+                "fade",
+                "region",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "shapes"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "kind": {
+                "$ref": "#/$defs/value",
+                "description": "circle | square | pill | mixed"
+              },
+              "count": {
+                "$ref": "#/$defs/value",
+                "description": "Default 6."
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "[min, max] lengths."
+              },
+              "colors": {
+                "$ref": "#/$defs/value",
+                "description": "Cycled."
+              },
+              "placement": {
+                "$ref": "#/$defs/value",
+                "description": "scatter | row | column"
+              },
+              "items": {
+                "$ref": "#/$defs/value",
+                "description": "[{ kind, x, y, size, color, rotate, opacity }]"
+              },
+              "region": {
+                "$ref": "#/$defs/value",
+                "description": "Fractions."
+              },
+              "rotate": {
+                "$ref": "#/$defs/value",
+                "description": "Tilt squares and pills."
+              },
+              "radius": {
+                "$ref": "#/$defs/value",
+                "description": "Square corner, fraction of size."
+              },
+              "outline": {
+                "$ref": "#/$defs/value",
+                "description": "true or a width."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "kind",
+                "count",
+                "size",
+                "colors",
+                "placement",
+                "items",
+                "region",
+                "rotate",
+                "radius",
+                "outline",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "icon"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/value",
+                "description": "Iconify name (\"lucide:feather\") or raw SVG (\"{icon}\")."
+              },
+              "svg": {
+                "$ref": "#/$defs/value",
+                "description": "Raw SVG."
+              },
+              "path": {
+                "$ref": "#/$defs/value",
+                "description": "A path d."
+              },
+              "viewBox": {
+                "$ref": "#/$defs/value",
+                "description": "[x, y, w, h] for path."
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Length. Default \"24vmin\"."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default the accent on a tile, else @text."
+              },
+              "strokeWidth": {
+                "$ref": "#/$defs/value",
+                "description": "Stroke icons."
+              },
+              "anchor": {
+                "$ref": "#/$defs/value",
+                "description": "One of nine anchors."
+              },
+              "position": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } fractions."
+              },
+              "offset": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } lengths."
+              },
+              "margin": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "tile": {
+                "$ref": "#/$defs/value",
+                "description": "true or { size, radius, color, shadow, border }."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "name",
+                "svg",
+                "path",
+                "viewBox",
+                "size",
+                "color",
+                "strokeWidth",
+                "anchor",
+                "position",
+                "offset",
+                "margin",
+                "tile",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "text"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "content": {
+                "$ref": "#/$defs/value",
+                "description": "The text (\"{title}\")."
+              },
+              "font": {
+                "$ref": "#/$defs/value",
+                "description": "Family. Default Inter."
+              },
+              "weight": {
+                "$ref": "#/$defs/value",
+                "description": "Default 600."
+              },
+              "style": {
+                "$ref": "#/$defs/value",
+                "description": "normal | italic"
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "minSize": {
+                "$ref": "#/$defs/value",
+                "description": "Shrink toward this before truncating."
+              },
+              "lineHeight": {
+                "$ref": "#/$defs/value",
+                "description": "Default 1.12."
+              },
+              "letterSpacing": {
+                "$ref": "#/$defs/value",
+                "description": "Em. Default -0.02."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default @text."
+              },
+              "align": {
+                "$ref": "#/$defs/value",
+                "description": "left | center | right"
+              },
+              "anchor": {
+                "$ref": "#/$defs/value",
+                "description": "Default bottom-left."
+              },
+              "position": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } fractions."
+              },
+              "offset": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } lengths."
+              },
+              "margin": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "maxWidth": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "maxLines": {
+                "$ref": "#/$defs/value",
+                "description": "Default 3."
+              },
+              "ellipsis": {
+                "$ref": "#/$defs/value",
+                "description": "Default '…'."
+              },
+              "balance": {
+                "$ref": "#/$defs/value",
+                "description": "Default true."
+              },
+              "transform": {
+                "$ref": "#/$defs/value",
+                "description": "none | uppercase | lowercase"
+              },
+              "label": {
+                "$ref": "#/$defs/value",
+                "description": "A string or { content, size, weight, color, letterSpacing, transform, gap }."
+              },
+              "background": {
+                "$ref": "#/$defs/value",
+                "description": "A colour or { color, radius, padding, opacity }."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "content",
+                "font",
+                "weight",
+                "style",
+                "size",
+                "minSize",
+                "lineHeight",
+                "letterSpacing",
+                "color",
+                "align",
+                "anchor",
+                "position",
+                "offset",
+                "margin",
+                "maxWidth",
+                "maxLines",
+                "ellipsis",
+                "balance",
+                "transform",
+                "label",
+                "background",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "frame"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "inset": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "radius": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "stroke": {
+                "$ref": "#/$defs/value",
+                "description": "Length."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default @text."
+              },
+              "fill": {
+                "$ref": "#/$defs/value",
+                "description": "A colour (a card)."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "inset",
+                "radius",
+                "stroke",
+                "color",
+                "fill",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

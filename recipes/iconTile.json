@@ -1,0 +1,214 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "iconTile",
+  "description": "An icon on a raised tile over a soft tint of the accent, a glow and faint rings. With a title, the tile moves to the upper left.",
+  "vars": {
+    "tint": {
+      "mix": [
+        "@bg",
+        "@accent",
+        {
+          "if": {
+            "mode": "dark"
+          },
+          "then": 0.1,
+          "else": 0.07
+        }
+      ]
+    },
+    "glow": {
+      "if": "title",
+      "then": {
+        "x": {
+          "add": [
+            0.22,
+            {
+              "range": [
+                -0.12,
+                0.12
+              ]
+            }
+          ]
+        },
+        "y": {
+          "add": [
+            0.26,
+            {
+              "range": [
+                -0.12,
+                0.12
+              ]
+            }
+          ]
+        }
+      },
+      "else": {
+        "x": {
+          "add": [
+            0.5,
+            {
+              "range": [
+                -0.12,
+                0.12
+              ]
+            }
+          ]
+        },
+        "y": {
+          "add": [
+            0.5,
+            {
+              "range": [
+                -0.12,
+                0.12
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid",
+      "color": "$tint"
+    },
+    {
+      "id": "glow",
+      "type": "radial",
+      "colors": [
+        {
+          "mix": [
+            "$tint",
+            "@accent",
+            {
+              "if": {
+                "mode": "dark"
+              },
+              "then": 0.32,
+              "else": 0.26
+            }
+          ]
+        },
+        "$tint"
+      ],
+      "x": "$glow.x",
+      "y": "$glow.y",
+      "radius": "52vmax"
+    },
+    {
+      "id": "rings",
+      "type": "pattern",
+      "kind": "rings",
+      "size": {
+        "if": "title",
+        "then": "6vmin",
+        "else": "7vmin"
+      },
+      "center": "$glow",
+      "opacity": {
+        "if": {
+          "mode": "dark"
+        },
+        "then": 0.14,
+        "else": 0.16
+      },
+      "fade": "radial",
+      "color": {
+        "if": {
+          "mode": "dark"
+        },
+        "then": "@text",
+        "else": "@accent"
+      }
+    },
+    {
+      "id": "icon",
+      "type": "icon",
+      "name": "{icon}",
+      "path": {
+        "if": {
+          "not": "icon"
+        },
+        "then": "M12 2c.4 4.9 2.1 7.6 7 8.6l3 .4-3 .4c-4.9 1-6.6 3.7-7 8.6-.4-4.9-2.1-7.6-7-8.6L2 11l3-.4c4.9-1 6.6-3.7 7-8.6Z"
+      },
+      "viewBox": {
+        "if": {
+          "not": "icon"
+        },
+        "then": [
+          0,
+          0,
+          24,
+          24
+        ]
+      },
+      "size": {
+        "mul": [
+          "@u",
+          {
+            "if": "title",
+            "then": 0.075,
+            "else": 0.12
+          }
+        ]
+      },
+      "anchor": {
+        "if": "title",
+        "then": "top-left",
+        "else": "center"
+      },
+      "tile": {
+        "color": {
+          "if": {
+            "mode": "dark"
+          },
+          "then": {
+            "mix": [
+              "$tint",
+              "@text",
+              0.09
+            ]
+          },
+          "else": {
+            "mix": [
+              "$tint",
+              "#ffffff",
+              0.85
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.066
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.048
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": "{label}"
+    }
+  ]
+}

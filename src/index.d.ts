@@ -38,6 +38,8 @@ export interface Palette {
   readonly text: string;
   /** The one strong colour. */
   readonly accent: string;
+  /** White, or near-black when the accent is light: marks drawn on the accent. */
+  readonly onAccent: string;
   /** Secondary type. */
   readonly muted: string;
   /** Raised things on `bg` (tiles, pills). */
@@ -62,6 +64,7 @@ export type PaletteInput =
       accent?: Color;
       muted?: Color;
       surface?: Color;
+      onAccent?: Color;
     };
 
 /** A font the text layers can use. TrueType, OpenType or WOFF (not WOFF2). */
@@ -380,7 +383,7 @@ export type Layer =
   | GrainLayer | PatternLayer | ShapesLayer | IconLayer | TextLayer | FrameLayer;
 
 /** Built-in recipe names. */
-export type RecipeName = 'aurora' | 'gridTitle' | 'iconTile' | 'bigType' | 'stripes' | 'duotone';
+export type RecipeName = 'aurora' | 'gridTitle' | 'iconTile' | 'bigType' | 'stripes' | 'duotone' | 'mark';
 
 /** What a recipe function receives besides the options. */
 export interface RecipeContext {
@@ -390,10 +393,63 @@ export interface RecipeContext {
   rng: Rng;
   /** `sqrt(width × height)`. */
   u: number;
+  /** The cover's seed. */
+  seed?: string;
 }
 
-/** A custom recipe. */
-export type Recipe = (options: RecipeOptions, context: RecipeContext) => Layer[];
+/** A custom recipe. JSON recipes defined with {@link defineRecipe} also carry `recipeName` and `json`. */
+export type Recipe = ((options: RecipeOptions, context: RecipeContext) => Layer[]) & { recipeName?: string; json?: RecipeJson };
+
+/**
+ * A recipe value in JSON: a literal, a token (`"@accent"`, `"$var"`,
+ * `"{title}"`), or an operator object (`{ "mix": [a, b, t] }`, `{ "if": … }`).
+ */
+export type RecipeValue =
+  | string | number | boolean | null
+  | RecipeValue[]
+  | { if: RecipeCondition; then: RecipeValue; else?: RecipeValue }
+  | { mix: [RecipeValue, RecipeValue, RecipeValue] | [RecipeValue, RecipeValue, RecipeValue, 'oklab' | 'oklch'] }
+  | { readable: RecipeValue }
+  | { pick: RecipeValue[] }
+  | { range: [RecipeValue, RecipeValue] }
+  | { int: [RecipeValue, RecipeValue] }
+  | { add: RecipeValue[] } | { sub: RecipeValue[] } | { mul: RecipeValue[] } | { div: [RecipeValue, RecipeValue] }
+  | { min: RecipeValue[] } | { max: RecipeValue[] }
+  | { ramp: RecipeValue[] }
+  | { taper: [RecipeValue, RecipeValue] }
+  | { reverse: RecipeValue }
+  | { [key: string]: RecipeValue };
+
+/** A condition: an option name (set?), `{ name: value }` (equals; `mode` is the palette's), `not`, `all`, `any`. */
+export type RecipeCondition =
+  | string
+  | boolean
+  | { not: RecipeCondition }
+  | { all: RecipeCondition[] }
+  | { any: RecipeCondition[] }
+  | { [option: string]: string | number | boolean | (string | number | boolean)[] };
+
+/** One layer of a JSON recipe: a layer type, its options as recipe values, and an optional `when`. */
+export interface RecipeJsonLayer {
+  type: Layer['type'];
+  id?: string;
+  when?: RecipeCondition;
+  [option: string]: RecipeValue | RecipeCondition | undefined;
+}
+
+/** A recipe as data (see `schema/recipe.schema.json`). */
+export interface RecipeJson {
+  $schema?: string;
+  name?: string;
+  description?: string;
+  /** Options this recipe reads, with defaults; cover options of the same name override them. */
+  params?: Record<string, RecipeValue>;
+  /** Options that must be set. */
+  requires?: string[];
+  /** Named values, resolved in order; referenced as `"$name"`. */
+  vars?: Record<string, RecipeValue>;
+  layers: RecipeJsonLayer[];
+}
 
 /** Per-layer customisation: a string is the layer's content, an object is merged in, `false` removes it. */
 export type LayerOverride = string | false | null | Partial<Layer> | Record<string, unknown>;
@@ -410,6 +466,12 @@ export interface RecipeOptions {
   image?: string | Uint8Array | Partial<ImageLayer>;
   /** `stripes`: which side the band runs down. */
   side?: 'left' | 'right';
+  /** `mark`: the accent (`'solid'`, default) or an accent gradient. */
+  background?: 'solid' | 'gradient';
+  /** `mark` gradient angle (CSS degrees). Default 135. */
+  angle?: number;
+  /** `mark` gradient colours. Default the accent → a mix toward the palette's second colour. */
+  colors?: Color[];
   /** Any recipe layer by id: `mesh`, `grid`, `grain`, `bg`, `glow`, `rings`, `wash`, `stripes`, `spot`, `scrim`… */
   [layerId: string]: unknown;
 }
@@ -424,8 +486,8 @@ export interface CoverOptions extends RecipeOptions {
   /** Drives every random choice. Use the post's slug. Default the title. */
   seed?: string | number;
   palette?: PaletteInput | Palette;
-  /** A built-in recipe or your own. */
-  recipe?: RecipeName | Recipe;
+  /** A built-in recipe, your own function, or a JSON recipe document. */
+  recipe?: RecipeName | Recipe | RecipeJson;
   /** Without a recipe: the whole stack. With one: extra layers painted on top. */
   layers?: Layer[];
   /** Extra fonts. Inter 400/500/600/700 is always available. */
@@ -501,6 +563,15 @@ export const VERSION: string;
 /** The built-in recipes. */
 export const recipes: Readonly<Record<RecipeName, Recipe>>;
 
+/** Turn a JSON recipe into a recipe function (validated; throws with the JSON path on a problem). */
+export function defineRecipe(json: RecipeJson): Recipe;
+
+/** Read and define a JSON recipe file (synchronous). */
+export function loadRecipe(path: string | URL): Recipe;
+
+/** Default encoder quality, by format. */
+export const DEFAULT_QUALITY: Readonly<{ webp: number; avif: number; jpeg: number; png: number }>;
+
 /** Curated palette presets. */
 export const palettes: Readonly<Record<PresetName, Readonly<{ bg: string; colors: readonly string[]; text: string; accent: string }>>>;
 
@@ -518,6 +589,8 @@ export function toOklch(color: Color): { l: number; c: number; h: number };
 export function fromOklch(lch: { l: number; c: number; h: number }): string;
 /** Mix two colours in OKLab. */
 export function mixOklab(a: Color, b: Color, t: number): string;
+/** Mix two colours in OKLCH (hue the short way; stays vivid). */
+export function mixOklch(a: Color, b: Color, t: number): string;
 
 /** Register an Iconify icon set (no `@iconify-json/*` install needed). */
 export function registerIcons(set: IconSet): void;

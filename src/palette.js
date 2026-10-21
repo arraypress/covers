@@ -7,6 +7,7 @@
  * - `colors`  the colours of gradients, blobs, stripes and shapes
  * - `text`    type (readable on `bg`)
  * - `accent`  the one strong colour (icons, labels, spots)
+ * - `onAccent` white, or near-black when the accent is light: for marks on the accent
  * - `muted`   secondary type (`text` mixed toward `bg`)
  * - `surface` raised things that sit on `bg` (icon tiles, pills)
  * - `mode`    `'light'` or `'dark'`, from `bg`
@@ -18,7 +19,7 @@
  * @module palette
  */
 
-import { relativeLuminance, contrastRatio, readableOn } from '@arraypress/color-utils';
+import { relativeLuminance, contrastRatio, readableOn, readableText } from '@arraypress/color-utils';
 import { toHex, toOklch, fromOklch, mixOklab } from './color.js';
 
 /**
@@ -138,6 +139,7 @@ export function resolvePalette(input) {
       accent: input.accent ? toHex(input.accent) : colors[0],
       muted: input.muted ? toHex(input.muted) : undefined,
       surface: input.surface ? toHex(input.surface) : undefined,
+      onAccent: input.onAccent ? toHex(input.onAccent) : undefined,
     });
   }
   throw new TypeError('A palette is a preset name, a colour, an array of colours or an object');
@@ -157,7 +159,7 @@ export function modeOf(bg) {
 /**
  * Fill the derived fields of a partial palette.
  *
- * @param {{ bg: string, colors: string[], accent: string, text?: string, muted?: string, surface?: string }} p
+ * @param {{ bg: string, colors: string[], accent: string, text?: string, muted?: string, surface?: string, onAccent?: string }} p
  * @returns {import('./index.js').Palette} The palette.
  */
 function finish(p) {
@@ -176,6 +178,7 @@ function finish(p) {
     colors: Object.freeze(p.colors.slice()),
     text,
     accent: p.accent,
+    onAccent: p.onAccent ?? readableText(p.accent, '#ffffff', '#111111'),
     muted: p.muted ?? mixOklab(text, p.bg, 0.38),
     surface: p.surface ?? (dark ? mixOklab(p.bg, text, 0.07) : mixOklab(p.bg, '#ffffff', 0.75)),
   });

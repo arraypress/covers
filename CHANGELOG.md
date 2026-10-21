@@ -18,9 +18,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   names, raw SVG or a path, optional tile), `text` (HarfBuzz-shaped outlines,
   balanced wrapping, `maxLines` with ellipsis, `minSize` fit, label, pill) and
   `frame`.
-- **Six recipes**: `aurora`, `gridTitle`, `iconTile`, `bigType`, `stripes`,
-  `duotone`. Any layer is customised by id: a string sets its content, an
-  object merges in, `false` removes it.
+- **Seven recipes**: `aurora`, `gridTitle`, `iconTile`, `bigType`, `stripes`,
+  `duotone` and `mark` (one icon, white or near-black, on the accent or an
+  accent gradient). Any layer is customised by id: a string sets its
+  content, an object merges in, `false` removes it.
+- **JSON recipes**: `defineRecipe(json)`, `loadRecipe(path)`, or the document
+  passed as `recipe`. Palette and canvas tokens (`@accent`, `@colors.1`,
+  `@u`), vars (`$name`), option templates (`{title}`, `{opt.x}`), operators
+  (`mix` in OKLab or OKLCH, `readable`, seeded `pick`/`range`/`int`,
+  arithmetic, `ramp`, `taper`, `reverse`, `if`), `when` conditions, `params`
+  and `requires`. Validated on definition with the JSON path in every error;
+  a JSON Schema ships as `@arraypress/covers/recipe.schema.json`. All seven
+  built-ins are JSON (`recipes/*.json`), tested byte-identical to the
+  original JavaScript recipes.
+- `palette.onAccent` and `mixOklch()`.
 - **Palettes**: nine presets, `[bg, ...colors]` arrays, partial objects, and
   `derivePalette()` from a theme's tokens (OKLCH, text at 7:1).
 - **Inter** (Latin, 400/500/600/700, WOFF) bundled; any TTF/OTF/WOFF can be

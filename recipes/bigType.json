@@ -1,0 +1,103 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "bigType",
+  "description": "The headline is the cover: large, tight, shrinking to fit four lines, with the label in the accent at the top.",
+  "vars": {
+    "corner": {
+      "pick": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0.5,
+          0
+        ]
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid"
+    },
+    {
+      "id": "wash",
+      "type": "radial",
+      "colors": [
+        {
+          "mix": [
+            "@bg",
+            "@accent",
+            {
+              "if": {
+                "mode": "dark"
+              },
+              "then": 0.16,
+              "else": 0.12
+            }
+          ]
+        },
+        "@bg"
+      ],
+      "x": "$corner.0",
+      "y": "$corner.1",
+      "radius": "110vmax"
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05
+    },
+    {
+      "id": "label",
+      "type": "text",
+      "when": "label",
+      "content": "{label}",
+      "anchor": "top-left",
+      "size": {
+        "mul": [
+          "@u",
+          0.024
+        ]
+      },
+      "weight": 600,
+      "letterSpacing": 0.09,
+      "transform": "uppercase",
+      "color": "@accent",
+      "maxLines": 1,
+      "balance": false
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 600,
+      "size": {
+        "mul": [
+          "@u",
+          0.13
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.078
+        ]
+      },
+      "lineHeight": 0.98,
+      "letterSpacing": -0.045,
+      "maxLines": 4
+    }
+  ]
+}
