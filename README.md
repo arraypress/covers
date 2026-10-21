@@ -226,7 +226,7 @@ Layers `bg`, `icon`, `grain` (+ `title`). One icon, centred, in white (near-blac
 await renderImage({ recipe: 'mark', seed: 'podcast', icon: 'lucide:music', background: 'gradient' });
 ```
 
-![mark](docs/mark.webp)
+![mark](https://raw.githubusercontent.com/arraypress/covers/main/docs/mark.webp)
 
 ### Your own
 
