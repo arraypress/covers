@@ -17,10 +17,13 @@
 import { readFile } from 'node:fs/promises';
 import { attrs, esc, layerAttrs, num } from './svg.js';
 import { len, place, anchorAlign, unit, regionPx } from './geometry.js';
-import { toHex, mixOklab } from './color.js';
+import { toHex, mixOklab, toOklch, fromOklch } from './color.js';
 import { harfbuzz, loadFont, pickFont } from './fonts.js';
 import { layout, runPath } from './text.js';
 import { resolveIcon, parseSvgIcon } from './icons.js';
+import { gridPath } from './grid.js';
+import { diagram } from './diagram.js';
+import { paper, scribble } from './handmade.js';
 
 /**
  * Everything a layer renderer needs.
@@ -36,7 +39,7 @@ import { resolveIcon, parseSvgIcon } from './icons.js';
  * @property {any} [sharp] - The `sharp` module, when available.
  */
 
-/** @typedef {{ defs: string, body: string }} Markup */
+/** @typedef {{ defs: string, body: string, pad?: number, finest?: number }} Markup */
 
 /**
  * Wrap a body in the layer's opacity/blend group (only when needed).
@@ -141,9 +144,19 @@ export function radial(layer, ctx) {
 }
 
 /**
- * `mesh` — soft blurred blobs of colour over a base: the "mesh gradient"
- * look. Blob centres are spread around the canvas (a jittered ring, so
- * they don't clump), each a rotated ellipse, then the group is blurred.
+ * `mesh` — soft blurred fields of colour: the "mesh gradient" look.
+ *
+ * The default `sweep` arrangement lays a few large, elongated fields along
+ * one seeded direction, with centres free to sit beyond the frame, and
+ * blurs them more along that direction than across it (`streak`), which is
+ * how editorial gradients read: broad diagonal washes, not round spots.
+ * `ring` spreads rounder blobs around the centre instead.
+ *
+ * Under the fields sits a gradient across the sweep between its first two
+ * colours (`base: 'auto'`), so colour reaches every edge and corner and the
+ * page colour never shows through as a vignette. `tone` pulls every colour into a lightness and
+ * chroma band (OKLCH), keeping its hue: pastel palettes become clear
+ * mid-tones, and a dark palette can't fall to black between fields.
  *
  * @param {import('./index.js').MeshLayer} layer
  * @param {RenderContext} ctx
@@ -154,39 +167,143 @@ export function mesh(layer, ctx) {
   const max = Math.max(w, h);
   // A few hues read as a colour story; every hue at once reads as a rainbow.
   const pool = rng.shuffle(colorList(layer.colors, p.colors));
-  const colors = pool.slice(0, Math.max(1, layer.hues ?? (layer.colors?.length ? pool.length : 3)));
+  let colors = pool.slice(0, Math.max(1, layer.hues ?? (layer.colors?.length ? pool.length : 3)));
+  if (layer.tone) colors = colors.map((c) => toneColor(c, /** @type {any} */ (layer.tone)));
   const count = layer.blobs?.length ?? layer.count ?? 4;
-  const spread = layer.spread ?? 0.7;
-  const [smin, smax] = layer.size ?? [0.3, 0.52];
+  const sweep = (layer.arrangement ?? 'sweep') === 'sweep';
+  const spread = layer.spread ?? (sweep ? 1 : 0.7);
+  const [smin, smax] = layer.size ?? (sweep ? [0.42, 0.72] : [0.3, 0.52]);
   const blur = len(layer.blur, ctx.canvas, '11vmax');
+  const streak = Math.max(0.2, layer.streak ?? (sweep ? 1.5 : 1));
+  const angle = layer.angle ?? rng.range(0, 180);
   const phase = rng.range(0, Math.PI * 2);
 
   const blobs = [];
   for (let i = 0; i < count; i++) {
     const given = layer.blobs?.[i];
-    const ang = phase + (i / count) * Math.PI * 2 + rng.range(-0.45, 0.45);
-    const dist = spread * rng.range(0.45, 0.85);
     const rx = (given?.r ?? rng.range(smin, smax)) * max;
+    let cx;
+    let cy;
+    let squash;
+    let rot;
+    if (sweep) {
+      // Along the sweep (u) and across it (v), in units of the longer side,
+      // relative to the centre; then rotated into place by the group.
+      const t = count === 1 ? 0 : i / (count - 1) - 0.5;
+      const u = (t * 1.15 + rng.range(-0.12, 0.12)) * spread;
+      const v = rng.range(-0.32, 0.32) * spread;
+      cx = u * max;
+      cy = v * max;
+      squash = rng.range(0.26, 0.5);
+      rot = rng.range(-14, 14);
+    } else {
+      const ang = phase + (i / count) * Math.PI * 2 + rng.range(-0.45, 0.45);
+      const dist = spread * rng.range(0.45, 0.85);
+      cx = (0.5 + Math.cos(ang) * dist * 0.72) * w;
+      cy = (0.5 + Math.sin(ang) * dist * 0.72) * h;
+      squash = rng.range(0.55, 0.95);
+      rot = rng.range(0, 180);
+    }
     blobs.push({
-      cx: (given?.x ?? 0.5 + Math.cos(ang) * dist * 0.72) * w,
-      cy: (given?.y ?? 0.5 + Math.sin(ang) * dist * 0.72) * h,
+      cx: given?.x != null ? (sweep ? (given.x - 0.5) * w : given.x * w) : cx,
+      cy: given?.y != null ? (sweep ? (given.y - 0.5) * h : given.y * h) : cy,
       rx,
-      ry: rx * (given?.squash ?? rng.range(0.55, 0.95)),
-      rot: given?.rotate ?? rng.range(0, 180),
+      ry: rx * (given?.squash ?? squash),
+      rot: given?.rotate ?? rot,
       fill: given?.color ? toHex(given.color) : colors[i % colors.length],
       opacity: given?.opacity ?? 1,
     });
   }
 
   const id = `${ctx.id}b`;
+  let defs_extra = '';
+  const std = sweep ? `${num(blur * streak)} ${num(blur / streak)}` : num(blur);
   const defs = blur > 0
-    ? `<filter${attrs({ id, x: '-50%', y: '-50%', width: '200%', height: '200%', 'color-interpolation-filters': 'sRGB' })}><feGaussianBlur stdDeviation="${num(blur)}"/></filter>`
+    ? `<filter${attrs({ id, x: '-50%', y: '-50%', width: '200%', height: '200%', 'color-interpolation-filters': 'sRGB' })}><feGaussianBlur stdDeviation="${std}"/></filter>`
     : '';
-  const base = layer.base === null || layer.base === false ? '' : `<rect${attrs({ width: w, height: h, fill: color(layer.base, p.bg) })}/>`;
+  // The base: by default a gradient across the sweep between its first two
+  // colours (so the field is full-bleed and never muddy), else a flat fill.
+  let base = '';
+  if (layer.base !== null && layer.base !== false) {
+    if (layer.base === undefined || layer.base === 'auto') {
+      const reach = Math.hypot(w, h) / 2;
+      const gid = `${ctx.id}g`;
+      const ends = [colors[0], colors[1 % colors.length]];
+      defs_extra = `<linearGradient${attrs({ id: gid, gradientUnits: 'userSpaceOnUse', x1: 0, y1: -reach, x2: 0, y2: reach })}>${stops(ends, true)}</linearGradient>`;
+      base = `<g transform="translate(${num(w / 2)} ${num(h / 2)}) rotate(${num(sweep ? angle : 0)})"><rect${attrs({ x: -reach, y: -reach, width: reach * 2, height: reach * 2, fill: `url(#${gid})` })}/></g>`;
+    } else {
+      base = `<rect${attrs({ width: w, height: h, fill: layer.base === 'bg' ? p.bg : toHex(layer.base) })}/>`;
+    }
+  }
   const shapes = blobs
     .map((b) => `<ellipse${attrs({ cx: b.cx, cy: b.cy, rx: b.rx, ry: b.ry, fill: b.fill, opacity: b.opacity < 1 ? b.opacity : undefined, transform: `rotate(${num(b.rot)} ${num(b.cx)} ${num(b.cy)})` })}/>`)
     .join('');
-  return { defs, body: wrap(layer, `${base}<g${attrs({ filter: blur > 0 ? `url(#${id})` : undefined })}>${shapes}</g>`) };
+  let field = `<g${attrs({ filter: blur > 0 ? `url(#${id})` : undefined })}>${shapes}</g>`;
+  const reach = Math.hypot(w, h) / 2 + blur * 2;
+
+  // A fold: a second field meeting the first along a soft curve, with a
+  // sharper edge than the blur elsewhere and a faint sheen along it (silk).
+  if (layer.fold) {
+    const f = layer.fold === true ? {} : layer.fold;
+    const fc = f.color ? toHex(f.color) : colors[2 % colors.length];
+    const far = f.to ? toHex(f.to) : mixOklab(fc, colors[0], 0.35);
+    const at = (f.position ?? rng.range(-0.15, 0.2)) * max;
+    const bend = (f.bend ?? rng.range(-0.28, 0.28)) * max;
+    const v = [at - bend * 0.6, at + bend, at - bend, at + bend * 0.5];
+    const curve = `M${num(-reach)} ${num(v[0])}C${num(-reach / 3)} ${num(v[1])} ${num(reach / 3)} ${num(v[2])} ${num(reach)} ${num(v[3])}`;
+    const fid = `${ctx.id}f`;
+    const gid2 = `${ctx.id}fg`;
+    const soft = blur * (f.softness ?? 0.16);
+    defs_extra += `<filter${attrs({ id: fid, x: '-20%', y: '-20%', width: '140%', height: '140%' })}><feGaussianBlur stdDeviation="${num(soft * streak)} ${num(soft)}"/></filter>`
+      + `<linearGradient${attrs({ id: gid2, gradientUnits: 'userSpaceOnUse', x1: 0, y1: at, x2: 0, y2: reach })}>${stops([fc, far], true)}</linearGradient>`;
+    const sheen = f.sheen ?? 0.4;
+    field += `<g filter="url(#${fid})"><path${attrs({ d: `${curve}V${num(reach)}H${num(-reach)}Z`, fill: `url(#${gid2})` })}/>`
+      + (sheen > 0 ? `<path${attrs({ d: curve, fill: 'none', stroke: mixOklab(fc, '#ffffff', 0.55), 'stroke-width': blur * 0.5, opacity: sheen })}/>` : '')
+      + '</g>';
+  }
+
+  // Streaks: thin, long, light ellipses blurred hard along the sweep (motion).
+  const nStreaks = layer.streaks ?? 0;
+  if (nStreaks > 0) {
+    const sid = `${ctx.id}s`;
+    defs_extra += `<filter${attrs({ id: sid, x: '-50%', y: '-50%', width: '200%', height: '200%' })}><feGaussianBlur stdDeviation="${num(blur * 0.7)} ${num(blur * 0.05)}"/></filter>`;
+    let lines = '';
+    for (let i = 0; i < nStreaks; i++) {
+      const rx = rng.range(0.35, 0.8) * max;
+      lines += `<ellipse${attrs({
+        cx: rng.range(-0.45, 0.45) * max,
+        cy: rng.range(-0.4, 0.4) * max,
+        rx,
+        ry: rx * rng.range(0.04, 0.11),
+        fill: mixOklab(colors[i % colors.length], '#ffffff', rng.range(0, 0.3)),
+        opacity: num(rng.range(0.45, 0.85), 2),
+        transform: `rotate(${num(rng.range(-6, 6))})`,
+      })}/>`;
+    }
+    field += `<g filter="url(#${sid})">${lines}</g>`;
+  }
+
+  // The sweep's group is rotated, so its (anisotropic) blur runs along the sweep.
+  const placed = sweep ? `<g transform="translate(${num(w / 2)} ${num(h / 2)}) rotate(${num(angle)})">${field}</g>` : field;
+  // For renderImage: librsvg clips a filter's input to the canvas, so blur
+  // near an edge pulls in transparency. It renders this layer on a padded
+  // canvas instead (`pad`), at a reduced scale the softest detail allows.
+  const finest = Math.min(sweep ? blur / streak : blur, layer.fold ? blur * ((layer.fold === true ? undefined : layer.fold.softness) ?? 0.16) : Infinity, nStreaks > 0 ? blur * 0.05 : Infinity);
+  return { defs: defs + defs_extra, body: wrap(layer, `${base}${placed}`), pad: Math.ceil(3 * blur * (sweep ? Math.max(1, streak) : 1)), finest };
+}
+
+/**
+ * Pull a colour into a lightness / chroma band in OKLCH, keeping its hue.
+ * Greys (chroma under 0.02) keep their chroma, since their hue means nothing.
+ *
+ * @param {string} c - The colour.
+ * @param {{ l?: [number, number], c?: [number, number] }} band - Ranges to clamp into.
+ * @returns {string} `#rrggbb`.
+ */
+export function toneColor(c, band) {
+  const o = toOklch(c);
+  const clamp = (/** @type {number} */ v, /** @type {[number, number] | undefined} */ r) => (r ? Math.min(r[1], Math.max(r[0], v)) : v);
+  return fromOklch({ l: clamp(o.l, band.l), c: o.c < 0.02 ? o.c : clamp(o.c, band.c), h: o.h });
 }
 
 /**
@@ -369,9 +486,22 @@ export function grain(layer, ctx) {
   // Stretch the turbulence's narrow range to the full 0–1 and make it opaque.
   const contrast = '<feComponentTransfer><feFuncR type="linear" slope="2.2" intercept="-0.6"/><feFuncG type="linear" slope="2.2" intercept="-0.6"/><feFuncB type="linear" slope="2.2" intercept="-0.6"/><feFuncA type="linear" slope="0" intercept="1"/></feComponentTransfer>';
   const defs = `<filter${attrs({ id, x: 0, y: 0, width: '100%', height: '100%', filterUnits: 'userSpaceOnUse', 'color-interpolation-filters': 'sRGB' })}><feTurbulence${attrs({ type: 'fractalNoise', baseFrequency: num(0.9 / size, 3), numOctaves: 2, seed, stitchTiles: 'stitch' })}/>${gray}${contrast}</filter>`;
-  const body = `<rect${attrs({ width: ctx.width, height: ctx.height, filter: `url(#${id})`, opacity: amount, style: `mix-blend-mode:${layer.blend ?? 'overlay'}` })}/>`;
-  return { defs, body: layer.opacity != null && layer.opacity < 1 ? `<g opacity="${num(layer.opacity)}">${body}</g>` : body };
+  let mask;
+  let maskDefs = '';
+  if (layer.vary === 'edges') {
+    // Heavier toward the edges and corners, like spray paint.
+    const mid = `${ctx.id}nm`;
+    maskDefs = `<radialGradient${attrs({ id: `${mid}g`, gradientUnits: 'userSpaceOnUse', cx: ctx.width / 2, cy: ctx.height / 2, r: Math.hypot(ctx.width, ctx.height) / 2 })}><stop offset="0" stop-color="#fff" stop-opacity="${num(VARY_FLOOR, 3)}"/><stop offset="1" stop-color="#fff"/></radialGradient>`
+      + `<mask${attrs({ id: mid, maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: ctx.width, height: ctx.height })}><rect${attrs({ width: ctx.width, height: ctx.height, fill: `url(#${mid}g)` })}/></mask>`;
+    mask = `url(#${mid})`;
+  }
+  const body = `<rect${attrs({ width: ctx.width, height: ctx.height, filter: `url(#${id})`, opacity: Math.min(1, amount * (layer.vary === 'edges' ? VARY_PEAK : 1)), mask, style: `mix-blend-mode:${layer.blend ?? 'overlay'}` })}/>`;
+  return { defs: defs + maskDefs, body: layer.opacity != null && layer.opacity < 1 ? `<g opacity="${num(layer.opacity)}">${body}</g>` : body };
 }
+
+/** `grain.vary: 'edges'`: the centre's share of the edge strength, and the edge's multiple of `amount`. */
+export const VARY_FLOOR = 0.35;
+export const VARY_PEAK = 1.8;
 
 /**
  * `pattern` — a line texture: `grid`, `dots`, `lines`, `rings` or `waves`,
@@ -391,6 +521,9 @@ export function pattern(layer, ctx) {
   const size = Math.max(2, len(layer.size, ctx.canvas, kind === 'dots' ? '3.2vmin' : kind === 'rings' ? '7vmin' : '8.33vmin'));
   const stroke = len(layer.stroke, ctx.canvas, kind === 'dots' ? '0.22vmin' : '0.1vmin');
   const col = color(layer.color, p.text);
+  const dash = layer.dash === 'dotted' ? `0 ${num(stroke * 4)}` : layer.dash === 'dashed' || layer.dash === true ? `${num(stroke * 4)} ${num(stroke * 5)}`
+    : Array.isArray(layer.dash) ? layer.dash.map((d) => num(len(d, ctx.canvas))).join(' ') : undefined;
+  const dashAttrs = dash ? { 'stroke-dasharray': dash, 'stroke-linecap': layer.dash === 'dotted' ? 'round' : undefined } : {};
   const cx = (layer.center?.x ?? 0.5) * w;
   const cy = (layer.center?.y ?? 0.5) * h;
   let shapes = '';
@@ -400,13 +533,18 @@ export function pattern(layer, ctx) {
     const angle = kind === 'lines' ? layer.angle ?? 0 : 0;
     const d = [];
     if (angle === 0) {
-      for (let y = cy % size; y <= h; y += size) d.push(`M0 ${num(y)}H${num(w)}`);
-      if (kind === 'grid') for (let x = cx % size; x <= w; x += size) d.push(`M${num(x)} 0V${num(h)}`);
-      shapes = `<path${attrs({ d: d.join(''), fill: 'none', stroke: col, 'stroke-width': stroke })}/>`;
+      // Rows and columns: every `size` from the centre, or `divisions` equal
+      // cells (inner lines only); broken wherever they cross a `gaps` region.
+      const n = layer.divisions;
+      const ys = n ? Array.from({ length: n - 1 }, (_, k) => ((k + 1) * h) / n) : range(cy % size, h, size);
+      const xs = kind !== 'grid' ? [] : n ? Array.from({ length: n - 1 }, (_, k) => ((k + 1) * w) / n) : range(cx % size, w, size);
+      const gaps = (layer.gaps ?? []).map((g) => regionPx(g, ctx.canvas));
+      d.push(gridPath(xs, ys, w, h, gaps));
+      shapes = `<path${attrs({ d: d.join(''), fill: 'none', stroke: col, 'stroke-width': stroke, ...dashAttrs })}/>`;
     } else {
       const reach = Math.hypot(w, h) / 2;
       for (let y = -Math.ceil(reach / size) * size; y <= reach; y += size) d.push(`M${num(-reach)} ${num(y)}H${num(reach)}`);
-      shapes = `<path${attrs({ d: d.join(''), fill: 'none', stroke: col, 'stroke-width': stroke, transform: `translate(${num(cx)} ${num(cy)}) rotate(${num(angle)})` })}/>`;
+      shapes = `<path${attrs({ d: d.join(''), fill: 'none', stroke: col, 'stroke-width': stroke, ...dashAttrs, transform: `translate(${num(cx)} ${num(cy)}) rotate(${num(angle)})` })}/>`;
     }
   } else if (kind === 'dots') {
     const id = `${ctx.id}p`;
@@ -415,7 +553,7 @@ export function pattern(layer, ctx) {
   } else if (kind === 'rings') {
     const reach = Math.hypot(Math.max(cx, w - cx), Math.max(cy, h - cy));
     for (let r = size; r <= reach; r += size) shapes += `<circle${attrs({ cx, cy, r })}/>`;
-    shapes = `<g${attrs({ fill: 'none', stroke: col, 'stroke-width': stroke })}>${shapes}</g>`;
+    shapes = `<g${attrs({ fill: 'none', stroke: col, 'stroke-width': stroke, ...dashAttrs })}>${shapes}</g>`;
   } else if (kind === 'waves') {
     const wavelength = len(layer.wavelength, ctx.canvas, size * 3.2);
     const amp = len(layer.amplitude, ctx.canvas, size * 0.22);
@@ -430,7 +568,7 @@ export function pattern(layer, ctx) {
       }
       d.push(line);
     }
-    shapes = `<path${attrs({ d: d.join(''), fill: 'none', stroke: col, 'stroke-width': stroke, 'stroke-linecap': 'round' })}/>`;
+    shapes = `<path${attrs({ d: d.join(''), fill: 'none', stroke: col, 'stroke-width': stroke, 'stroke-linecap': 'round', ...dashAttrs })}/>`;
   } else {
     throw new TypeError(`Unknown pattern kind "${kind}" (grid, dots, lines, rings, waves)`);
   }
@@ -444,6 +582,18 @@ export function pattern(layer, ctx) {
     body = `<g clip-path="url(#${ctx.id}r)">${body}</g>`;
   }
   return { defs, body: layer.blend ? `<g style="mix-blend-mode:${esc(layer.blend)}">${body}</g>` : body };
+}
+
+/**
+ * `[from, from + step, …]` up to `to`.
+ *
+ * @param {number} from @param {number} to @param {number} step
+ * @returns {number[]}
+ */
+function range(from, to, step) {
+  const out = [];
+  for (let v = from; v <= to; v += step) out.push(v);
+  return out;
 }
 
 /**
@@ -775,4 +925,4 @@ export function frame(layer, ctx) {
 }
 
 /** Every layer type, by name. */
-export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame });
+export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame, diagram, paper, scribble });

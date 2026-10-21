@@ -1,0 +1,191 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "cutout",
+  "description": "A flat matte field (or a hand-cut panel on the page colour) with cut-paper shapes and a hand-drawn icon or node graph.",
+  "params": {
+    "panel": false,
+    "shapes": null,
+    "graph": false,
+    "stroke": null
+  },
+  "vars": {
+    "field": {
+      "tone": [
+        "@accent",
+        {
+          "l": [
+            0.52,
+            0.64
+          ],
+          "c": [
+            0.05,
+            0.11
+          ]
+        }
+      ]
+    },
+    "count": {
+      "if": {
+        "shapes": null
+      },
+      "then": {
+        "if": "panel",
+        "then": 0,
+        "else": 3
+      },
+      "else": "{shapes}"
+    },
+    "ink": {
+      "if": {
+        "stroke": "light"
+      },
+      "then": "#faf9f5",
+      "else": {
+        "if": {
+          "stroke": "dark"
+        },
+        "then": "#141413",
+        "else": {
+          "if": "panel",
+          "then": "#faf9f5",
+          "else": {
+            "if": "graph",
+            "then": "#141413",
+            "else": {
+              "if": {
+                "shapes": 0
+              },
+              "then": "#faf9f5",
+              "else": "#141413"
+            }
+          }
+        }
+      }
+    },
+    "type": {
+      "readable": [
+        {
+          "if": "panel",
+          "then": "@bg",
+          "else": "$field"
+        },
+        4.5,
+        "white"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid",
+      "color": {
+        "if": "panel",
+        "then": "@bg",
+        "else": "$field"
+      }
+    },
+    {
+      "id": "panel",
+      "type": "paper",
+      "when": "panel",
+      "items": [
+        {
+          "kind": "rect",
+          "x": 0.5,
+          "y": 0.5,
+          "width": {
+            "mul": [
+              "@width",
+              0.64
+            ]
+          },
+          "height": {
+            "mul": [
+              "@height",
+              0.6
+            ]
+          }
+        }
+      ],
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 1,
+        "height": 1
+      },
+      "color": "$field",
+      "wobble": 0.3
+    },
+    {
+      "id": "shapes",
+      "type": "paper",
+      "count": "$count",
+      "region": {
+        "x": 0.24,
+        "y": 0.22,
+        "width": 0.52,
+        "height": 0.56
+      }
+    },
+    {
+      "id": "icon",
+      "type": "scribble",
+      "when": {
+        "not": "graph"
+      },
+      "icon": "{icon}",
+      "color": "$ink",
+      "size": {
+        "if": "panel",
+        "then": "34vmin",
+        "else": "44vmin"
+      },
+      "stroke": "1.6vmin"
+    },
+    {
+      "id": "graph",
+      "type": "scribble",
+      "when": "graph",
+      "graph": true,
+      "color": "$ink",
+      "size": "52vmin",
+      "stroke": "1.7vmin"
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.035
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.066
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.048
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "$type",
+          "content": "{label}"
+        }
+      },
+      "color": "$type"
+    }
+  ]
+}

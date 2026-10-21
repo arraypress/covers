@@ -5,6 +5,7 @@
  */
 
 import { mixOklab } from '../../src/color.js';
+import { createRng } from '../../src/rng.js';
 
 /**
  * The text content of a string-or-object option.
@@ -54,43 +55,44 @@ function titleLayer(o, c, style) {
  * @param {RecipeContext} c
  * @returns {import('./index.js').Layer[]}
  */
+/**
+ * The mesh's tone band. Without a title: the reference's clear mid-tones.
+ * With one: a band the palette's text clears 4.5:1 on.
+ */
+const tone = (o, c) => (!contentOf(o.title) ? { l: [0.55, 0.85], c: [0.12, 0.22] }
+  : c.palette.mode === 'dark' ? { l: [0.34, 0.5], c: [0.12, 0.22] } : { l: [0.66, 0.82], c: [0.13, 0.2] });
+
+/** The full-bleed field both mesh recipes share; folds and streaks are per seed. */
+const meshField = (o, c) => {
+  // With a title, no folds or streaks: their light edges would cut its contrast.
+  const r = createRng(`${c.seed}:recipe:mesh`);
+  const titled = Boolean(contentOf(o.title));
+  return { id: 'mesh', type: 'mesh', count: 4, blur: '11vmax', size: [0.45, 0.8], streak: 1.8, tone: tone(o, c), fold: titled ? false : r.pick([false, false, true]), streaks: titled ? 0 : r.pick([0, 0, 0, 6]), hues: r.pick([2, 2, 3]) };
+};
+
+/** The title's label, in the title's colour (muted can't read on a mid-tone field). */
+const textLabel = (t, c) => t.map((l) => ({ ...l, label: l.label ? { color: c.palette.text, ...l.label } : undefined }));
+
 export function aurora(o, c) {
+  const vary = createRng(`${c.seed}:recipe:grain`).pick(['edges', null]);
   return [
     { id: 'bg', type: 'solid' },
-    { id: 'mesh', type: 'mesh', count: 5, blur: '13vmax', size: [0.32, 0.56], spread: 0.85 },
-    { id: 'grain', type: 'grain', amount: 0.085 },
-    ...titleLayer(o, c, {}),
+    meshField(o, c),
+    { id: 'grain', type: 'grain', amount: 0.09, vary },
+    ...textLabel(titleLayer(o, c, {}), c),
   ];
 }
 
-/**
- * `gridTitle` — a mesh under a fine grid that fades out from the centre,
- * grain, and a headline in the lower left (the openai.com/news look).
- *
- * @param {import('./index.js').RecipeOptions} o
- * @param {RecipeContext} c
- * @returns {import('./index.js').Layer[]}
- */
 export function gridTitle(o, c) {
-  const dark = c.palette.mode === 'dark';
   return [
     { id: 'bg', type: 'solid' },
-    { id: 'mesh', type: 'mesh', count: 4, blur: '10vmax', size: [0.3, 0.5], spread: 0.9 },
-    { id: 'grid', type: 'pattern', kind: 'grid', size: c.u / 12, opacity: dark ? 0.16 : 0.13, fade: 'edges' },
-    { id: 'grain', type: 'grain', amount: 0.075 },
-    ...titleLayer(o, c, {}),
+    meshField(o, c),
+    { id: 'grid', type: 'pattern', kind: 'grid', divisions: 4, stroke: '0.3vmin', dash: 'dotted', color: '#ffffff', opacity: 0.6 },
+    { id: 'grain', type: 'grain', amount: 0.08 },
+    ...textLabel(titleLayer(o, c, {}), c),
   ];
 }
 
-/**
- * `iconTile` — an icon on a raised tile, on a soft tint of the accent with
- * a quiet glow and rings behind (JournalGrid's look, refined). With a
- * `title`, the tile moves to the upper left and the title sets below.
- *
- * @param {import('./index.js').RecipeOptions} o
- * @param {RecipeContext} c
- * @returns {import('./index.js').Layer[]}
- */
 export function iconTile(o, c) {
   const p = c.palette;
   const dark = p.mode === 'dark';

@@ -140,17 +140,29 @@ export interface MeshLayer extends BaseLayer {
   colors?: Color[];
   /** How many distinct colours to use (default 3 from the palette; all of `colors` when given). */
   hues?: number;
-  /** Number of blobs. Default 4. */
+  /** Number of fields. Default 4. */
   count?: number;
+  /** `'sweep'` (default): long fields along one direction, centres free to leave the frame. `'ring'`: rounder blobs round the centre. */
+  arrangement?: 'sweep' | 'ring';
+  /** Sweep direction, degrees. Default seeded. */
+  angle?: number;
+  /** How much more a sweep blurs along its direction than across. Default 1.5. */
+  streak?: number;
   /** Blur std deviation. Default `'11vmax'`. */
   blur?: Length;
-  /** How far blobs wander from the centre, 0–1. Default 0.7. */
+  /** How far fields wander, 0–1. Default 1 (sweep), 0.7 (ring). */
   spread?: number;
-  /** Radius range, fractions of the longer side. Default `[0.3, 0.52]`. */
+  /** Radius range, fractions of the longer side. Default `[0.42, 0.72]` (sweep), `[0.3, 0.52]` (ring). */
   size?: [number, number];
-  /** Fill under the blobs. Default `palette.bg`; `null` for none. */
-  base?: Color | null | false;
-  /** Place blobs explicitly (overrides `count`). */
+  /** Pull every colour into an OKLCH lightness / chroma band, keeping its hue. */
+  tone?: { l?: [number, number]; c?: [number, number] };
+  /** A second field meeting the first along a soft curve, with a sharper edge and a faint sheen (silk). */
+  fold?: boolean | { color?: Color; to?: Color; position?: number; bend?: number; softness?: number; sheen?: number };
+  /** Thin light motion streaks along the sweep. Default 0. */
+  streaks?: number;
+  /** Under the fields: `'auto'` (default, a gradient across the sweep between the first two colours), `'bg'`, a colour, or `null`. */
+  base?: 'auto' | 'bg' | Color | null | false;
+  /** Place fields explicitly (overrides `count`). */
   blobs?: MeshBlob[];
 }
 
@@ -206,6 +218,8 @@ export interface GrainLayer extends BaseLayer {
   size?: number;
   /** Default true. */
   monochrome?: boolean;
+  /** `'edges'`: heavier toward the edges and corners (spray paint). */
+  vary?: 'edges' | null;
   /** Default `'overlay'`. In raster output: normal, multiply, screen, overlay, soft-light. */
   blend?: 'normal' | 'multiply' | 'screen' | 'overlay' | 'soft-light';
 }
@@ -231,6 +245,12 @@ export interface PatternLayer extends BaseLayer {
   amplitude?: Length;
   /** Fade out with a mask. Default `'none'`. */
   fade?: 'none' | 'radial' | 'edges' | 'top' | 'bottom' | 'left' | 'right';
+  /** Dashed or dotted lines (or `[on, off]` lengths). */
+  dash?: 'dashed' | 'dotted' | true | [Length, Length];
+  /** Grid / lines: N equal cells (inner lines only) instead of `size`. */
+  divisions?: number;
+  /** Regions (fractions) the lines break around. */
+  gaps?: Region[];
   region?: Region;
 }
 
@@ -378,12 +398,92 @@ export interface FrameLayer extends BaseLayer {
   fill?: Color;
 }
 
+export interface DiagramNode {
+  /** Iconify name or raw SVG; the spark when left out. */
+  icon?: string;
+  /** Default `'square'` (`'circle'` in the square layout, `'none'` in the hub). */
+  shape?: 'square' | 'circle' | 'none';
+  size?: Length;
+  /** Corner brackets around the node. */
+  brackets?: boolean;
+}
+
+export interface DiagramLayer extends BaseLayer {
+  type: 'diagram';
+  /** One icon, drawn large as line art (shortcut for one node). */
+  icon?: string;
+  /** For a single icon. Default `'none'`. */
+  shape?: 'square' | 'circle' | 'none';
+  nodes?: DiagramNode[];
+  /** Default from the node count. */
+  layout?: 'single' | 'row' | 'triangle' | 'square' | 'stack' | 'hub' | null;
+  /** `true`: straight arrows; `'loop'`: also an elbow back (row); `'both'`: there and back (triangle); `'cycle'` (square). */
+  arrows?: boolean | 'loop' | 'both' | 'cycle' | 'merge' | null;
+  size?: Length;
+  gap?: Length;
+  /** Default `'0.3vmin'`. */
+  stroke?: Length;
+  /** Default white. */
+  color?: Color;
+  radius?: Length;
+  /** Icon size inside a tile, 0–1. Default 0.44. */
+  iconScale?: number;
+  position?: Point;
+  /** A dotted grid (4×4 cells) that breaks around the drawing. */
+  grid?: boolean | { divisions?: number; opacity?: number; stroke?: Length; color?: Color; pad?: Length };
+}
+
+export interface PaperItem {
+  kind?: 'rect' | 'square' | 'circle' | 'blob' | 'arch' | 'pill';
+  /** Centre, fractions of the region. */
+  x?: number;
+  y?: number;
+  width?: Length;
+  height?: Length;
+  size?: Length;
+  rotate?: number;
+  color?: Color;
+}
+
+export interface PaperLayer extends BaseLayer {
+  type: 'paper';
+  /** Shapes in the collage. Default 4. */
+  count?: number;
+  /** Default `'mixed'`. */
+  kind?: 'mixed' | 'rect' | 'square' | 'circle' | 'blob' | 'arch' | 'pill';
+  /** Default `#faf9f5`. */
+  color?: Color;
+  /** Default the middle 60%. */
+  region?: Region;
+  items?: PaperItem[];
+  /** How rough the cut edges are, 0–1. Default 0.5. */
+  wobble?: number;
+}
+
+export interface ScribbleLayer extends BaseLayer {
+  type: 'scribble';
+  /** An icon to re-draw by hand (Iconify name or raw SVG); the spark when left out. */
+  icon?: string;
+  /** A hand-drawn node graph instead: `true` or `{ nodes, dot }`. */
+  graph?: boolean | { nodes?: number; dot?: number };
+  /** Default `#faf9f5`. */
+  color?: Color;
+  /** Default `'1.3vmin'`. */
+  stroke?: Length;
+  /** Default `'46vmin'`. */
+  size?: Length;
+  position?: Point;
+  /** 0–1. Default 0.5. */
+  wobble?: number;
+}
+
 export type Layer =
+  | DiagramLayer | PaperLayer | ScribbleLayer
   | SolidLayer | LinearLayer | RadialLayer | MeshLayer | StripesLayer | ImageLayer
   | GrainLayer | PatternLayer | ShapesLayer | IconLayer | TextLayer | FrameLayer;
 
 /** Built-in recipe names. */
-export type RecipeName = 'aurora' | 'gridTitle' | 'iconTile' | 'bigType' | 'stripes' | 'duotone' | 'mark';
+export type RecipeName = 'aurora' | 'gridTitle' | 'iconTile' | 'bigType' | 'stripes' | 'duotone' | 'mark' | 'diagram' | 'cutout';
 
 /** What a recipe function receives besides the options. */
 export interface RecipeContext {
@@ -411,6 +511,7 @@ export type RecipeValue =
   | { mix: [RecipeValue, RecipeValue, RecipeValue] | [RecipeValue, RecipeValue, RecipeValue, 'oklab' | 'oklch'] }
   | { readable: RecipeValue }
   | { gradientUnder: [RecipeValue, RecipeValue, RecipeValue] }
+  | { tone: [RecipeValue, RecipeValue] }
   | { pick: RecipeValue[] }
   | { range: [RecipeValue, RecipeValue] }
   | { int: [RecipeValue, RecipeValue] }
@@ -473,6 +574,18 @@ export interface RecipeOptions {
   angle?: number;
   /** `mark` gradient colours. Default the accent → a mix toward the palette's second colour. */
   colors?: Color[];
+  /** `diagram` nodes, layout and arrows (see {@link DiagramLayer}). */
+  nodes?: DiagramNode[];
+  layout?: DiagramLayer['layout'];
+  arrows?: DiagramLayer['arrows'];
+  /** `cutout`: a hand-cut panel on the page colour instead of a full field. */
+  panel?: boolean;
+  /** `cutout`: paper shapes (default 3, none on a panel). */
+  shapes?: number;
+  /** `cutout`: a hand-drawn node graph instead of an icon. */
+  graph?: boolean;
+  /** `cutout`: line colour, light (paper) or dark (ink). Default from the composition. */
+  stroke?: 'light' | 'dark';
   /** `mark` icon colour. `'auto'` (default): white whenever it clears 3:1 against everything under the icon, else near-black. */
   iconColor?: 'auto' | 'white' | 'black' | Color;
   /** Any recipe layer by id: `mesh`, `grid`, `grain`, `bg`, `glow`, `rings`, `wash`, `stripes`, `spot`, `scrim`… */

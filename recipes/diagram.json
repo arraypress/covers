@@ -1,0 +1,91 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "diagram",
+  "description": "White line-art over the gradient field: one icon, or nodes in outlined tiles joined by arrows, with a dotted grid that breaks around them (the engineering-blog look).",
+  "params": {
+    "nodes": null,
+    "layout": null,
+    "arrows": null
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid"
+    },
+    {
+      "id": "mesh",
+      "type": "mesh",
+      "count": 4,
+      "blur": "11vmax",
+      "size": [
+        0.45,
+        0.8
+      ],
+      "streak": 1.8,
+      "tone": {
+        "l": [
+          0.4,
+          0.6
+        ],
+        "c": [
+          0.14,
+          0.24
+        ]
+      },
+      "fold": {
+        "pick": [
+          false,
+          false,
+          {
+            "sheen": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "diagram",
+      "type": "diagram",
+      "icon": "{icon}",
+      "nodes": "{nodes}",
+      "layout": "{layout}",
+      "arrows": "{arrows}",
+      "grid": true
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.07
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "when": "title",
+      "content": "{title}",
+      "anchor": "bottom-left",
+      "weight": 500,
+      "size": {
+        "mul": [
+          "@u",
+          0.066
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@u",
+          0.048
+        ]
+      },
+      "lineHeight": 1.08,
+      "letterSpacing": -0.025,
+      "maxLines": 3,
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "#ffffff",
+          "content": "{label}"
+        }
+      },
+      "color": "#ffffff"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 /**
- * Render every recipe × 3 seeds × 2 palettes (light, dark) × 2 aspects to
+ * Render every recipe × its example seeds × palettes (light and dark, or the
+ * example's own) × 2 aspects to
  * `examples/out/`, with an `index.html` grid to eyeball them and one PNG
  * contact sheet per recipe.
  *
@@ -34,8 +35,34 @@ const markSeeds = [
   { seed: 'mark-compass', icon: 'lucide:compass', background: 'gradient' },
   { seed: 'mark-sparkles', icon: 'lucide:sparkles' },
 ];
-const seedsFor = (name) => (name === 'mark' ? markSeeds : seeds);
+// The OpenAI-style fields carry no title by default (the page sets it under the card).
+const fieldSeeds = [
+  { seed: 'field-notes-14' },
+  { seed: 'shipping-covers' },
+  { seed: 'state-of-the-stack-2026', title: 'The state of the stack, 2026', label: 'Research' },
+];
+// Diagrams and cut paper bring their own palettes.
+const diagramSeeds = [
+  { seed: 'storage', palette: 'dusk', layout: 'hub', nodes: [{ icon: 'lucide:globe' }, { icon: 'lucide:database' }, { icon: 'lucide:database' }, { icon: 'lucide:database' }] },
+  { seed: 'pipeline', palette: 'ocean', nodes: [{ icon: 'lucide:send' }, { icon: 'lucide:settings' }, { icon: 'lucide:cpu' }], arrows: 'loop' },
+  { seed: 'voice', palette: 'ink', layout: 'triangle', nodes: [{ icon: 'lucide:audio-lines' }, { icon: 'lucide:user' }, { icon: 'lucide:sparkles' }], arrows: 'both' },
+  { seed: 'agents', palette: 'dawn', layout: 'square', nodes: [{ icon: 'lucide:pencil' }, { icon: 'lucide:shapes' }, { icon: 'lucide:chart-line' }, { icon: 'lucide:wrench' }, { icon: 'lucide:terminal', shape: 'square' }] },
+  { seed: 'core-dump', palette: 'moss', layout: 'stack', nodes: [{ icon: 'lucide:list' }, { icon: 'lucide:cpu' }, { icon: 'lucide:triangle-alert' }] },
+  { seed: 'writing', palette: 'ember', icon: 'lucide:feather' },
+];
+const page = '#1f1e1d';
+const cutoutSeeds = [
+  { seed: 'graph', palette: { accent: '#8b80c9', bg: page }, graph: true },
+  { seed: 'cursor', palette: { accent: '#b5694f', bg: page }, panel: true, icon: 'lucide:mouse-pointer-2' },
+  { seed: 'leaf', palette: { accent: '#8a9a7b', bg: page }, icon: 'lucide:leaf', shapes: 0 },
+  { seed: 'compass', palette: { accent: '#c4a052', bg: page }, icon: 'lucide:compass' },
+  { seed: 'chat', palette: { accent: '#5f6f7f', bg: page }, panel: true, icon: 'lucide:message-circle' },
+  { seed: 'paper-graph', palette: 'paper', graph: true, shapes: 4 },
+  { seed: 'dusk-pen', palette: 'dusk', icon: 'lucide:pen-tool' },
+];
+const seedsFor = (name) => ({ mark: markSeeds, aurora: fieldSeeds, gridTitle: fieldSeeds, diagram: diagramSeeds, cutout: cutoutSeeds })[name] ?? seeds;
 const palettes = [['light', 'paper'], ['dark', 'dusk']];
+const palettesFor = (name) => (name === 'diagram' || name === 'cutout' ? [['set', undefined]] : palettes);
 const aspects = ['1:1', '16:9'];
 
 const rows = [];
@@ -43,11 +70,11 @@ const timings = [];
 for (const name of Object.keys(recipes)) {
   const tiles = [];
   for (const aspect of aspects) {
-    for (const [mode, palette] of palettes) {
+    for (const [mode, palette] of palettesFor(name)) {
       for (const s of seedsFor(name)) {
         const file = `${name}-${mode}-${aspect.replace(':', 'x')}-${s.seed}.webp`;
         const t = performance.now();
-        const buf = await renderImage({ recipe: name, palette, aspect, image: photo, ...s }, { format: 'webp' });
+        const buf = await renderImage({ recipe: name, palette, aspect, image: photo, ...s, ...(s.palette ? { palette: s.palette } : {}) }, { format: 'webp' });
         timings.push(performance.now() - t);
         await writeFile(join(out, file), buf);
         tiles.push({ file, buf, aspect, mode });
@@ -60,7 +87,7 @@ for (const name of Object.keys(recipes)) {
   const thumb = 360;
   const gap = 16;
   const heights = aspects.map((a) => Math.round(thumb / (a === '1:1' ? 1 : 16 / 9)));
-  const cols = palettes.length * seedsFor(name).length;
+  const cols = palettesFor(name).length * seedsFor(name).length;
   const sheetW = cols * thumb + (cols + 1) * gap;
   const sheetH = heights.reduce((a, b) => a + b, 0) + (aspects.length + 1) * gap;
   const composites = [];

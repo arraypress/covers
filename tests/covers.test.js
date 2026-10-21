@@ -10,7 +10,7 @@ import {
 } from '../src/index.js';
 import { layout } from '../src/text.js';
 import { harfbuzz, loadFont, bundledFonts, decodeFont } from '../src/fonts.js';
-import { contrastRatio } from '@arraypress/color-utils';
+import { contrastRatio, relativeLuminance } from '@arraypress/color-utils';
 
 const photo = await sharp({ create: { width: 64, height: 40, channels: 3, background: '#3366cc' } }).png().toBuffer();
 
@@ -90,6 +90,15 @@ const every = [
   { type: 'icon', path: 'M0 0h24v24H0z' },
   { type: 'text', content: 'Every layer', label: 'Test', background: { color: '#ffffff' } },
   { type: 'frame', radius: 12 },
+  { type: 'diagram', nodes: [{ icon: 'lucide:send' }, { icon: 'lucide:cpu' }, {}], arrows: 'loop', grid: true },
+  { type: 'diagram', layout: 'hub', nodes: [{ icon: 'lucide:globe' }, { icon: 'lucide:database' }, { icon: 'lucide:database' }] },
+  { type: 'diagram', layout: 'square', nodes: [{}, {}, {}, {}, { shape: 'square' }] },
+  { type: 'diagram', layout: 'triangle', nodes: [{}, {}, {}], arrows: 'both' },
+  { type: 'diagram', layout: 'stack', nodes: [{}, {}, {}] },
+  { type: 'paper', count: 5 },
+  { type: 'paper', items: [{ kind: 'arch', x: 0.3 }, { kind: 'pill', x: 0.7, width: 80, height: 30 }] },
+  { type: 'scribble', icon: 'lucide:compass' },
+  { type: 'scribble', graph: { nodes: 5 } },
 ];
 
 test('every layer type renders', async () => {
@@ -347,4 +356,29 @@ test('custom fonts: picked by family and weight; ArrayBuffer data hashes', async
   const inter700 = await renderSvg({ ...o, fonts: [], layers: [{ type: 'text', content: 'Display', weight: 700 }] });
   assert.equal(custom, inter700);
   assert.match(await coverKey(o), /^[0-9a-f]{40}$/);
+});
+
+test('mesh recipes: the title reads (4.5:1) on every preset, and colour reaches the edges', async () => {
+  const hex = (d, i) => '#' + [d[i], d[i + 1], d[i + 2]].map((v) => v.toString(16).padStart(2, '0')).join('');
+  for (const recipe of ['gridTitle', 'aurora']) {
+    for (const palette of Object.keys(palettes)) {
+      for (const seed of ['a', 'b', 'c']) {
+        const o = { recipe, palette, seed, width: 240, aspect: '16:9', grid: false, grain: false, title: { content: 'x', opacity: 0 } };
+        const { data, info } = await sharp(Buffer.from(await renderSvg(o))).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+        const text = resolvePalette(palette).text;
+        let worst = 21;
+        // The title's box: the lower-left two thirds, bottom third.
+        for (let y = Math.floor(info.height * 0.62); y < info.height; y += 3) {
+          for (let x = 0; x < Math.floor(info.width * 0.7); x += 3) worst = Math.min(worst, contrastRatio(text, hex(data, (y * info.width + x) * 3)));
+        }
+        assert.ok(worst >= 4.5, `${recipe} ${palette} ${seed}: title contrast ${worst.toFixed(2)}`);
+        // No vignette: the corners are as bright as the middle, give or take.
+        const lum = (x, y) => relativeLuminance(hex(data, (y * info.width + x) * 3));
+        const mid = lum(info.width >> 1, info.height >> 1);
+        const corners = [lum(0, 0), lum(info.width - 1, 0), lum(0, info.height - 1), lum(info.width - 1, info.height - 1)];
+        const bg = relativeLuminance(resolvePalette(palette).bg);
+        for (const c of corners) assert.ok(Math.abs(c - bg) > 0.02 || Math.abs(mid - bg) < 0.02, `${recipe} ${palette} ${seed}: a corner shows the page colour`);
+      }
+    }
+  }
 });

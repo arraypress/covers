@@ -1,7 +1,7 @@
 {
   "$schema": "../schema/recipe.schema.json",
   "name": "aurora",
-  "description": "A soft mesh of the palette's colours with grain, and an optional title.",
+  "description": "Full-bleed sweeps of the palette's colours, sometimes folded or streaked, with grain (the openai.com/news look). A title sets in the corner only when given.",
   "layers": [
     {
       "id": "bg",
@@ -10,18 +10,92 @@
     {
       "id": "mesh",
       "type": "mesh",
-      "count": 5,
-      "blur": "13vmax",
+      "count": 4,
+      "blur": "11vmax",
       "size": [
-        0.32,
-        0.56
+        0.45,
+        0.8
       ],
-      "spread": 0.85
+      "streak": 1.8,
+      "tone": {
+        "if": "title",
+        "then": {
+          "if": {
+            "mode": "dark"
+          },
+          "then": {
+            "l": [
+              0.34,
+              0.5
+            ],
+            "c": [
+              0.12,
+              0.22
+            ]
+          },
+          "else": {
+            "l": [
+              0.66,
+              0.82
+            ],
+            "c": [
+              0.13,
+              0.2
+            ]
+          }
+        },
+        "else": {
+          "l": [
+            0.55,
+            0.85
+          ],
+          "c": [
+            0.12,
+            0.22
+          ]
+        }
+      },
+      "fold": {
+        "if": "title",
+        "then": false,
+        "else": {
+          "pick": [
+            false,
+            false,
+            true
+          ]
+        }
+      },
+      "streaks": {
+        "if": "title",
+        "then": 0,
+        "else": {
+          "pick": [
+            0,
+            0,
+            0,
+            6
+          ]
+        }
+      },
+      "hues": {
+        "pick": [
+          2,
+          2,
+          3
+        ]
+      }
     },
     {
       "id": "grain",
       "type": "grain",
-      "amount": 0.085
+      "amount": 0.09,
+      "vary": {
+        "pick": [
+          "edges",
+          null
+        ]
+      }
     },
     {
       "id": "title",
@@ -45,7 +119,13 @@
       "lineHeight": 1.08,
       "letterSpacing": -0.025,
       "maxLines": 3,
-      "label": "{label}"
+      "label": {
+        "if": "label",
+        "then": {
+          "color": "@text",
+          "content": "{label}"
+        }
+      }
     }
   ]
 }

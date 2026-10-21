@@ -107,6 +107,24 @@
         },
         {
           "type": "object",
+          "description": "[color, { l: [min, max], c: [min, max] }]: the colour pulled into an OKLCH band, hue kept.",
+          "required": [
+            "tone"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "tone": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
           "description": "[colors, angle, size]: the colours a centred square of that size covers in a linear gradient.",
           "required": [
             "gradientUnder"
@@ -459,6 +477,9 @@
             "shapes",
             "icon",
             "text",
+            "diagram",
+            "paper",
+            "scribble",
             "frame"
           ]
         },
@@ -667,7 +688,7 @@
               },
               "spread": {
                 "$ref": "#/$defs/value",
-                "description": "0–1. Default 0.7."
+                "description": "0–1. Default 1 (sweep), 0.7 (ring)."
               },
               "size": {
                 "$ref": "#/$defs/value",
@@ -675,7 +696,31 @@
               },
               "base": {
                 "$ref": "#/$defs/value",
-                "description": "Fill under the blobs; null for none."
+                "description": "Fill under the fields: \"auto\" (a gradient across the sweep between the first two colours; default), \"bg\", a colour, or null."
+              },
+              "arrangement": {
+                "$ref": "#/$defs/value",
+                "description": "sweep (default: long fields along one direction) | ring"
+              },
+              "angle": {
+                "$ref": "#/$defs/value",
+                "description": "Sweep direction in degrees. Default seeded."
+              },
+              "streak": {
+                "$ref": "#/$defs/value",
+                "description": "How much more the sweep blurs along than across. Default 1.5."
+              },
+              "tone": {
+                "$ref": "#/$defs/value",
+                "description": "{ l: [min, max], c: [min, max] }: pull colours into an OKLCH band."
+              },
+              "fold": {
+                "$ref": "#/$defs/value",
+                "description": "true or { color, to, position, bend, softness, sheen }: a second field meeting the first along a soft curve."
+              },
+              "streaks": {
+                "$ref": "#/$defs/value",
+                "description": "Thin light motion streaks along the sweep. Default 0."
               },
               "blobs": {
                 "$ref": "#/$defs/value",
@@ -706,6 +751,12 @@
                 "spread",
                 "size",
                 "base",
+                "arrangement",
+                "angle",
+                "streak",
+                "tone",
+                "fold",
+                "streaks",
                 "blobs",
                 "opacity",
                 "blend",
@@ -910,6 +961,10 @@
                 "$ref": "#/$defs/value",
                 "description": "Default true."
               },
+              "vary": {
+                "$ref": "#/$defs/value",
+                "description": "\"edges\": heavier toward the edges (spray paint)."
+              },
               "opacity": {
                 "$ref": "#/$defs/value",
                 "description": "0–1."
@@ -931,6 +986,7 @@
                 "amount",
                 "size",
                 "monochrome",
+                "vary",
                 "opacity",
                 "blend",
                 "seed"
@@ -987,6 +1043,18 @@
                 "$ref": "#/$defs/value",
                 "description": "none | radial | edges | top | bottom | left | right"
               },
+              "dash": {
+                "$ref": "#/$defs/value",
+                "description": "dotted | dashed | [on, off] lengths."
+              },
+              "divisions": {
+                "$ref": "#/$defs/value",
+                "description": "Grid/lines: N equal cells (inner lines only) instead of size."
+              },
+              "gaps": {
+                "$ref": "#/$defs/value",
+                "description": "[{ x, y, width, height }] fractions the lines break around."
+              },
               "region": {
                 "$ref": "#/$defs/value",
                 "description": "Fractions."
@@ -1018,6 +1086,9 @@
                 "wavelength",
                 "amplitude",
                 "fade",
+                "dash",
+                "divisions",
+                "gaps",
                 "region",
                 "opacity",
                 "blend",
@@ -1348,6 +1419,250 @@
                 "transform",
                 "label",
                 "background",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "diagram"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "icon": {
+                "$ref": "#/$defs/value",
+                "description": "One icon (Iconify name or raw SVG), drawn as white line-art."
+              },
+              "nodes": {
+                "$ref": "#/$defs/value",
+                "description": "[{ icon, shape: square | circle | none, size, brackets }]"
+              },
+              "layout": {
+                "$ref": "#/$defs/value",
+                "description": "single | row | triangle | square | stack | hub"
+              },
+              "arrows": {
+                "$ref": "#/$defs/value",
+                "description": "true | false | loop | both | cycle"
+              },
+              "shape": {
+                "$ref": "#/$defs/value",
+                "description": "For a single icon: none (default) | square | circle."
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Node size. Length."
+              },
+              "gap": {
+                "$ref": "#/$defs/value",
+                "description": "Space between nodes. Length."
+              },
+              "stroke": {
+                "$ref": "#/$defs/value",
+                "description": "Line width. Default \"0.3vmin\"."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Line colour. Default white."
+              },
+              "radius": {
+                "$ref": "#/$defs/value",
+                "description": "Tile corner radius."
+              },
+              "iconScale": {
+                "$ref": "#/$defs/value",
+                "description": "Icon size inside a tile, 0–1. Default 0.44."
+              },
+              "position": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } centre, fractions."
+              },
+              "grid": {
+                "$ref": "#/$defs/value",
+                "description": "true or { divisions, opacity, stroke, color, pad }: a dotted grid that breaks around the drawing."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "icon",
+                "nodes",
+                "layout",
+                "arrows",
+                "shape",
+                "size",
+                "gap",
+                "stroke",
+                "color",
+                "radius",
+                "iconScale",
+                "position",
+                "grid",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "paper"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "count": {
+                "$ref": "#/$defs/value",
+                "description": "Shapes in the collage. Default 4."
+              },
+              "kind": {
+                "$ref": "#/$defs/value",
+                "description": "mixed | rect | square | circle | blob | arch | pill"
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default #faf9f5 (paper)."
+              },
+              "region": {
+                "$ref": "#/$defs/value",
+                "description": "Where the collage sits, fractions."
+              },
+              "items": {
+                "$ref": "#/$defs/value",
+                "description": "[{ kind, x, y, width, height, size, rotate, color }] placed in the region."
+              },
+              "wobble": {
+                "$ref": "#/$defs/value",
+                "description": "How rough the cut edges are, 0–1. Default 0.5."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "count",
+                "kind",
+                "color",
+                "region",
+                "items",
+                "wobble",
+                "opacity",
+                "blend",
+                "seed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "scribble"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "icon": {
+                "$ref": "#/$defs/value",
+                "description": "An icon to re-draw by hand (Iconify name or raw SVG)."
+              },
+              "graph": {
+                "$ref": "#/$defs/value",
+                "description": "true or { nodes, dot }: a hand-drawn node graph instead."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default #faf9f5."
+              },
+              "stroke": {
+                "$ref": "#/$defs/value",
+                "description": "Line width. Default \"1.3vmin\"."
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Length. Default \"46vmin\"."
+              },
+              "position": {
+                "$ref": "#/$defs/value",
+                "description": "{ x, y } centre, fractions."
+              },
+              "wobble": {
+                "$ref": "#/$defs/value",
+                "description": "0–1. Default 0.5."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "icon",
+                "graph",
+                "color",
+                "stroke",
+                "size",
+                "position",
+                "wobble",
                 "opacity",
                 "blend",
                 "seed"

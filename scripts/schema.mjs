@@ -17,6 +17,7 @@ import { LAYER_OPTIONS, COMMON } from '../src/layer-options.js';
 const OPS = {
   mix: ['Mix two colours: [a, b, t] in OKLab, or [a, b, t, "oklch"] (hue the short way, stays vivid).', { type: 'array', minItems: 3, maxItems: 4, items: { $ref: '#/$defs/value' } }],
   readable: ['White, or near-black on a light colour: c, [c, light, dark], or [backgrounds, ratio, prefer] (prefer "white" | "black" | a colour when it clears ratio on every background).', { $ref: '#/$defs/value' }],
+  tone: ['[color, { l: [min, max], c: [min, max] }]: the colour pulled into an OKLCH band, hue kept.', { type: 'array', minItems: 2, maxItems: 2, items: { $ref: '#/$defs/value' } }],
   gradientUnder: ['[colors, angle, size]: the colours a centred square of that size covers in a linear gradient.', { type: 'array', minItems: 3, maxItems: 3, items: { $ref: '#/$defs/value' } }],
   pick: ['One item, seeded.', { type: 'array', minItems: 1, items: { $ref: '#/$defs/value' } }],
   range: ['A float in [min, max), seeded.', { type: 'array', minItems: 2, maxItems: 2, items: { $ref: '#/$defs/value' } }],

@@ -24,15 +24,26 @@ const base = {
   image: join(root, 'examples', 'photo.jpg'),
 };
 
+const page = '#1f1e1d';
+/** Per recipe: the light and dark examples. */
+const examples = {
+  aurora: [{ palette: 'paper', seed: 'notes-light' }, { palette: 'dusk', seed: 'notes-dark' }],
+  gridTitle: [{ palette: 'paper', seed: 'notes-light' }, { palette: 'dusk', seed: 'shipping-covers' }],
+  mark: [{ palette: 'paper', seed: 'notes-light', icon: 'lucide:music', background: 'gradient' }, { palette: 'ink', seed: 'notes-dark', icon: 'simple-icons:github' }],
+  diagram: [
+    { palette: 'ocean', seed: 'pipeline', nodes: [{ icon: 'lucide:send' }, { icon: 'lucide:settings' }, { icon: 'lucide:cpu' }], arrows: 'loop' },
+    { palette: 'dusk', seed: 'storage', layout: 'hub', nodes: [{ icon: 'lucide:globe' }, { icon: 'lucide:database' }, { icon: 'lucide:database' }, { icon: 'lucide:database' }] },
+  ],
+  cutout: [
+    { palette: { accent: '#8b80c9', bg: page }, seed: 'graph', graph: true },
+    { palette: { accent: '#b5694f', bg: page }, seed: 'cursor', panel: true, icon: 'lucide:mouse-pointer-2' },
+  ],
+};
+
 for (const recipe of Object.keys(recipes)) {
-  const tiles = await Promise.all(
-    [['paper', 'notes-light'], ['dusk', 'notes-dark']].map(([palette, seed], i) => renderImage(
-      recipe === 'mark'
-        ? { ...base, title: undefined, label: undefined, recipe, palette: i ? 'ink' : 'paper', seed, icon: i ? 'simple-icons:github' : 'lucide:music', background: i ? 'solid' : 'gradient' }
-        : { ...base, recipe, palette, seed },
-      { format: 'png' },
-    )),
-  );
+  const pair = examples[recipe] ?? [{ palette: 'paper', seed: 'notes-light' }, { palette: 'dusk', seed: 'notes-dark' }];
+  const untitled = ['aurora', 'gridTitle', 'mark', 'diagram', 'cutout'].includes(recipe);
+  const tiles = await Promise.all(pair.map((ex) => renderImage({ ...base, ...(untitled ? { title: undefined, label: undefined } : {}), recipe, ...ex }, { format: 'png' })));
   await sharp({ create: { width: 1616, height: 450, channels: 3, background: '#ffffff' } })
     .composite([{ input: tiles[0], left: 0, top: 0 }, { input: tiles[1], left: 816, top: 0 }])
     .webp({ quality: 80 })

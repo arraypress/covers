@@ -51,7 +51,7 @@ export function contentOf(v) {
 }
 
 /** The built-in recipe names (each is `recipes/<name>.json`). */
-const BUILT_IN = ['aurora', 'gridTitle', 'iconTile', 'bigType', 'stripes', 'duotone', 'mark'];
+const BUILT_IN = ['aurora', 'gridTitle', 'iconTile', 'bigType', 'stripes', 'duotone', 'mark', 'diagram', 'cutout'];
 
 /** Every built-in recipe, by name, defined from its JSON document. */
 export const recipes = Object.freeze(Object.fromEntries(BUILT_IN.map((name) => [

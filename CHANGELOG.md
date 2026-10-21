@@ -12,13 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`cover()`, `renderSvg()`, `renderImage()`**: build-time cover images from a
   seed. The same input gives byte-identical SVG; each layer has its own seeded
   stream, so adding one never reshuffles the others.
-- **Twelve layer types**: `solid`, `linear`, `radial`, `mesh`, `stripes`,
+- **`diagram`, `paper` and `scribble` layers; `diagram` and `cutout` recipes.** White line-art nodes and arrows with a dotted grid that breaks around them (layouts single / row / triangle / square / stack / hub); cut-paper shapes with scissor-cut edges; icons re-drawn by hand (SVG shapes flattened, wobbled, stroked at a drifting width) and hand-drawn node graphs. White line-art is held to 3:1 and both cutout inks to 3:1 on every preset.
+- **`mesh` gains `fold` (a silk-edged second field) and `streaks`; `grain` gains `vary: 'edges'`; `pattern` gains `divisions` and `gaps`; JSON gains `tone`.** `aurora`/`gridTitle` carry no title unless given (the reference sets it under the card), vary folds/streaks per seed, and use a dotted 4×4 grid. `renderImage` renders mesh layers padded (librsvg clips filters to the canvas, which made the fields fade at the edges).
+- **`mesh` is full-bleed**: long fields along a seeded direction (`arrangement: 'sweep'`, `angle`, `streak`), a gradient base between its colours (`base: 'auto'`) so the page colour never shows round the edges, and `tone` to pull colours into an OKLCH band. `aurora` and `gridTitle` retuned against openai.com/news (measured: no vignette, mid-tone fields, dashed grid); a test holds their titles to 4.5:1 on every preset. `pattern` gains `dash`.
+- **Fifteen layer types** (with `diagram`, `paper`, `scribble` above): `solid`, `linear`, `radial`, `mesh`, `stripes`,
   `image` (cover/contain, smart crop, duotone, tint), `grain`, `pattern`
   (grid, dots, lines, rings, waves, with fades), `shapes`, `icon` (Iconify
   names, raw SVG or a path, optional tile), `text` (HarfBuzz-shaped outlines,
   balanced wrapping, `maxLines` with ellipsis, `minSize` fit, label, pill) and
   `frame`.
-- **Seven recipes**: `aurora`, `gridTitle`, `iconTile`, `bigType`, `stripes`,
+- **Nine recipes** (with `diagram` and `cutout` below): `aurora`, `gridTitle`, `iconTile`, `bigType`, `stripes`,
   `duotone` and `mark` (one icon on the accent or an accent gradient; white
   whenever it clears WCAG 1.4.11's 3:1 against every colour under the icon,
   else near-black; `iconColor` to force one). Any layer is customised by id: a string sets its

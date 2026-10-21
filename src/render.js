@@ -12,7 +12,7 @@ import { createRng } from './rng.js';
 import { resolveSize, unit, len } from './geometry.js';
 import { resolvePalette } from './palette.js';
 import { bundledFonts } from './fonts.js';
-import { LAYERS } from './layers.js';
+import { LAYERS, VARY_FLOOR, VARY_PEAK } from './layers.js';
 import { recipes, applyOverrides } from './recipes.js';
 import { defineRecipe } from './json-recipe.js';
 import { attrs, esc, num } from './svg.js';
@@ -90,7 +90,7 @@ export function cover(options) {
  *
  * @param {import('./index.js').Cover} c - The cover.
  * @param {any} sharp - The sharp module, or undefined.
- * @returns {Promise<{ layer: import('./index.js').Layer, defs: string, body: string, ctx: import('./layers.js').RenderContext }[]>}
+ * @returns {Promise<{ layer: import('./index.js').Layer, defs: string, body: string, pad?: number, finest?: number, ctx: import('./layers.js').RenderContext }[]>}
  */
 async function renderLayers(c, sharp) {
   const fonts = [...c.fonts, ...bundledFonts()];
@@ -210,14 +210,16 @@ export async function renderImage(input, options = {}) {
   const parts = await renderLayers(c, sharp);
   const { width, height } = c;
 
-  // Split the stack at grain layers: [svg] grain [svg] grain [svg] …
-  /** @type {{ svg?: typeof parts, grain?: typeof parts[number] }[]} */
+  // Split the stack: [svg] grain [svg] …, with each heavily blurred layer
+  // (a mesh) in a step of its own, rendered padded (see `soft` below).
+  /** @type {{ svg?: typeof parts, grain?: typeof parts[number], soft?: typeof parts[number] }[]} */
   const steps = [];
   let run = [];
   for (const part of parts) {
-    if (part.layer.type === 'grain') {
+    const kind = part.layer.type === 'grain' ? 'grain' : part.pad ? 'soft' : null;
+    if (kind) {
       if (run.length) steps.push({ svg: run });
-      steps.push({ grain: part });
+      steps.push({ [kind]: part });
       run = [];
     } else {
       run.push(part);
@@ -230,7 +232,26 @@ export async function renderImage(input, options = {}) {
   /** @type {Buffer | undefined} */
   let pixels;
   for (const step of steps) {
-    if (step.svg) {
+    if (step.soft) {
+      // librsvg clips a filter's input to the canvas, so a blur near an edge
+      // fades to transparent there (a vignette). Render the layer on a canvas
+      // padded by 3σ (so the edge sees the colour beyond it), at the smallest
+      // scale that keeps its finest blur above ~1.6px, then crop and upscale.
+      const pad = /** @type {number} */ (step.soft.pad);
+      const scale = Math.min(1, Math.max(0.2, 1.6 / (step.soft.finest || 1)));
+      const pw = width + pad * 2;
+      const ph = height + pad * 2;
+      const doc = `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(pw * scale)}" height="${Math.round(ph * scale)}" viewBox="${-pad} ${-pad} ${pw} ${ph}"><defs>${step.soft.defs}</defs>${step.soft.body}</svg>`;
+      const layerPx = await sharp(Buffer.from(doc))
+        .extract({ left: Math.round(pad * scale), top: Math.round(pad * scale), width: Math.max(1, Math.round(width * scale)), height: Math.max(1, Math.round(height * scale)) })
+        .resize(width, height, { kernel: 'cubic', fit: 'fill' })
+        .ensureAlpha()
+        .raw()
+        .toBuffer();
+      pixels = pixels
+        ? await sharp(pixels, { raw }).composite([{ input: layerPx, raw }]).raw().toBuffer()
+        : layerPx;
+    } else if (step.svg) {
       const svg = svgOf(step.svg);
       pixels = pixels
         ? await sharp(pixels, { raw }).composite([{ input: svg }]).raw().toBuffer()
@@ -238,7 +259,7 @@ export async function renderImage(input, options = {}) {
     } else if (step.grain) {
       pixels ??= Buffer.alloc(width * height * 4);
       const g = /** @type {import('./index.js').GrainLayer} */ (step.grain.layer);
-      applyGrain(pixels, await noise(sharp, width, height, g, step.grain.ctx.rng), g);
+      applyGrain(pixels, { ...(await noise(sharp, width, height, g, step.grain.ctx.rng)), width, height }, g);
     }
   }
   let image = sharp(pixels ?? Buffer.alloc(width * height * 4), { raw });
@@ -313,21 +334,14 @@ const BLENDS = /** @type {Record<string, (b: number, s: number) => number>} */ (
 });
 
 /**
- * Blend grain into RGBA pixels in place, at the layer's `amount`.
- * Done in JS rather than with sharp's `composite` blend modes, whose
- * overlay with a partly transparent layer flattens the noise to almost
- * nothing (measured σ 0.5 against the expected 5.9 on mid grey).
+ * A 256×256 lookup (backdrop × noise → result) for one blend and strength:
+ * cheaper than the blend maths per pixel.
  *
- * @param {Buffer} pixels - RGBA pixels (modified).
- * @param {{ data: Buffer, channels: 1 | 3 }} grain - Noise from {@link noise}.
- * @param {import('./index.js').GrainLayer} layer - The grain layer.
- * @returns {void}
+ * @param {(b: number, s: number) => number} blend
+ * @param {number} amount
+ * @returns {Uint8Array}
  */
-function applyGrain(pixels, grain, layer) {
-  const amount = Math.max(0, Math.min(1, (layer.amount ?? 0.08) * (layer.opacity ?? 1)));
-  const blend = BLENDS[layer.blend ?? 'overlay'];
-  if (!blend) throw new TypeError(`Unknown grain blend "${layer.blend}" (${Object.keys(BLENDS).join(', ')})`);
-  // A 256×256 table per channel value pair is cheaper than the maths per pixel.
+function grainTable(blend, amount) {
   const table = new Uint8Array(65536);
   for (let b = 0; b < 256; b++) {
     for (let s = 0; s < 256; s++) {
@@ -335,7 +349,42 @@ function applyGrain(pixels, grain, layer) {
       table[(b << 8) | s] = Math.round((cb + amount * (blend(cb, s / 255) - cb)) * 255);
     }
   }
+  return table;
+}
+
+/**
+ * Blend grain into RGBA pixels in place, at the layer's `amount`.
+ * Done in JS rather than with sharp's `composite` blend modes, whose
+ * overlay with a partly transparent layer flattens the noise to almost
+ * nothing (measured σ 0.5 against the expected 5.9 on mid grey).
+ *
+ * @param {Buffer} pixels - RGBA pixels (modified).
+ * @param {{ data: Buffer, channels: 1 | 3, width: number, height: number }} grain - Noise from {@link noise}, and the canvas size.
+ * @param {import('./index.js').GrainLayer} layer - The grain layer.
+ * @returns {void}
+ */
+function applyGrain(pixels, grain, layer) {
+  const amount = Math.max(0, Math.min(1, (layer.amount ?? 0.08) * (layer.opacity ?? 1)));
+  const blend = BLENDS[layer.blend ?? 'overlay'];
+  if (!blend) throw new TypeError(`Unknown grain blend "${layer.blend}" (${Object.keys(BLENDS).join(', ')})`);
+  const table = grainTable(blend, amount);
   const { data, channels } = grain;
+  if (layer.vary === 'edges') {
+    // Heavier toward the edges: per-pixel strength from the centre out, as in the SVG mask.
+    const { width, height } = grain;
+    const peak = Math.min(1, amount * VARY_PEAK);
+    const tables = Array.from({ length: 17 }, (_, k) => grainTable(blend, peak * (VARY_FLOOR + (1 - VARY_FLOOR) * (k / 16))));
+    const half = Math.hypot(width, height) / 2;
+    for (let y = 0, i = 0, j = 0; y < height; y++) {
+      for (let x = 0; x < width; x++, i += 4, j += channels) {
+        const t = tables[Math.min(16, Math.round((Math.hypot(x - width / 2, y - height / 2) / half) * 16))];
+        pixels[i] = t[(pixels[i] << 8) | data[j]];
+        pixels[i + 1] = t[(pixels[i + 1] << 8) | data[j + (channels === 3 ? 1 : 0)]];
+        pixels[i + 2] = t[(pixels[i + 2] << 8) | data[j + (channels === 3 ? 2 : 0)]];
+      }
+    }
+    return;
+  }
   for (let i = 0, j = 0; i < pixels.length; i += 4, j += channels) {
     pixels[i] = table[(pixels[i] << 8) | data[j]];
     pixels[i + 1] = table[(pixels[i + 1] << 8) | data[j + (channels === 3 ? 1 : 0)]];
