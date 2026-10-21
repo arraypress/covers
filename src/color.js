@@ -13,7 +13,7 @@
  * @module color
  */
 
-import { hexToRgb, rgbToHex } from '@arraypress/color-utils';
+import { hexToRgb, rgbToHex, contrastRatio } from '@arraypress/color-utils';
 
 /**
  * Parse a CSS colour to `#rrggbb`.
@@ -195,4 +195,52 @@ export function mixOklch(a, b, t) {
   const qh = q.c < 0.02 ? p.h : q.h;
   const dh = ((qh - ph + 540) % 360) - 180;
   return fromOklch({ l: p.l + (q.l - p.l) * t, c: p.c + (q.c - p.c) * t, h: (ph + dh * t + 360) % 360 });
+}
+
+/** Near-black used wherever white doesn't read. */
+export const NEAR_BLACK = '#111111';
+
+/**
+ * A colour for a mark on one or more backgrounds: `prefer` when it clears
+ * `ratio` against every one of them, else whichever of white and
+ * near-black has the better worst case.
+ *
+ * For icons and other non-text marks WCAG 1.4.11 asks 3:1 (text needs
+ * 4.5:1), so `onBackground(bg, 3, 'white')` keeps white on mid-tone fills
+ * where a text rule would flip to black.
+ *
+ * @param {string | string[]} backgrounds - The colour(s) under the mark.
+ * @param {number} [ratio=3] - Contrast to clear.
+ * @param {'white' | 'black' | string} [prefer='white'] - The colour to use when it clears `ratio`.
+ * @returns {string} `#rrggbb`.
+ *
+ * @example
+ * onBackground('#e0533d', 3, 'white'); // '#ffffff' (3.6:1)
+ * onBackground('#ffe14d', 3, 'white'); // '#111111'
+ */
+export function onBackground(backgrounds, ratio = 3, prefer = 'white') {
+  const bgs = [].concat(/** @type {any} */ (backgrounds)).map(toHex);
+  const want = prefer === 'white' ? '#ffffff' : prefer === 'black' ? NEAR_BLACK : toHex(prefer);
+  const worst = (/** @type {string} */ c) => Math.min(...bgs.map((b) => contrastRatio(c, b)));
+  if (worst(want) >= ratio) return want;
+  return worst('#ffffff') >= worst(NEAR_BLACK) ? '#ffffff' : NEAR_BLACK;
+}
+
+/**
+ * The colour of an eased multi-stop gradient at `t` (0–1), the way the
+ * `linear` and `radial` layers draw it (smoothstep between stops, in OKLab).
+ *
+ * @param {string[]} colors - Two or more stops, evenly spaced.
+ * @param {number} t - Position along the gradient.
+ * @param {boolean} [ease=true] - Ease between stops.
+ * @returns {string} `#rrggbb`.
+ */
+export function gradientAt(colors, t, ease = true) {
+  const list = colors.map(toHex);
+  if (list.length === 1) return list[0];
+  const n = list.length - 1;
+  const x = Math.max(0, Math.min(1, t)) * n;
+  const i = Math.min(n - 1, Math.floor(x));
+  const f = x - i;
+  return mixOklab(list[i], list[i + 1], ease ? f * f * (3 - 2 * f) : f);
 }

@@ -24,6 +24,8 @@
  * | `"{title}"` | a param or content option (`title`, `label`, `icon`, `image`); `"{opt.x}"` any cover option. A whole-string token keeps the value's type; inside a longer string it's interpolated. |
  * | `{ "mix": [a, b, t, space?] }` | two colours mixed in OKLab (or `"oklch"`: hue the short way, stays vivid) |
  * | `{ "readable": c }` | white, or near-black on a light colour (`[c, light, dark]` to choose) |
+ * | `{ "readable": [bgs, ratio, prefer] }` | `prefer` (`"white"`, `"black"`, a colour) if it clears `ratio` on every background, else the better of white / near-black |
+ * | `{ "gradientUnder": [colors, angle, size] }` | the colours a centred square of `size` covers in a linear gradient |
  * | `{ "pick": [...] }`, `{ "range": [min, max] }`, `{ "int": [min, max] }` | seeded choices |
  * | `{ "add" \| "sub" \| "mul" \| "div" \| "min" \| "max": [a, b, …] }` | arithmetic; lengths like `"54vw"` become pixels |
  * | `{ "ramp": [from, to, steps, amount?] }` | `steps` colours from `from` toward `to` |
@@ -46,7 +48,7 @@ import { readFileSync } from 'node:fs';
 import { readableText } from '@arraypress/color-utils';
 import { createRng } from './rng.js';
 import { len } from './geometry.js';
-import { toHex, mixOklab, mixOklch } from './color.js';
+import { toHex, mixOklab, mixOklch, onBackground, gradientAt } from './color.js';
 import { LAYERS } from './layers.js';
 import { LAYER_OPTIONS, COMMON } from './layer-options.js';
 
@@ -59,7 +61,7 @@ const CANVAS = ['width', 'height', 'u'];
 
 /** Value operators, by name, with their argument arity. */
 const OPS = /** @type {Record<string, [number, number]>} */ ({
-  mix: [3, 4], readable: [1, 3], pick: [1, Infinity], range: [2, 2], int: [2, 2],
+  mix: [3, 4], readable: [1, 3], gradientUnder: [3, 3], pick: [1, Infinity], range: [2, 2], int: [2, 2],
   add: [1, Infinity], sub: [2, Infinity], mul: [1, Infinity], div: [2, 2], min: [1, Infinity], max: [1, Infinity],
   ramp: [3, 4], taper: [2, 2], reverse: [1, 1],
 });
@@ -279,7 +281,20 @@ function op(s, name, raw) {
   const args = /** @type {any[]} */ ([].concat(resolve(s, raw)));
   const nums = () => args.map((a) => (typeof a === 'number' ? a : len(a, s.c)));
   switch (name) {
-    case 'readable': return readableText(toHex(args[0]), args[1] ? toHex(args[1]) : '#ffffff', args[2] ? toHex(args[2]) : '#111111');
+    case 'readable': {
+      // [backgrounds, ratio, prefer]: prefer a colour that clears a ratio (3 for icons).
+      if (typeof args[1] === 'number') return onBackground(args[0], args[1], args[2] ?? 'white');
+      return readableText(toHex(args[0]), args[1] ? toHex(args[1]) : '#ffffff', args[2] ? toHex(args[2]) : '#111111');
+    }
+    case 'gradientUnder': {
+      // The colours a centred square of `size` sits on in a linear gradient at `angle`.
+      const [colors, angle, size] = args;
+      const box = typeof size === 'number' ? size : len(size, s.c);
+      const a = (Number(angle) * Math.PI) / 180;
+      const line = Math.abs(s.c.width * Math.sin(a)) + Math.abs(s.c.height * Math.cos(a));
+      const half = ((box / 2) * (Math.abs(Math.sin(a)) + Math.abs(Math.cos(a)))) / line;
+      return [-1, -0.5, 0, 0.5, 1].map((k) => gradientAt(colors, 0.5 + k * half));
+    }
     case 'mix': {
       const mixer = args[3] === 'oklch' ? mixOklch : mixOklab;
       if (args[3] !== undefined && args[3] !== 'oklch' && args[3] !== 'oklab') throw new TypeError(`Recipe "${s.name}": mix space must be "oklab" or "oklch"`);

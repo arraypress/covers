@@ -1,11 +1,13 @@
 {
   "$schema": "../schema/recipe.schema.json",
   "name": "mark",
-  "description": "One icon, centred, in white (or near-black on a light colour), on the accent or an accent gradient.",
+  "description": "One icon, centred, on the accent or an accent gradient: white whenever white clears 3:1 (WCAG 1.4.11, non-text) against everything under it, else near-black.",
   "params": {
     "background": "solid",
     "angle": 135,
-    "colors": null
+    "colors": null,
+    "size": "24vmin",
+    "iconColor": "auto"
   },
   "vars": {
     "gradient": {
@@ -25,18 +27,65 @@
     },
     "ink": {
       "if": {
-        "background": "gradient"
+        "iconColor": "auto"
       },
       "then": {
-        "readable": {
-          "mix": [
-            "$gradient.0",
-            "$gradient.1",
-            0.5
+        "if": {
+          "background": "gradient"
+        },
+        "then": {
+          "readable": [
+            {
+              "gradientUnder": [
+                "$gradient",
+                "{angle}",
+                "{size}"
+              ]
+            },
+            3,
+            "white"
+          ]
+        },
+        "else": {
+          "readable": [
+            "@accent",
+            3,
+            "white"
           ]
         }
       },
-      "else": "@onAccent"
+      "else": {
+        "if": {
+          "iconColor": "white"
+        },
+        "then": "#ffffff",
+        "else": {
+          "if": {
+            "iconColor": "black"
+          },
+          "then": "#111111",
+          "else": "{iconColor}"
+        }
+      }
+    },
+    "type": {
+      "if": {
+        "background": "gradient"
+      },
+      "then": {
+        "readable": [
+          "$gradient",
+          4.5,
+          "$ink"
+        ]
+      },
+      "else": {
+        "readable": [
+          "@accent",
+          4.5,
+          "$ink"
+        ]
+      }
     }
   },
   "layers": [
@@ -78,7 +127,7 @@
           24
         ]
       },
-      "size": "24vmin",
+      "size": "{size}",
       "color": "$ink"
     },
     {
@@ -111,11 +160,11 @@
       "label": {
         "if": "label",
         "then": {
-          "color": "$ink",
+          "color": "$type",
           "content": "{label}"
         }
       },
-      "color": "$ink"
+      "color": "$type"
     }
   ]
 }

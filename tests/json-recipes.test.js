@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import sharp from 'sharp';
 import Ajv from 'ajv/dist/2020.js';
-import { cover, renderSvg, defineRecipe, loadRecipe, recipes, resolvePalette } from '../src/index.js';
+import { cover, renderSvg, defineRecipe, loadRecipe, recipes, resolvePalette, mixOklab } from '../src/index.js';
 import { jsRecipes } from './fixtures/js-recipes.js';
 import { schemaText } from '../scripts/schema.mjs';
 
@@ -246,4 +246,43 @@ test('mark: gradient background, overrides, raw SVG icons and an optional title'
   const svg = await renderSvg({ recipe: 'mark', seed: 'm', icon: '<svg viewBox="0 0 10 10"><rect width="10" height="10" fill="currentColor"/></svg>' });
   assert.match(svg, /<rect width="10" height="10" fill="currentColor"\/>/);
   assert.match(await renderSvg({ recipe: 'mark', seed: 'm', icon: 'simple-icons:github', aspect: '16:9' }), /viewBox="0 0 24 24"/);
+});
+
+test('mark: white whenever it clears 3:1 (WCAG 1.4.11) under the whole icon', () => {
+  const icon = (o) => cover({ recipe: 'mark', seed: 'm', ...o }).layers.find((l) => l.type === 'icon').color;
+  // paper's orange → pink gradient: a text rule (4.5:1 at the midpoint) chose black; 3:1 keeps white.
+  assert.equal(icon({ palette: 'paper', background: 'gradient' }), '#ffffff');
+  assert.equal(icon({ palette: 'paper' }), '#ffffff');
+  assert.equal(icon({ palette: { accent: '#ffe14d' }, background: 'gradient' }), '#111111');
+  // One light stop under the icon is enough to fall back to near-black.
+  assert.equal(icon({ background: 'gradient', colors: ['#1d4ed8', '#fef08a'] }), '#111111');
+  assert.equal(icon({ background: 'gradient', colors: ['#1d4ed8', '#7c3aed'] }), '#ffffff');
+  assert.equal(icon({ palette: { accent: '#ffe14d' }, iconColor: 'white' }), '#ffffff');
+  assert.equal(icon({ palette: { accent: '#2563eb' }, iconColor: 'black' }), '#111111');
+  assert.equal(icon({ iconColor: '#ff0000' }), '#ff0000');
+});
+
+test('readable with a ratio and gradientUnder', () => {
+  const l = one({
+    type: 'shapes',
+    colors: [
+      { readable: ['#e0533d', 3, 'white'] },
+      { readable: ['#e0533d', 4.5, 'white'] },
+      { readable: [['#000000', '#ffff00'], 3, 'white'] },
+      { readable: ['#777777', 3, 'black'] },
+    ],
+    items: { gradientUnder: [['#000000', '#ffffff'], 90, '10vmin'] },
+  }, { width: 1000, height: 1000 });
+  assert.deepEqual(l.colors, ['#ffffff', '#111111', '#111111', '#111111']);
+  assert.equal(l.items.length, 5);
+  assert.equal(l.items[2], mixOklab('#000000', '#ffffff', 0.5), 'the middle sample is the gradient midpoint');
+  assert.ok(l.items[0] < l.items[2] && l.items[2] < l.items[4], 'samples run along the gradient');
+});
+
+test('mark: the title is held to 4.5:1 even where the icon gets 3:1', () => {
+  const c = cover({ recipe: 'mark', seed: 'm', background: 'gradient', colors: ['#e0533d', '#e0533d'], title: 'Hello', label: 'L' });
+  assert.equal(c.layers.find((l) => l.type === 'icon').color, '#ffffff', 'white icon at 3.8:1');
+  const title = c.layers.find((l) => l.type === 'text');
+  assert.equal(title.color, '#111111', 'white text would fail 4.5:1');
+  assert.equal(title.label.color, '#111111');
 });

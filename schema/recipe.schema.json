@@ -94,7 +94,7 @@
         },
         {
           "type": "object",
-          "description": "White, or near-black on a light colour: c or [c, light, dark].",
+          "description": "White, or near-black on a light colour: c, [c, light, dark], or [backgrounds, ratio, prefer] (prefer \"white\" | \"black\" | a colour when it clears ratio on every background).",
           "required": [
             "readable"
           ],
@@ -102,6 +102,24 @@
           "properties": {
             "readable": {
               "$ref": "#/$defs/value"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "[colors, angle, size]: the colours a centred square of that size covers in a linear gradient.",
+          "required": [
+            "gradientUnder"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "gradientUnder": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "$ref": "#/$defs/value"
+              }
             }
           }
         },

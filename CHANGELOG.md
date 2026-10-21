@@ -19,8 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   balanced wrapping, `maxLines` with ellipsis, `minSize` fit, label, pill) and
   `frame`.
 - **Seven recipes**: `aurora`, `gridTitle`, `iconTile`, `bigType`, `stripes`,
-  `duotone` and `mark` (one icon, white or near-black, on the accent or an
-  accent gradient). Any layer is customised by id: a string sets its
+  `duotone` and `mark` (one icon on the accent or an accent gradient; white
+  whenever it clears WCAG 1.4.11's 3:1 against every colour under the icon,
+  else near-black; `iconColor` to force one). Any layer is customised by id: a string sets its
   content, an object merges in, `false` removes it.
 - **JSON recipes**: `defineRecipe(json)`, `loadRecipe(path)`, or the document
   passed as `recipe`. Palette and canvas tokens (`@accent`, `@colors.1`,
@@ -31,7 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a JSON Schema ships as `@arraypress/covers/recipe.schema.json`. All seven
   built-ins are JSON (`recipes/*.json`), tested byte-identical to the
   original JavaScript recipes.
-- `palette.onAccent` and `mixOklch()`.
+- `palette.onAccent`, `mixOklch()`, `onBackground()` and `gradientAt()`; the
+  `readable` operator's `[backgrounds, ratio, prefer]` form and
+  `gradientUnder`.
 - **Palettes**: nine presets, `[bg, ...colors]` arrays, partial objects, and
   `derivePalette()` from a theme's tokens (OKLCH, text at 7:1).
 - **Inter** (Latin, 400/500/600/700, WOFF) bundled; any TTF/OTF/WOFF can be

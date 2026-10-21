@@ -410,6 +410,7 @@ export type RecipeValue =
   | { if: RecipeCondition; then: RecipeValue; else?: RecipeValue }
   | { mix: [RecipeValue, RecipeValue, RecipeValue] | [RecipeValue, RecipeValue, RecipeValue, 'oklab' | 'oklch'] }
   | { readable: RecipeValue }
+  | { gradientUnder: [RecipeValue, RecipeValue, RecipeValue] }
   | { pick: RecipeValue[] }
   | { range: [RecipeValue, RecipeValue] }
   | { int: [RecipeValue, RecipeValue] }
@@ -472,6 +473,8 @@ export interface RecipeOptions {
   angle?: number;
   /** `mark` gradient colours. Default the accent → a mix toward the palette's second colour. */
   colors?: Color[];
+  /** `mark` icon colour. `'auto'` (default): white whenever it clears 3:1 against everything under the icon, else near-black. */
+  iconColor?: 'auto' | 'white' | 'black' | Color;
   /** Any recipe layer by id: `mesh`, `grid`, `grain`, `bg`, `glow`, `rings`, `wash`, `stripes`, `spot`, `scrim`… */
   [layerId: string]: unknown;
 }
@@ -589,6 +592,10 @@ export function toOklch(color: Color): { l: number; c: number; h: number };
 export function fromOklch(lch: { l: number; c: number; h: number }): string;
 /** Mix two colours in OKLab. */
 export function mixOklab(a: Color, b: Color, t: number): string;
+/** `prefer` if it clears `ratio` on every background, else the better of white and near-black (3:1 suits icons, WCAG 1.4.11). */
+export function onBackground(backgrounds: Color | Color[], ratio?: number, prefer?: 'white' | 'black' | Color): string;
+/** The colour of an eased multi-stop gradient at t (0–1), as the gradient layers draw it. */
+export function gradientAt(colors: Color[], t: number, ease?: boolean): string;
 /** Mix two colours in OKLCH (hue the short way; stays vivid). */
 export function mixOklch(a: Color, b: Color, t: number): string;
 

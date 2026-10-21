@@ -64,7 +64,7 @@ const svg = await renderSvg({
 | `defineRecipe(json)`, `loadRecipe(path)` | A recipe from a JSON document or file (see [JSON recipes](#json-recipes)). |
 | `palettes`, `resolvePalette(input)`, `derivePalette(tokens)` | Palettes (see [Palettes](#palettes)). |
 | `registerIcons(iconifySet)` | Use an icon set without installing its package. |
-| `toHex`, `toOklch`, `fromOklch`, `mixOklab`, `mixOklch` | Colour helpers. |
+| `toHex`, `toOklch`, `fromOklch`, `mixOklab`, `mixOklch`, `onBackground`, `gradientAt` | Colour helpers (`onBackground(bgs, 3, 'white')` is the icon-contrast rule). |
 | `createRng(seed)`, `hashString(str)` | The seeded randomness, for custom recipes. |
 | `resolveSize`, `ASPECTS`, `MIME`, `DEFAULT_QUALITY`, `VERSION` | |
 
@@ -220,7 +220,9 @@ Layers `image`, `scrim`, `grain`, `title`. A photo (`image`: a path or bytes) ma
 ![duotone](https://raw.githubusercontent.com/arraypress/covers/main/docs/duotone.webp)
 
 ### `mark`
-Layers `bg`, `icon`, `grain` (+ `title`). One icon, centred, in white (near-black when the background is light) on the accent, or on a gradient with `background: 'gradient'` (135°, the accent toward the palette's second colour, mixed in OKLCH so it stays vivid; `angle` and `colors` override). `icon` is an Iconify name or raw SVG (the spark by default); the icon is `24vmin`; grain is 0.03 (`grain: false` removes it). A title appears bottom left only when given.
+Layers `bg`, `icon`, `grain` (+ `title`). One icon, centred, on the accent, or on a gradient with `background: 'gradient'` (135°, the accent toward the palette's second colour, mixed in OKLCH so it stays vivid; `angle` and `colors` override). `icon` is an Iconify name or raw SVG (the spark by default); `size` is `'24vmin'`; grain is 0.03 (`grain: false` removes it). A title appears bottom left only when given.
+
+`iconColor` is `'auto'` (default), `'white'`, `'black'` or a colour. Auto prefers **white** whenever white clears **3:1** (WCAG 1.4.11, non-text contrast; 4.5:1 is the rule for text) against everything under the icon: the fill, or for a gradient every colour across the icon's square (sampled along the gradient, not just its midpoint). Otherwise it's near-black. So a mid-tone orange-to-pink gradient keeps a white mark, and a yellow one gets a dark one. The title is text, so it keeps the icon's colour only where that clears 4.5:1 across the whole background.
 
 ```js
 await renderImage({ recipe: 'mark', seed: 'podcast', icon: 'lucide:music', background: 'gradient' });
@@ -305,6 +307,8 @@ A layer is any [layer](#layers) plus an optional `id` and `when`. Its option val
 | `"{title}"`, `"{label}"`, `"{icon}"`, `"{image}"`, `"{param}"`, `"{opt.anything}"` | A cover option. A whole-string token keeps the value's type (a number stays a number, a label object stays an object); inside longer text it's interpolated (`"Read {title}"`). An unset option drops the key. |
 | `{ "mix": [a, b, t] }`, `{ "mix": [a, b, t, "oklch"] }` | Two colours mixed in OKLab, or in OKLCH (hue the short way, so far-apart hues stay vivid). |
 | `{ "readable": c }`, `{ "readable": [c, light, dark] }` | White (or `light`), or near-black (or `dark`), whichever reads better on `c`. |
+| `{ "readable": [backgrounds, ratio, prefer] }` | `prefer` (`"white"`, `"black"` or a colour) when it clears `ratio` on every background (one colour or a list), else the better of white and near-black. `[c, 3, "white"]` is the icon rule. |
+| `{ "gradientUnder": [colors, angle, size] }` | The colours a centred square of `size` covers in a linear gradient (five samples, eased as drawn). Pair it with `readable`. |
 | `{ "pick": [...] }`, `{ "range": [min, max] }`, `{ "int": [min, max] }` | Seeded choices. |
 | `{ "add" / "sub" / "mul" / "div" / "min" / "max": [...] }` | Arithmetic. Lengths (`"54vw"`, `"12vmin"`) become px first. |
 | `{ "ramp": [from, to, steps, amount?] }` | `steps` colours from `from` toward `to` (`amount` of the way). |
