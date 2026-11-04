@@ -9,7 +9,7 @@ import { attrs, num, layerAttrs, esc } from './svg.js';
 import { len, regionPx } from './geometry.js';
 import { toHex } from './color.js';
 import { createRng } from './rng.js';
-import { encodePng, pngUri } from './png.js';
+import { encodePngAsync, pngUri } from './png.js';
 import { text as textLayer } from './layers.js';
 
 /** Classic risograph inks, by name (`'riso:pink'`). Approximations, not trademarks. */
@@ -126,7 +126,7 @@ export async function ink(layer, ctx) {
     for (let i = 0; i < px.length; i++) px[i] = rng.next() < hole ? 0 : 255;
     // Clump the holes a little (riso misses ink in specks, not single pixels).
     for (let i = 0; i < px.length; i++) if (px[i] === 0 && rng.next() < 0.5) px[(i + 1) % px.length] = 0;
-    defs += `<pattern${attrs({ id: `${id}t`, patternUnits: 'userSpaceOnUse', width: size, height: size })}><image${attrs({ width: size, height: size, href: pngUri(encodePng(px, size, size, 1)) })}/></pattern>`;
+    defs += `<pattern${attrs({ id: `${id}t`, patternUnits: 'userSpaceOnUse', width: size, height: size })}><image${attrs({ width: size, height: size, href: pngUri(await encodePngAsync(px, size, size, 1)) })}/></pattern>`;
     defs += `<mask${attrs({ id: `${id}tm`, maskUnits: 'userSpaceOnUse', ...bleed })}><rect${attrs({ ...bleed, fill: `url(#${id}t)` })}/></mask>`;
     inner = `<g mask="url(#${id}tm)">${inner}</g>`;
   } else if (texture === 'halftone') {
@@ -153,7 +153,7 @@ export async function ink(layer, ctx) {
         px[y * T + x] = Math.round((hit / 4) * 255);
       }
     }
-    defs += `<pattern${attrs({ id: `${id}t`, patternUnits: 'userSpaceOnUse', width: T, height: T })}><image${attrs({ width: T, height: T, href: pngUri(encodePng(px, T, T, 1)) })}/></pattern>`;
+    defs += `<pattern${attrs({ id: `${id}t`, patternUnits: 'userSpaceOnUse', width: T, height: T })}><image${attrs({ width: T, height: T, href: pngUri(await encodePngAsync(px, T, T, 1)) })}/></pattern>`;
     defs += `<mask${attrs({ id: `${id}tm`, maskUnits: 'userSpaceOnUse', ...bleed })}><rect${attrs({ ...bleed, fill: `url(#${id}t)` })}/></mask>`;
     inner = `<g mask="url(#${id}tm)">${inner}</g>`;
   }
@@ -242,9 +242,9 @@ const BAYER8 = (() => {
  *
  * @param {import('./index.js').DitherLayer} layer
  * @param {import('./layers.js').RenderContext} ctx
- * @returns {import('./layers.js').Markup}
+ * @returns {Promise<import('./layers.js').Markup>}
  */
-export function dither(layer, ctx) {
+export async function dither(layer, ctx) {
   const { width: w, height: h, rng, palette: p } = ctx;
   const cell = Math.max(1, Math.round(len(layer.cell, ctx.canvas, '0.9vmin')));
   const cw = Math.ceil(w / cell);
@@ -309,7 +309,7 @@ export function dither(layer, ctx) {
       px[i] = c[0]; px[i + 1] = c[1]; px[i + 2] = c[2];
     }
   }
-  const body = `<image${attrs({ x: 0, y: 0, width: cw * cell, height: chh * cell, preserveAspectRatio: 'none', 'image-rendering': 'optimizeSpeed', style: 'image-rendering:pixelated', href: pngUri(encodePng(px, cw, chh, 3)) })}/>`;
+  const body = `<image${attrs({ x: 0, y: 0, width: cw * cell, height: chh * cell, preserveAspectRatio: 'none', 'image-rendering': 'optimizeSpeed', style: 'image-rendering:pixelated', href: pngUri(await encodePngAsync(px, cw, chh, 3)) })}/>`;
   return { defs: '', body: wrap(layer, body) };
 }
 
@@ -515,7 +515,8 @@ export async function waveform(layer, ctx) {
   if (!peaks && layer.audio) {
     let gen;
     try {
-      gen = await import('@arraypress/waveform-gen');
+      const name = '@arraypress/waveform-gen';
+      gen = await import(/* @vite-ignore */ name);
     } catch {
       throw new Error('Decoding audio needs @arraypress/waveform-gen: npm install @arraypress/waveform-gen (or pass peaks)');
     }

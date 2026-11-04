@@ -1,0 +1,345 @@
+{
+  "$schema": "../../../../schema/recipe.schema.json",
+  "name": "smear-field",
+  "description": "Series (v2): a long-exposure sky seen through a window. A pale ground tinted from the palette; the fluid field (a sweep mesh with streaks, soft cloud orbs and light folds under one directional drag) shows only inside a large circle, ringed by a hairline; the series wordmark spans the full width at the top in a wide display face, in a deep ink mixed from the palette; the artist and title run as one line on a bottom hairline, and the catalogue number sits in a small pill at its end. Slots: {label}, {artist}, {title}, {catalog}, the palette (colors = the four stops; the ground and ink are mixed from them). Fonts: Syne, Geist.",
+  "params": {
+    "artist": "Artist",
+    "catalog": "",
+    "small": 24,
+    "lift": 0.16,
+    "drag": 60
+  },
+  "vars": {
+    "angle": {
+      "pick": [
+        -38,
+        -32,
+        -48,
+        34,
+        42
+      ]
+    },
+    "hx": {
+      "range": [
+        300,
+        700
+      ]
+    },
+    "hy": {
+      "range": [
+        250,
+        600
+      ]
+    },
+    "c1x": {
+      "range": [
+        150,
+        450
+      ]
+    },
+    "c2x": {
+      "range": [
+        550,
+        850
+      ]
+    },
+    "c1y": {
+      "range": [
+        300,
+        700
+      ]
+    },
+    "c2y": {
+      "range": [
+        200,
+        600
+      ]
+    },
+    "ink": {
+      "mix": [
+        "@colors.2",
+        "#0b0b14",
+        0.62
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "ground",
+      "type": "solid",
+      "color": {
+        "mix": [
+          "@colors.1",
+          "#ffffff",
+          0.78
+        ]
+      }
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "window",
+          "type": "group",
+          "clip": [
+            {
+              "id": "windowShape",
+              "type": "shape",
+              "kind": "circle",
+              "cx": 500,
+              "cy": 528,
+              "r": 318,
+              "fill": "#000000"
+            }
+          ],
+          "layers": [
+            {
+              "id": "windowBase",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 1000,
+              "height": 1000,
+              "fill": {
+                "type": "linear",
+                "colors": [
+                  "@colors.0",
+                  "@colors.2"
+                ],
+                "angle": "$angle"
+              }
+            },
+            {
+              "id": "field",
+              "type": "mesh",
+              "colors": [
+                "@colors.0",
+                "@colors.1",
+                "@colors.2",
+                "@colors.3"
+              ],
+              "hues": 4,
+              "count": 5,
+              "arrangement": "sweep",
+              "angle": "$angle",
+              "blur": "9vmax",
+              "streaks": 5,
+              "streak": 2.2
+            },
+            {
+              "id": "clouds",
+              "type": "group",
+              "effects": [
+                {
+                  "kind": "motion",
+                  "angle": "$angle",
+                  "length": "{drag}",
+                  "spread": 3
+                }
+              ],
+              "layers": [
+                {
+                  "id": "cloudA",
+                  "type": "shape",
+                  "kind": "ellipse",
+                  "cx": "$c1x",
+                  "cy": "$c1y",
+                  "rx": 300,
+                  "ry": 140,
+                  "rotate": "$angle",
+                  "fill": "@colors.3",
+                  "opacity": 0.85,
+                  "soft": 36
+                },
+                {
+                  "id": "cloudB",
+                  "type": "shape",
+                  "kind": "ellipse",
+                  "cx": "$c2x",
+                  "cy": "$c2y",
+                  "rx": 260,
+                  "ry": 120,
+                  "rotate": {
+                    "add": [
+                      "$angle",
+                      20
+                    ]
+                  },
+                  "fill": "@colors.1",
+                  "opacity": 0.8,
+                  "soft": 30
+                },
+                {
+                  "id": "cloudC",
+                  "type": "shape",
+                  "kind": "circle",
+                  "cx": "$c2x",
+                  "cy": {
+                    "add": [
+                      "$c1y",
+                      180
+                    ]
+                  },
+                  "r": 150,
+                  "fill": "@colors.2",
+                  "opacity": 0.75,
+                  "soft": 40
+                },
+                {
+                  "id": "fold",
+                  "type": "shape",
+                  "kind": "ellipse",
+                  "cx": "$hx",
+                  "cy": {
+                    "add": [
+                      "$hy",
+                      120
+                    ]
+                  },
+                  "rx": 460,
+                  "ry": 36,
+                  "rotate": "$angle",
+                  "fill": "#ffffff",
+                  "opacity": 0.55,
+                  "soft": 12
+                },
+                {
+                  "id": "fold2",
+                  "type": "shape",
+                  "kind": "ellipse",
+                  "cx": {
+                    "sub": [
+                      1000,
+                      "$hx"
+                    ]
+                  },
+                  "cy": {
+                    "sub": [
+                      900,
+                      "$hy"
+                    ]
+                  },
+                  "rx": 380,
+                  "ry": 24,
+                  "rotate": {
+                    "add": [
+                      "$angle",
+                      8
+                    ]
+                  },
+                  "fill": "#ffffff",
+                  "opacity": 0.4,
+                  "soft": 10
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "windowRing",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 528,
+          "r": 338,
+          "fill": "none",
+          "stroke": "$ink",
+          "strokeWidth": 1.2,
+          "opacity": 0.5
+        },
+        {
+          "id": "wordmark",
+          "type": "text",
+          "content": {
+            "upper": "{label}"
+          },
+          "font": "Syne",
+          "weight": 800,
+          "size": 150,
+          "letterSpacing": 0.02,
+          "x": 500,
+          "y": 168,
+          "align": "center",
+          "fit": "width",
+          "width": 888,
+          "maxWidth": 888,
+          "color": "$ink"
+        },
+        {
+          "id": "rule",
+          "type": "shape",
+          "kind": "line",
+          "x1": 56,
+          "y1": 894,
+          "x2": 944,
+          "y2": 894,
+          "stroke": "$ink",
+          "strokeWidth": 1.2
+        },
+        {
+          "id": "credit",
+          "type": "text",
+          "font": "Geist",
+          "size": "{small}",
+          "x": 56,
+          "y": 940,
+          "maxWidth": 680,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "$ink",
+          "spans": [
+            {
+              "content": "{artist}",
+              "weight": 600
+            },
+            {
+              "content": "  \u00b7  {title}",
+              "weight": 400
+            }
+          ]
+        },
+        {
+          "id": "pill",
+          "type": "shape",
+          "when": "catalog",
+          "kind": "rect",
+          "x": 810,
+          "y": 914,
+          "width": 134,
+          "height": 40,
+          "radius": 20,
+          "fill": "none",
+          "stroke": "$ink",
+          "strokeWidth": 1.4
+        },
+        {
+          "id": "catalog",
+          "type": "text",
+          "when": "catalog",
+          "content": "No. {catalog}",
+          "font": "Geist",
+          "weight": 600,
+          "size": 19,
+          "x": 877,
+          "y": 941,
+          "align": "center",
+          "color": "$ink"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.06
+    }
+  ]
+}

@@ -14,17 +14,24 @@
  * @module layers
  */
 
-import { readFile } from 'node:fs/promises';
+import { loadBytes } from './platform/index.js';
+import { toBase64, latin1, utf8 } from './platform/bytes.js';
 import { attrs, esc, layerAttrs, num } from './svg.js';
 import { len, place, anchorAlign, unit, regionPx } from './geometry.js';
 import { toHex, mixOklab, toOklch, fromOklch } from './color.js';
 import { harfbuzz, loadFont, pickFont } from './fonts.js';
-import { layout, runPath } from './text.js';
+import { layout, runPath, caseText } from './text.js';
 import { resolveIcon, parseSvgIcon } from './icons.js';
 import { gridPath } from './grid.js';
 import { diagram } from './diagram.js';
 import { paper, scribble } from './handmade.js';
 import { ink, dither, contour, waveform, tiles, rule } from './print.js';
+import { typeset, wantsType } from './type/index.js';
+import { recordLayout } from './type/layout-ref.js';
+import { shape, svg, table, barcode, perforation, tear, texture } from './layers/index.js';
+import { pos } from './layers/util.js';
+import { paint } from './effects/paint.js';
+import { imageSize } from './lint/image-size.js';
 
 /**
  * Everything a layer renderer needs.
@@ -406,35 +413,31 @@ export function stripes(layer, ctx) {
  */
 export async function image(layer, ctx) {
   if (!layer.src) throw new TypeError('An image layer needs a src (a file path or bytes)');
-  const box = regionPx(layer.region, ctx.canvas);
+  const L = /** @type {any} */ (layer);
+  // 1.1: an explicit box in px (x, y, width, height), as an SVG <image> would take.
+  const box = L.x != null || L.y != null || L.width != null || L.height != null
+    ? { x: pos(L.x ?? 0, 'x', ctx.canvas), y: pos(L.y ?? 0, 'y', ctx.canvas), width: L.width != null ? pos(L.width, 'x', ctx.canvas) : ctx.width, height: L.height != null ? pos(L.height, 'y', ctx.canvas) : ctx.height }
+    : regionPx(layer.region, ctx.canvas);
   const fit = layer.fit ?? 'cover';
   const focus = layer.focus ?? 'center';
-  let bytes = typeof layer.src === 'string' ? await readSource(layer.src) : layer.src;
+  let bytes = typeof layer.src === 'string' || layer.src instanceof URL ? await readSource(layer.src) : await loadBytes(layer.src, 'image');
   let mime = sniff(bytes);
-  let preserve = `${alignFor(focus)} ${fit === 'contain' ? 'meet' : 'slice'}`;
+  let preserve = fit === 'stretch' ? 'none' : `${alignFor(focus)} ${fit === 'contain' ? 'meet' : 'slice'}`;
   let sharpBlurred = false;
 
+  /** Source pixels and what was embedded, for lint. */
+  let source = imageSize(bytes);
+  let embedded = source;
   if (ctx.sharp && mime !== 'image/svg+xml') {
-    const w = Math.round(box.width);
-    const hgt = Math.round(box.height);
-    const position = typeof focus === 'string' && ['attention', 'entropy'].includes(focus) ? focus : (POSITIONS[focus] ?? 'centre');
-    let img = ctx.sharp(bytes).rotate().resize(w, hgt, { fit, position, background: { r: 0, g: 0, b: 0, alpha: 0 } });
-    // Stretch the tones first, so a duotone spans both of its colours.
-    if (layer.normalize ?? Boolean(layer.duotone || layer.grayscale)) img = img.normalise();
-    // Blur here rather than in SVG: sharp clamps at the edges, where an SVG
-    // blur (in librsvg) fades the photo to transparent.
-    if (layer.blur) {
-      img = img.blur(Math.max(0.3, len(layer.blur, ctx.canvas)));
-      sharpBlurred = true;
-    }
-    const meta = await ctx.sharp(bytes).metadata();
-    const alpha = meta.hasAlpha || fit === 'contain';
-    bytes = await (alpha ? img.png() : img.jpeg({ quality: 90 })).toBuffer();
-    mime = alpha ? 'image/png' : 'image/jpeg';
+    const out = await resample(ctx, bytes, box, fit, focus, layer);
+    ({ bytes, mime, source, embedded } = out);
+    sharpBlurred = Boolean(layer.blur);
     preserve = 'none';
   } else if (!mime) {
     throw new TypeError('Unrecognised image format (use PNG, JPEG, WebP, AVIF, GIF or SVG)');
   }
+  const res = /** @type {any} */ (ctx).res ?? 1;
+  /** @type {any} */ (ctx).report?.({ kind: 'image', id: layer.id, drawn: { width: box.width * res, height: box.height * res }, source, embedded, fit });
 
   const p = ctx.palette;
   const id = `${ctx.id}f`;
@@ -454,12 +457,70 @@ export async function image(layer, ctx) {
     ? `<filter${attrs({ id, x: 0, y: 0, width: '100%', height: '100%', 'color-interpolation-filters': 'sRGB' })}>${filters.join('')}</filter>`
     : '';
 
-  let body = `<image${attrs({ x: box.x, y: box.y, width: box.width, height: box.height, preserveAspectRatio: preserve, filter: defs ? `url(#${id})` : undefined, href: `data:${mime};base64,${Buffer.from(bytes).toString('base64')}` })}/>`;
+  let body = `<image${attrs({ x: box.x, y: box.y, width: box.width, height: box.height, preserveAspectRatio: preserve, filter: defs ? `url(#${id})` : undefined, href: `data:${mime};base64,${toBase64(bytes)}` })}/>`;
   if (layer.tint) {
     const t = typeof layer.tint === 'string' ? { color: layer.tint } : layer.tint;
     body += `<rect${attrs({ x: box.x, y: box.y, width: box.width, height: box.height, fill: color(t.color, p.accent), opacity: t.amount ?? 0.35, style: `mix-blend-mode:${t.blend ?? 'multiply'}` })}/>`;
   }
   return { defs, body: wrap(layer, body) };
+}
+
+/** Embeds up to this many pixels at top level are sized to their box, as in 1.0, even past the source's pixels. */
+const CAP_FREE = 4e6;
+
+/**
+ * Resize and crop an image to its box with sharp, at the pixels it's drawn
+ * at (its box times the group and transform scale above it), never above
+ * the source's own pixels (the SVG scales it up instead, so a small photo
+ * isn't embedded at output size). Opaque results are JPEG, even from a
+ * source with an unused alpha channel; PNG only where there's transparency.
+ *
+ * @param {RenderContext} ctx
+ * @param {Uint8Array} bytes
+ * @param {{ width: number, height: number }} box
+ * @param {string} fit
+ * @param {any} focus
+ * @param {import('./index.js').ImageLayer} layer
+ * @returns {Promise<{ bytes: Uint8Array, mime: string, source: { width: number, height: number } | undefined, embedded: { width: number, height: number } }>}
+ */
+async function resample(ctx, bytes, box, fit, focus, layer) {
+  const sharp = /** @type {any} */ (ctx.sharp);
+  const meta = await sharp(bytes).metadata();
+  // EXIF orientations 5–8 turn the image a quarter.
+  const [sw, sh] = (meta.orientation ?? 1) >= 5 ? [meta.height, meta.width] : [meta.width, meta.height];
+  const res = /** @type {any} */ (ctx).res ?? 1;
+  let w = box.width * res;
+  let hgt = box.height * res;
+  // How much the fit would enlarge the source: past 1, embed at the source's
+  // own size. (A top-level image under 4 MP keeps 1.0's box-sized embed, so
+  // 1.0 covers stay byte-identical.)
+  const cap = res !== 1 || w * hgt > CAP_FREE;
+  const grow = !cap || fit === 'stretch' ? 1 : fit === 'contain' ? Math.min(w / sw, hgt / sh) : Math.max(w / sw, hgt / sh);
+  if (grow > 1) { w /= grow; hgt /= grow; }
+  if (cap && fit === 'stretch') { w = Math.min(w, sw); hgt = Math.min(hgt, sh); }
+  w = Math.max(1, Math.round(w));
+  hgt = Math.max(1, Math.round(hgt));
+  const position = typeof focus === 'string' && ['attention', 'entropy'].includes(focus) ? focus : (POSITIONS[focus] ?? 'centre');
+  let img = sharp(bytes).rotate().resize(w, hgt, { fit: fit === 'stretch' ? 'fill' : fit, position, background: { r: 0, g: 0, b: 0, alpha: 0 } });
+  // Stretch the tones first, so a duotone spans both of its colours.
+  if (layer.normalize ?? Boolean(layer.duotone || layer.grayscale)) img = img.normalise();
+  // Blur here rather than in SVG: sharp clamps at the edges, where an SVG
+  // blur (in librsvg) fades the photo to transparent. In the pixels drawn.
+  if (layer.blur) img = img.blur(Math.max(0.3, len(layer.blur, ctx.canvas) * res / Math.max(1, grow)));
+  const embedded = { width: w, height: hgt };
+  const source = { width: sw, height: sh };
+  if (!meta.hasAlpha && fit !== 'contain') return { bytes: await img.jpeg({ quality: 90 }).toBuffer(), mime: 'image/jpeg', source, embedded };
+  // An alpha channel: PNG only if it's used (a letterbox, a cutout).
+  const { data, info } = await img.clone().ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const raw = { raw: { width: info.width, height: info.height, channels: 4 } };
+  let opaque = true;
+  for (let i = 3; i < data.length; i += 4) if (data[i] !== 255) { opaque = false; break; }
+  if (opaque) return { bytes: await sharp(data, raw).removeAlpha().jpeg({ quality: 90 }).toBuffer(), mime: 'image/jpeg', source, embedded };
+  if (fit === 'contain' && !meta.hasAlpha && res === 1 && grow <= 1) {
+    // As 1.0 encoded it (the letterbox's alpha), byte for byte.
+    return { bytes: await img.png().toBuffer(), mime: 'image/png', source, embedded };
+  }
+  return { bytes: await sharp(data, raw).png().toBuffer(), mime: 'image/png', source, embedded };
 }
 
 /** Anchor name to sharp's crop `position`. */
@@ -484,10 +545,7 @@ function defaultDuotone(p) {
 
 /** @param {string} src @returns {Promise<Uint8Array>} */
 async function readSource(src) {
-  const data = src.match(/^data:[^;,]+;base64,(.*)$/s);
-  if (data) return Buffer.from(data[1], 'base64');
-  if (/^https?:/i.test(src)) throw new TypeError('Image src must be a local file or bytes: covers never fetch from the network');
-  return readFile(src);
+  return loadBytes(src, 'image');
 }
 
 /**
@@ -500,10 +558,10 @@ export function sniff(b) {
   if (b[0] === 0x89 && b[1] === 0x50) return 'image/png';
   if (b[0] === 0xff && b[1] === 0xd8) return 'image/jpeg';
   if (b[0] === 0x47 && b[1] === 0x49) return 'image/gif';
-  const head = Buffer.from(b.subarray(0, 32)).toString('latin1');
+  const head = latin1(b.subarray(0, 32));
   if (head.startsWith('RIFF') && head.slice(8, 12) === 'WEBP') return 'image/webp';
   if (head.slice(4, 12) === 'ftypavif' || head.slice(4, 12) === 'ftypavis') return 'image/avif';
-  if (/^\s*(<\?xml|<svg)/i.test(Buffer.from(b.subarray(0, 256)).toString('utf8'))) return 'image/svg+xml';
+  if (/^\s*(<\?xml|<svg)/i.test(utf8(b.subarray(0, 256)))) return 'image/svg+xml';
   return undefined;
 }
 
@@ -766,7 +824,8 @@ export function icon(layer, ctx) {
   const p = ctx.palette;
   // A name that is markup is a raw SVG (so one `icon` option can carry either).
   const name = typeof layer.name === 'string' ? layer.name.trim() : undefined;
-  const svg = layer.svg ?? (name?.startsWith('<') ? name : undefined);
+  const markup = /** @type {any} */ (layer).markup;
+  const svg = layer.svg ?? (name?.startsWith('<') ? name : undefined) ?? (markup ? `<svg viewBox="${(/** @type {any} */ (layer).viewBox ?? [0, 0, 512, 512]).join(' ')}"><g fill="currentColor">${markup}</g></svg>` : undefined);
   const data = svg
     ? parseSvgIcon(svg)
     : name
@@ -779,8 +838,11 @@ export function icon(layer, ctx) {
   const tileOpts = layer.tile === true ? {} : layer.tile || null;
   const size = len(layer.size, ctx.canvas, tileOpts ? '15vmin' : '24vmin');
   const tileSize = tileOpts ? len(tileOpts.size, ctx.canvas, size / 0.5) : size;
-  const margin = len(layer.margin, ctx.canvas, unit(ctx.canvas) * 0.07);
-  const at = place({ width: tileSize, height: tileSize, canvas: ctx.canvas, anchor: layer.anchor ?? 'center', margin, position: layer.position, offset: layer.offset });
+  const margin = len(layer.margin, ctx.canvas, /** @type {any} */ (ctx).inset ?? unit(ctx.canvas) * 0.07);
+  // 1.1: `x`, `y` place the icon's top-left corner in px (a mark at translate(x y) scale(size / 512)).
+  const at = /** @type {any} */ (layer).x != null || /** @type {any} */ (layer).y != null
+    ? { x: pos(/** @type {any} */ (layer).x ?? 0, 'x', ctx.canvas), y: pos(/** @type {any} */ (layer).y ?? 0, 'y', ctx.canvas) }
+    : place({ width: tileSize, height: tileSize, canvas: ctx.canvas, anchor: layer.anchor ?? 'center', margin, position: layer.position, offset: layer.offset });
 
   let defs = '';
   let body = '';
@@ -807,6 +869,13 @@ export function icon(layer, ctx) {
   const ih = vh * fitScale;
   let inner = data.body;
   if (layer.strokeWidth != null) inner = inner.replace(/stroke-width="[^"]*"/g, `stroke-width="${num(layer.strokeWidth)}"`);
+  // 1.1: `fill` paints the icon with a gradient, tile or preset, laid over its grid.
+  const fill = /** @type {any} */ (layer).fill;
+  if (fill != null && typeof fill === 'object') {
+    const fp = paint(fill, 'currentColor', { id: `${ctx.id}i`, box: { x: vx, y: vy, width: vw, height: vh }, canvas: ctx.canvas });
+    defs += fp.defs;
+    inner = inner.replace(/currentColor/g, fp.value);
+  }
   body += `<svg${attrs({
     x: at.x + (tileSize - iw) / 2,
     y: at.y + (tileSize - ih) / 2,
@@ -814,7 +883,7 @@ export function icon(layer, ctx) {
     height: ih,
     viewBox: `${num(vx)} ${num(vy)} ${num(vw)} ${num(vh)}`,
     overflow: 'visible',
-    color: color(layer.color, tileOpts ? p.accent : p.text),
+    color: typeof /** @type {any} */ (layer).fill === 'string' ? toHex(/** @type {any} */ (layer).fill) : color(layer.color, tileOpts ? p.accent : p.text),
   })}>${inner}</svg>`;
   return { defs, body: wrap(layer, body) };
 }
@@ -843,14 +912,16 @@ function shadowPass(name, blur, dy, opacity) {
  * @returns {Promise<Markup>}
  */
 export async function text(layer, ctx) {
+  // 1.1 options (baseline placement, justification, fitting, paths, live text, auto colour).
+  if (wantsType(layer)) return typeset(layer, ctx);
   // An override object in `content` (a recipe's "{title}") means its content.
   const raw = layer.content && typeof layer.content === 'object' ? /** @type {any} */ (layer.content).content : layer.content;
-  const content = transform(String(raw ?? ''), layer.transform);
+  const content = caseText(String(raw ?? ''), layer.transform);
   if (!content.trim()) return { defs: '', body: '' };
   const hb = await harfbuzz();
   const p = ctx.palette;
   const u = unit(ctx.canvas);
-  const margin = len(layer.margin, ctx.canvas, u * 0.07);
+  const margin = len(layer.margin, ctx.canvas, /** @type {any} */ (ctx).inset ?? u * 0.07);
   const anchor = layer.anchor ?? 'bottom-left';
   const align = layer.align ?? anchorAlign(anchor);
   const bg = layer.background ? (typeof layer.background === 'string' ? { color: layer.background } : layer.background) : null;
@@ -886,7 +957,7 @@ export async function text(layer, ctx) {
     const lsize = len(labelOpts.size, ctx.canvas, Math.max(12, set.size * 0.32, u * 0.02));
     const lset = layout({
       face: lface, hb,
-      text: transform(labelOpts.content, labelOpts.transform ?? 'uppercase'),
+      text: caseText(labelOpts.content, labelOpts.transform ?? 'uppercase'),
       size: lsize,
       letterSpacing: labelOpts.letterSpacing ?? 0.08,
       maxWidth,
@@ -921,14 +992,16 @@ export async function text(layer, ctx) {
   }
   const d = set.lines.map((l, i) => runPath(face, l.run, set.size, lineX(l.run.width), y + cap + i * lh)).join('');
   body += `<path${attrs({ d, fill: color(layer.color, p.text) })}/>`;
+  // Where the block landed, for later layers ({layout.<id>.bottom}); what was drawn, for lint (the label too).
+  recordLayout(ctx, layer.id, { x: left, y: top, width: blockW, height: blockH }, { x: lineX(set.lines[0]?.run.width ?? 0), y: y + cap, baseline: y + cap + (set.lines.length - 1) * lh, size: set.size, lines: set.lines.length });
+  const report = /** @type {any} */ (ctx).report;
+  if (report) {
+    report({ kind: 'text', id: layer.id, content, size: set.size, capHeight: cap, box: { x: at.x, y: at.y, width: boxW, height: boxH } });
+    if (label) report({ kind: 'text', id: layer.id, content: label.set.lines.map((l) => l.text).join('\n'), size: label.set.size, capHeight: label.cap, box: null });
+  }
   return { defs: '', body: wrap(layer, body) };
 }
 
-/** @param {string} s @param {string | undefined} t @returns {string} */
-function transform(s, t) {
-  const clean = s.replace(/[\t\r ]+/g, ' ').replace(/ *\n */g, '\n').trim();
-  return t === 'uppercase' ? clean.toUpperCase() : t === 'lowercase' ? clean.toLowerCase() : clean;
-}
 
 /**
  * Padding as `[vertical, horizontal]` pixels.
@@ -969,4 +1042,15 @@ export function frame(layer, ctx) {
 }
 
 /** Every layer type, by name. */
-export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame, diagram, paper, scribble, ink, dither, contour, waveform, tiles, rule });
+/**
+ * `group` (and `repeat`, `defs`, `use`) are drawn by the renderer (they
+ * render nested stacks); this entry registers the type and explains itself
+ * if called directly.
+ *
+ * @returns {never}
+ */
+function group() {
+  throw new TypeError('A group layer is drawn by renderSvg()/renderImage(), not on its own');
+}
+
+export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame, diagram, paper, scribble, ink, dither, contour, waveform, tiles, rule, group, shape, svg, table, barcode, perforation, tear, texture, repeat: group, defs: group, use: group });

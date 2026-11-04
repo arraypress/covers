@@ -1,0 +1,114 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "wheatpaste-torn",
+  "description": "Wheatpaste, torn: a pasted sheet torn away on a diagonal (paper fibres at the rip), the photo bare below it, the words and the mark cut out of what's left, glue creases over everything. Re-expressed from the Logomarks scenes lab (ZineCards, 'Wheatpaste · torn').",
+  "params": {
+    "words": "MAKE IT",
+    "sheet": "#f29ad8",
+    "rip": "#fff6fb"
+  },
+  "layers": [
+    {
+      "id": "photo",
+      "type": "image",
+      "src": "{photo}",
+      "fit": "cover",
+      "when": "photo"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "layers": [
+        {
+          "id": "sheet",
+          "type": "tear",
+          "seed": "rip",
+          "from": [
+            -60,
+            354
+          ],
+          "to": [
+            460,
+            146
+          ],
+          "step": 10,
+          "jitter": 22,
+          "color": "{sheet}",
+          "rip": false,
+          "fibres": false,
+          "opacity": 0.94,
+          "knockout": [
+            {
+              "type": "text",
+              "content": "{words}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 138,
+              "letterSpacing": 0,
+              "x": 14,
+              "y": 118,
+              "width": 372
+            },
+            {
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 130,
+              "y": 128,
+              "size": 120,
+              "when": "mark"
+            }
+          ]
+        },
+        {
+          "id": "edge",
+          "type": "tear",
+          "seed": "rip",
+          "from": [
+            -60,
+            354
+          ],
+          "to": [
+            460,
+            146
+          ],
+          "step": 10,
+          "jitter": 22,
+          "color": "none",
+          "fibres": {
+            "color": "{rip}",
+            "width": 2.2,
+            "opacity": 0.85,
+            "length": [
+              4,
+              10
+            ],
+            "spread": 3
+          },
+          "rip": {
+            "color": "{rip}",
+            "width": 3.5,
+            "opacity": 0.9
+          }
+        }
+      ]
+    },
+    {
+      "id": "creases",
+      "type": "texture",
+      "kind": "creases"
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.06,
+      "blend": "multiply"
+    }
+  ]
+}

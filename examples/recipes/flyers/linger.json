@@ -1,0 +1,67 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "linger",
+  "description": "Aura, pastel on pale: peach, lilac, mint and pink orbs melting into each other on a warm white, a single italic serif word, the mark small above it, a quiet foot line, multiply grain. Each orb is its own one-blob mesh. With format 'release' it re-composes for a 3000×3000 cover: the orbs re-laid for the square, the name and a release title only. Re-expressed from the Logomarks scenes lab (FlyerCards, 'Aura · pastel on pale').",
+  "params": {
+    "ground": "#f1eee9",
+    "ink": "#0b0b0b",
+    "peach": "#ffa47a",
+    "lilac": "#b6a2ff",
+    "mint": "#93ecd0",
+    "pink": "#ffb0d8",
+    "word": "linger",
+    "sub": "a scent that stays after you've gone",
+    "brand": "pellia",
+    "product": "eau de parfum · no. 3",
+    "season": "spring 27",
+    "artist": "pellia",
+    "release": "petal\nweather"
+  },
+  "layers": [
+    { "id": "ground", "type": "solid", "color": "{ground}" },
+    { "id": "orb1", "type": "mesh", "when": { "not": { "format": "release" } }, "arrangement": "ring", "base": null, "blur": "12.65vw", "blobs": [{ "x": 0.26, "y": 0.36, "r": 0.172, "squash": 1, "rotate": 0, "color": "{peach}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{peach}", "opacity": 0.001 }] },
+    { "id": "orb2", "type": "mesh", "when": { "not": { "format": "release" } }, "arrangement": "ring", "base": null, "blur": "13.12vw", "blobs": [{ "x": 0.78, "y": 0.54, "r": 0.18, "squash": 1, "rotate": 0, "color": "{lilac}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{lilac}", "opacity": 0.001 }] },
+    { "id": "orb3", "type": "mesh", "when": { "not": { "format": "release" } }, "arrangement": "ring", "base": null, "blur": "11.47vw", "blobs": [{ "x": 0.4, "y": 0.82, "r": 0.152, "squash": 1, "rotate": 0, "color": "{mint}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{mint}", "opacity": 0.001 }] },
+    { "id": "orb4", "type": "mesh", "when": { "not": { "format": "release" } }, "arrangement": "ring", "base": null, "blur": "9.83vw", "blobs": [{ "x": 0.7, "y": 0.16, "r": 0.124, "squash": 1, "rotate": 0, "color": "{pink}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{pink}", "opacity": 0.001 }] },
+    { "id": "corb1", "type": "mesh", "when": { "format": "release" }, "arrangement": "ring", "base": null, "blur": "12.06vw", "blobs": [{ "x": 0.25, "y": 0.3, "r": 0.2025, "squash": 1, "rotate": 0, "color": "{peach}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{peach}", "opacity": 0.001 }] },
+    { "id": "corb2", "type": "mesh", "when": { "format": "release" }, "arrangement": "ring", "base": null, "blur": "12.65vw", "blobs": [{ "x": 0.8, "y": 0.525, "r": 0.215, "squash": 1, "rotate": 0, "color": "{lilac}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{lilac}", "opacity": 0.001 }] },
+    { "id": "corb3", "type": "mesh", "when": { "format": "release" }, "arrangement": "ring", "base": null, "blur": "11.47vw", "blobs": [{ "x": 0.325, "y": 0.85, "r": 0.19, "squash": 1, "rotate": 0, "color": "{mint}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{mint}", "opacity": 0.001 }] },
+    { "id": "corb4", "type": "mesh", "when": { "format": "release" }, "arrangement": "ring", "base": null, "blur": "9.71vw", "blobs": [{ "x": 0.75, "y": 0.1, "r": 0.1525, "squash": 1, "rotate": 0, "color": "{pink}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{pink}", "opacity": 0.001 }] },
+    {
+      "id": "poster",
+      "type": "group",
+      "when": { "not": { "format": "release" } },
+      "viewBox": [0, 0, 400, 500],
+      "fit": "contain",
+      "layers": [
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 182, "y": 40, "size": 36, "color": "{ink}", "when": "mark" },
+        { "id": "word", "type": "text", "content": "{word}", "font": "Instrument Serif", "style": "italic", "weight": 400, "size": 120, "letterSpacing": -0.03, "x": 200, "y": 281.2, "align": "center", "color": "{ink}" },
+        { "id": "sub", "type": "table", "font": "Geist", "weight": 400, "size": 11.6, "letterSpacing": 0, "y": 326.7, "color": "{ink}", "opacity": 0.8, "columns": [{ "x": 200, "align": "center" }], "rows": [["{sub}"]] },
+        {
+          "id": "foot",
+          "type": "table",
+          "font": "Geist",
+          "weight": 400,
+          "size": 11.2,
+          "color": "{ink}",
+          "y": 468,
+          "columns": [{ "x": 24, "weight": 600 }, { "x": 191, "align": "center" }, { "x": 376, "align": "right" }],
+          "rows": [["{brand}", "{product}", "{season}"]]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "when": { "format": "release" },
+      "viewBox": [0, 0, 400, 400],
+      "fit": "contain",
+      "layers": [
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 180, "y": 30, "size": 40, "color": "{ink}", "when": "mark" },
+        { "id": "title", "type": "text", "content": "{release}", "font": "Instrument Serif", "style": "italic", "weight": 400, "size": 112, "lineHeight": 0.84, "letterSpacing": -0.03, "x": 200, "y": 196, "align": "center", "color": "{ink}" },
+        { "id": "artist", "type": "text", "content": "{artist}", "font": "Geist", "weight": 600, "size": 40, "letterSpacing": -0.03, "x": 200, "y": 368, "align": "center", "color": "{ink}" }
+      ]
+    },
+    { "id": "grain", "type": "grain", "amount": 0.07, "size": 1.5, "blend": "multiply" }
+  ]
+}

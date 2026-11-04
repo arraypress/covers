@@ -4,7 +4,7 @@
  * @module extract
  */
 
-import { readFile } from 'node:fs/promises';
+import { loadBytes } from './platform/index.js';
 import { toOklch, fromOklch, toHex } from './color.js';
 import { createRng } from './rng.js';
 
@@ -35,11 +35,12 @@ export function extractPalette(src, options = {}) {
   const job = (async () => {
     let sharp;
     try {
-      sharp = (await import('sharp')).default;
+      const name = 'sharp';
+      sharp = (await import(/* @vite-ignore */ name)).default;
     } catch {
       throw new Error('Extracting a palette from a photo needs sharp: npm install sharp');
     }
-    const bytes = typeof src === 'string' ? await readFile(src) : src;
+    const bytes = await loadBytes(src, 'image');
     const { data } = await sharp(bytes).rotate().resize(64, 64, { fit: 'cover' }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
     /** @type {[number, number, number][]} */
     const pts = [];

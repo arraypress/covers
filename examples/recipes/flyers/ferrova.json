@@ -1,0 +1,812 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "ferrova",
+  "description": "Acid, chrome: on a near-black vignette, the mark in polished chrome (a diagonal horizon-gradient fill clipped to the mark, a lit bevel and a white rim from raw filter primitives, no 3D), a wide chrome wordmark with a small bevel, a few glinting four-point sparkles and small mono lines. With format 'release' it re-composes for a 3000×3000 cover: the wordmark over the chrome mark, the release title in the same chrome across the foot, all three painted as a reflected horizon (sky, a hard dark horizon, warm ground) with a keyline, an inner bevel and a hard shadow, no lighting filters. Re-expressed from the Logomarks scenes lab (FlyerCards, 'Acid · chrome').",
+  "params": {
+    "ink": "#ffffff",
+    "name": "FERROVA",
+    "meta": [
+      [
+        {
+          "content": "FERROVA",
+          "weight": 700
+        },
+        "DROP 01",
+        "SS27"
+      ],
+      [
+        {
+          "content": "LIQUID METAL",
+          "opacity": 0.7
+        },
+        {
+          "content": "12.12.26 — 00:00",
+          "opacity": 0.7
+        },
+        {
+          "content": "FERROVA.STORE",
+          "opacity": 0.7
+        }
+      ]
+    ],
+    "tagline": "MADE TO BE TOUCHED · NOT TO BE KEPT",
+    "artist": "FERROVA",
+    "release": "CHROME\nTIDE"
+  },
+  "vars": {
+    "chrome": {
+      "type": "linear",
+      "angle": 180,
+      "colors": [
+        "#ffffff",
+        "#dfe7ee",
+        "#7d8894",
+        "#20262d",
+        "#5b4a3c",
+        "#c9b9a6",
+        "#f6f4f1",
+        "#9aa4ad"
+      ],
+      "stops": [
+        0,
+        0.2,
+        0.44,
+        0.5,
+        0.53,
+        0.6,
+        0.8,
+        1
+      ]
+    },
+    "chromeH": {
+      "type": "linear",
+      "angle": 135,
+      "colors": [
+        "#f8fbff",
+        "#9aa6b2",
+        "#1b2027",
+        "#e9edf1",
+        "#7b8590",
+        "#ffffff",
+        "#6d7680"
+      ],
+      "stops": [
+        0,
+        0.3,
+        0.46,
+        0.5,
+        0.66,
+        0.84,
+        1
+      ]
+    },
+    "bevelType": "<feGaussianBlur in=\"SourceAlpha\" stdDeviation=\"1.2\" result=\"b\"/><feSpecularLighting in=\"b\" surfaceScale=\"3\" lighting-color=\"#ffffff\"><feDistantLight azimuth=\"235\" elevation=\"48\"/></feSpecularLighting><feComponentTransfer result=\"s\"><feFuncR type=\"table\" tableValues=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0001 0.0001 0.0001 0.0002 0.0004 0.0006 0.001 0.0015 0.0023 0.0035 0.0053 0.0079 0.0117 0.0173 0.0253 0.0368 0.0531 0.0761 0.1085 0.1536 0.2162 0.3026 0.4211 0.5829 0.8028 1\"/><feFuncG type=\"table\" tableValues=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0001 0.0001 0.0001 0.0002 0.0004 0.0006 0.001 0.0015 0.0023 0.0035 0.0053 0.0079 0.0117 0.0173 0.0253 0.0368 0.0531 0.0761 0.1085 0.1536 0.2162 0.3026 0.4211 0.5829 0.8028 1\"/><feFuncB type=\"table\" tableValues=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0001 0.0001 0.0001 0.0002 0.0004 0.0006 0.001 0.0015 0.0023 0.0035 0.0053 0.0079 0.0117 0.0173 0.0253 0.0368 0.0531 0.0761 0.1085 0.1536 0.2162 0.3026 0.4211 0.5829 0.8028 1\"/><feFuncA type=\"table\" tableValues=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0001 0.0001 0.0001 0.0002 0.0004 0.0006 0.001 0.0015 0.0023 0.0035 0.0053 0.0079 0.0117 0.0173 0.0253 0.0368 0.0531 0.0761 0.1085 0.1536 0.2162 0.3026 0.4211 0.5829 0.8028 1\"/></feComponentTransfer><feComposite in=\"s\" in2=\"SourceAlpha\" operator=\"in\" result=\"s2\"/><feComposite in=\"SourceGraphic\" in2=\"s2\" operator=\"arithmetic\" k2=\"1\" k3=\"0.7\"/>",
+    "sparkle": "M96 141Q96 150 105 150Q96 150 96 159Q96 150 87 150Q96 150 96 141ZM318 180Q318 186 324 186Q318 186 318 192Q318 186 312 186Q318 186 318 180ZM300 381Q300 392 311 392Q300 392 300 403Q300 392 289 392Q300 392 300 381ZM88 375Q88 380 93 380Q88 380 88 385Q88 380 83 380Q88 380 88 375ZM214 126Q214 130 218 130Q214 130 214 134Q214 130 210 130Q214 130 214 126Z"
+  },
+  "layers": [
+    {
+      "id": "poster",
+      "type": "group",
+      "when": {
+        "not": {
+          "format": "release"
+        }
+      },
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "layers": [
+        {
+          "id": "vignette",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 500,
+          "fill": {
+            "type": "radial",
+            "colors": [
+              "#1c1d24",
+              "#000000"
+            ],
+            "r": 270
+          }
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 58,
+          "letterSpacing": -0.0345,
+          "x": 200,
+          "y": 88,
+          "align": "center",
+          "width": 368,
+          "fill": "$chrome",
+          "effects": [
+            {
+              "kind": "filter",
+              "markup": "$bevelType"
+            }
+          ]
+        },
+        {
+          "id": "chromeMark",
+          "type": "group",
+          "when": "mark",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.1,
+              "markup": "<feGaussianBlur in=\"SourceAlpha\" stdDeviation=\"9\" result=\"b\"/><feSpecularLighting in=\"b\" surfaceScale=\"9\" lighting-color=\"#ffffff\"><fePointLight x=\"120\" y=\"-60\" z=\"260\"/></feSpecularLighting><feComponentTransfer result=\"s\"><feFuncR type=\"table\" tableValues=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0001 0.0001 0.0002 0.0004 0.0007 0.0012 0.002 0.0034 0.0057 0.0093 0.0151 0.0243 0.0388 0.0615 0.0967 0.1508 0.2334 0.3588 0.5475 0.83 1\"/><feFuncG type=\"table\" tableValues=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0001 0.0001 0.0002 0.0004 0.0007 0.0012 0.002 0.0034 0.0057 0.0093 0.0151 0.0243 0.0388 0.0615 0.0967 0.1508 0.2334 0.3588 0.5475 0.83 1\"/><feFuncB type=\"table\" tableValues=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0001 0.0001 0.0002 0.0004 0.0007 0.0012 0.002 0.0034 0.0057 0.0093 0.0151 0.0243 0.0388 0.0615 0.0967 0.1508 0.2334 0.3588 0.5475 0.83 1\"/><feFuncA type=\"table\" tableValues=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0001 0.0001 0.0002 0.0004 0.0007 0.0012 0.002 0.0034 0.0057 0.0093 0.0151 0.0243 0.0388 0.0615 0.0967 0.1508 0.2334 0.3588 0.5475 0.83 1\"/></feComponentTransfer><feComposite in=\"s\" in2=\"SourceAlpha\" operator=\"in\" result=\"s2\"/><feComposite in=\"SourceGraphic\" in2=\"s2\" operator=\"arithmetic\" k2=\"1\" k3=\"0.9\" result=\"lit\"/><feMorphology in=\"SourceAlpha\" operator=\"erode\" radius=\"3\" result=\"er\"/><feComposite in=\"SourceAlpha\" in2=\"er\" operator=\"out\" result=\"rim\"/><feFlood flood-color=\"#ffffff\" flood-opacity=\"0.85\"/><feComposite in2=\"rim\" operator=\"in\" result=\"rimw\"/><feMerge><feMergeNode in=\"lit\"/><feMergeNode in=\"rimw\"/></feMerge>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "metal",
+              "type": "shape",
+              "kind": "rect",
+              "x": 86,
+              "y": 144,
+              "width": 228,
+              "height": 228,
+              "fill": "$chromeH",
+              "clip": [
+                {
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 70,
+                  "y": 128,
+                  "size": 260
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sparkles",
+          "type": "shape",
+          "kind": "path",
+          "d": "$sparkle",
+          "fill": "{ink}",
+          "effects": [
+            {
+              "kind": "glow",
+              "color": "{ink}",
+              "opacity": 1,
+              "blur": 2.4
+            }
+          ]
+        },
+        {
+          "id": "rule",
+          "type": "shape",
+          "kind": "line",
+          "x1": 16,
+          "y1": 438,
+          "x2": 384,
+          "y2": 438,
+          "stroke": "{ink}",
+          "strokeWidth": 0.5,
+          "opacity": 0.5
+        },
+        {
+          "id": "meta",
+          "type": "table",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 8,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "y": 452,
+          "rowHeight": 11,
+          "columns": [
+            {
+              "x": 16
+            },
+            {
+              "x": 200,
+              "align": "center"
+            },
+            {
+              "x": 384,
+              "align": "right"
+            }
+          ],
+          "rows": "{meta}"
+        },
+        {
+          "id": "tagline",
+          "type": "table",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 6.5,
+          "letterSpacing": 0.3077,
+          "y": 486,
+          "color": "{ink}",
+          "opacity": 0.5,
+          "columns": [
+            {
+              "x": 200,
+              "align": "center"
+            }
+          ],
+          "rows": [
+            [
+              "{tagline}"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "when": {
+        "format": "release"
+      },
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "layers": [
+        {
+          "id": "vignette",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 400,
+          "fill": {
+            "type": "radial",
+            "colors": [
+              "#1c1d24",
+              "#000000"
+            ],
+            "r": 250
+          }
+        },
+        {
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 103,
+          "y": 93,
+          "size": 194,
+          "id": "chromeMarkShadow",
+          "color": "#000000",
+          "opacity": 0.45,
+          "transform": {
+            "translate": [
+              2.8000000000000003,
+              4.800000000000001
+            ]
+          },
+          "effects": [
+            {
+              "kind": "border",
+              "width": 1.6,
+              "color": "#000000"
+            }
+          ],
+          "when": "mark"
+        },
+        {
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 103,
+          "y": 93,
+          "size": 194,
+          "id": "chromeMarkKeyline",
+          "color": "#0b0f18",
+          "effects": [
+            {
+              "kind": "border",
+              "width": 1.6,
+              "color": "#0b0f18"
+            }
+          ],
+          "when": "mark"
+        },
+        {
+          "id": "chromeMark",
+          "type": "shape",
+          "kind": "rect",
+          "x": 103,
+          "y": 104.64,
+          "width": 194,
+          "height": 170.72,
+          "fill": {
+            "type": "linear",
+            "angle": 180,
+            "colors": [
+              "#eef6ff",
+              "#9ec9ef",
+              "#1b2433",
+              "#7a5a3a",
+              "#d8b47a",
+              "#f3e1b8"
+            ],
+            "stops": [
+              0,
+              0.52,
+              0.52,
+              0.62,
+              0.8200000000000001,
+              1
+            ]
+          },
+          "clip": [
+            {
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 103,
+              "y": 93,
+              "size": 194
+            }
+          ],
+          "when": "mark"
+        },
+        {
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 103,
+          "y": 93,
+          "size": 194,
+          "id": "chromeMarkBevel",
+          "color": "#ffffff",
+          "opacity": 0.85,
+          "knockout": [
+            {
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 103,
+              "y": 93,
+              "size": 194,
+              "transform": {
+                "translate": [
+                  0,
+                  2.4000000000000004
+                ]
+              }
+            }
+          ],
+          "when": "mark"
+        },
+        {
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 103,
+          "y": 93,
+          "size": 194,
+          "id": "chromeMarkShade",
+          "color": "#0b0f18",
+          "opacity": 0.5,
+          "knockout": [
+            {
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 103,
+              "y": 93,
+              "size": 194,
+              "transform": {
+                "translate": [
+                  0,
+                  -2
+                ]
+              }
+            }
+          ],
+          "when": "mark"
+        },
+        {
+          "type": "text",
+          "content": "{artist}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 58,
+          "letterSpacing": -0.0345,
+          "x": 200,
+          "y": 76,
+          "align": "center",
+          "width": 368,
+          "transform": {
+            "translate": [
+              2,
+              3.6
+            ]
+          },
+          "id": "artistShadow",
+          "color": "#000000",
+          "strokes": [
+            {
+              "color": "#0b0f18",
+              "width": 2.8000000000000003
+            }
+          ],
+          "opacity": 0.5
+        },
+        {
+          "type": "text",
+          "content": "{artist}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 58,
+          "letterSpacing": -0.0345,
+          "x": 200,
+          "y": 76,
+          "align": "center",
+          "width": 368,
+          "id": "artist",
+          "fill": {
+            "type": "linear",
+            "angle": 180,
+            "colors": [
+              "#eef6ff",
+              "#9ec9ef",
+              "#1b2433",
+              "#7a5a3a",
+              "#d8b47a",
+              "#f3e1b8"
+            ],
+            "stops": [
+              0,
+              0.55,
+              0.55,
+              0.65,
+              0.8500000000000001,
+              1
+            ]
+          },
+          "strokes": [
+            {
+              "color": "#0b0f18",
+              "width": 2.8000000000000003
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": "{artist}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 58,
+          "letterSpacing": -0.0345,
+          "x": 200,
+          "y": 76,
+          "align": "center",
+          "width": 368,
+          "id": "artistBevel",
+          "color": "#ffffff",
+          "opacity": 0.9,
+          "knockout": [
+            {
+              "type": "text",
+              "content": "{artist}",
+              "font": "Anybody",
+              "weight": 900,
+              "axes": {
+                "wdth": 150
+              },
+              "size": 58,
+              "letterSpacing": -0.0345,
+              "x": 200,
+              "y": 76,
+              "align": "center",
+              "width": 368,
+              "transform": {
+                "translate": [
+                  0,
+                  1.2800000000000002
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": "{artist}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 58,
+          "letterSpacing": -0.0345,
+          "x": 200,
+          "y": 76,
+          "align": "center",
+          "width": 368,
+          "id": "artistShade",
+          "color": "#0b0f18",
+          "opacity": 0.45,
+          "knockout": [
+            {
+              "type": "text",
+              "content": "{artist}",
+              "font": "Anybody",
+              "weight": 900,
+              "axes": {
+                "wdth": 150
+              },
+              "size": 58,
+              "letterSpacing": -0.0345,
+              "x": 200,
+              "y": 76,
+              "align": "center",
+              "width": 368,
+              "transform": {
+                "translate": [
+                  0,
+                  -1.04
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": "{release}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 40,
+          "lineHeight": 1.1,
+          "letterSpacing": -0.02,
+          "x": 200,
+          "y": 338,
+          "align": "center",
+          "transform": {
+            "translate": [
+              2,
+              3.6
+            ]
+          },
+          "id": "titleShadow",
+          "color": "#000000",
+          "strokes": [
+            {
+              "color": "#0b0f18",
+              "width": 2.8000000000000003
+            }
+          ],
+          "opacity": 0.5
+        },
+        {
+          "type": "text",
+          "content": "{release}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 40,
+          "lineHeight": 1.1,
+          "letterSpacing": -0.02,
+          "x": 200,
+          "y": 338,
+          "align": "center",
+          "id": "title",
+          "fill": {
+            "type": "linear",
+            "angle": 180,
+            "colors": [
+              "#eef6ff",
+              "#9ec9ef",
+              "#1b2433",
+              "#7a5a3a",
+              "#d8b47a",
+              "#f3e1b8",
+              "#f3e1b8"
+            ],
+            "stops": [
+              0,
+              0.3375,
+              0.3375,
+              0.3989,
+              0.5216,
+              0.6136,
+              1
+            ],
+            "length": 44,
+            "spread": "repeat"
+          },
+          "strokes": [
+            {
+              "color": "#0b0f18",
+              "width": 2.8000000000000003
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": "{release}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 40,
+          "lineHeight": 1.1,
+          "letterSpacing": -0.02,
+          "x": 200,
+          "y": 338,
+          "align": "center",
+          "id": "titleBevel",
+          "color": "#ffffff",
+          "opacity": 0.9,
+          "knockout": [
+            {
+              "type": "text",
+              "content": "{release}",
+              "font": "Anybody",
+              "weight": 900,
+              "axes": {
+                "wdth": 150
+              },
+              "size": 40,
+              "lineHeight": 1.1,
+              "letterSpacing": -0.02,
+              "x": 200,
+              "y": 338,
+              "align": "center",
+              "transform": {
+                "translate": [
+                  0,
+                  1.2800000000000002
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": "{release}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 40,
+          "lineHeight": 1.1,
+          "letterSpacing": -0.02,
+          "x": 200,
+          "y": 338,
+          "align": "center",
+          "id": "titleShade",
+          "color": "#0b0f18",
+          "opacity": 0.45,
+          "knockout": [
+            {
+              "type": "text",
+              "content": "{release}",
+              "font": "Anybody",
+              "weight": 900,
+              "axes": {
+                "wdth": 150
+              },
+              "size": 40,
+              "lineHeight": 1.1,
+              "letterSpacing": -0.02,
+              "x": 200,
+              "y": 338,
+              "align": "center",
+              "transform": {
+                "translate": [
+                  0,
+                  -1.04
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "sparkles",
+          "type": "shape",
+          "fill": "{ink}",
+          "items": [
+            {
+              "kind": "star",
+              "cx": 372,
+              "cy": 40,
+              "r": 15,
+              "inner": 0.07,
+              "points": 4
+            },
+            {
+              "kind": "star",
+              "cx": 372,
+              "cy": 40,
+              "r": 6.3,
+              "inner": 0.12,
+              "points": 4,
+              "rotate": 45
+            },
+            {
+              "kind": "star",
+              "cx": 290,
+              "cy": 112,
+              "r": 13,
+              "inner": 0.07,
+              "points": 4
+            },
+            {
+              "kind": "star",
+              "cx": 290,
+              "cy": 112,
+              "r": 5.46,
+              "inner": 0.12,
+              "points": 4,
+              "rotate": 45
+            },
+            {
+              "kind": "star",
+              "cx": 112,
+              "cy": 276,
+              "r": 10,
+              "inner": 0.07,
+              "points": 4
+            },
+            {
+              "kind": "star",
+              "cx": 112,
+              "cy": 276,
+              "r": 4.2,
+              "inner": 0.12,
+              "points": 4,
+              "rotate": 45
+            },
+            {
+              "kind": "star",
+              "cx": 64,
+              "cy": 262,
+              "r": 7,
+              "inner": 0.07,
+              "points": 4
+            },
+            {
+              "kind": "star",
+              "cx": 64,
+              "cy": 262,
+              "r": 2.94,
+              "inner": 0.12,
+              "points": 4,
+              "rotate": 45
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "print",
+      "type": "grain",
+      "amount": 0.04,
+      "size": 1.5,
+      "blend": "multiply"
+    }
+  ]
+}

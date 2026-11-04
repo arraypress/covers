@@ -1,0 +1,1143 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "name": "brand",
+  "description": "A brand on every format: avatars, headers and banners, posts and stories, business cards (front and back), letterhead, compliment slips, tickets, passes and stickers. kit() uses it by default. Options: name, tagline, mark (path markup on a 512 grid), photo, lines (contact or info lines), person and role (cards and passes), ticket (a ticket number), compliments.",
+  "pages": [
+    "front",
+    "back"
+  ],
+  "params": {
+    "tagline": ""
+  },
+  "layers": [
+    {
+      "id": "bg",
+      "type": "solid",
+      "color": "@accent",
+      "when": {
+        "not": {
+          "any": [
+            {
+              "format": [
+                "letterhead",
+                "letterhead-us",
+                "compliment-slip",
+                "badge",
+                "lanyard-pass"
+              ]
+            },
+            {
+              "all": [
+                {
+                  "format": [
+                    "business-card",
+                    "business-card-us"
+                  ]
+                },
+                {
+                  "page": "back"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "bg",
+      "type": "solid",
+      "color": "@bg",
+      "when": {
+        "any": [
+          {
+            "format": [
+              "letterhead",
+              "letterhead-us",
+              "compliment-slip",
+              "badge",
+              "lanyard-pass"
+            ]
+          },
+          {
+            "all": [
+              {
+                "format": [
+                  "business-card",
+                  "business-card-us"
+                ]
+              },
+              {
+                "page": "back"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "photo",
+      "type": "image",
+      "src": "{photo}",
+      "when": {
+        "all": [
+          "photo",
+          {
+            "not": {
+              "format": [
+                "avatar",
+                "x-avatar",
+                "youtube-avatar",
+                "sticker",
+                "sticker-square",
+                "business-card",
+                "business-card-us",
+                "letterhead",
+                "letterhead-us",
+                "compliment-slip",
+                "badge",
+                "lanyard-pass",
+                "ticket"
+              ]
+            }
+          }
+        ]
+      },
+      "effects": [
+        {
+          "kind": "duotone",
+          "colors": [
+            {
+              "mix": [
+                "@accent",
+                "#000000",
+                0.6
+              ]
+            },
+            "@accent",
+            {
+              "mix": [
+                "@accent",
+                "#ffffff",
+                0.65
+              ]
+            }
+          ]
+        }
+      ],
+      "opacity": 0.9
+    },
+    {
+      "id": "scrim",
+      "type": "linear",
+      "angle": 180,
+      "colors": [
+        "@accent",
+        "@accent"
+      ],
+      "opacities": [
+        0,
+        0.75
+      ],
+      "when": {
+        "all": [
+          "photo",
+          {
+            "not": {
+              "format": [
+                "avatar",
+                "x-avatar",
+                "youtube-avatar",
+                "sticker",
+                "sticker-square",
+                "business-card",
+                "business-card-us",
+                "letterhead",
+                "letterhead-us",
+                "compliment-slip",
+                "badge",
+                "lanyard-pass",
+                "ticket"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "mark",
+      "type": "icon",
+      "markup": "{mark}",
+      "anchor": "center",
+      "size": {
+        "mul": [
+          {
+            "min": [
+              "@safeWidth",
+              "@safeHeight"
+            ]
+          },
+          0.86
+        ]
+      },
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "mark",
+          {
+            "format": [
+              "avatar",
+              "x-avatar",
+              "youtube-avatar",
+              "sticker",
+              "sticker-square"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "initial",
+      "type": "text",
+      "content": {
+        "upper": {
+          "slice": [
+            "{name}",
+            0,
+            1
+          ]
+        }
+      },
+      "anchor": "center",
+      "align": "center",
+      "size": {
+        "mul": [
+          {
+            "min": [
+              "@safeWidth",
+              "@safeHeight"
+            ]
+          },
+          0.62
+        ]
+      },
+      "weight": 700,
+      "letterSpacing": 0,
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          {
+            "not": "mark"
+          },
+          "name",
+          {
+            "format": [
+              "avatar",
+              "x-avatar",
+              "youtube-avatar",
+              "sticker",
+              "sticker-square"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mark",
+      "type": "icon",
+      "markup": "{mark}",
+      "anchor": "left",
+      "size": {
+        "mul": [
+          "@safeHeight",
+          0.6
+        ]
+      },
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "mark",
+          {
+            "all": [
+              {
+                "not": {
+                  "format": [
+                    "avatar",
+                    "x-avatar",
+                    "youtube-avatar",
+                    "sticker",
+                    "sticker-square",
+                    "business-card",
+                    "business-card-us",
+                    "letterhead",
+                    "letterhead-us",
+                    "compliment-slip",
+                    "badge",
+                    "lanyard-pass",
+                    "ticket"
+                  ]
+                }
+              },
+              {
+                "aspect": "wide"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "content": "{name}",
+      "label": {
+        "content": "{tagline}",
+        "color": {
+          "mix": [
+            "@onAccent",
+            "@accent",
+            0.3
+          ]
+        }
+      },
+      "anchor": "left",
+      "weight": 700,
+      "letterSpacing": -0.03,
+      "offset": {
+        "if": "mark",
+        "then": {
+          "x": {
+            "mul": [
+              "@safeHeight",
+              0.74
+            ]
+          }
+        },
+        "else": {
+          "x": 0
+        }
+      },
+      "maxWidth": {
+        "if": "mark",
+        "then": {
+          "sub": [
+            "@safeWidth",
+            {
+              "mul": [
+                "@safeHeight",
+                0.9
+              ]
+            }
+          ]
+        },
+        "else": {
+          "mul": [
+            "@safeWidth",
+            0.9
+          ]
+        }
+      },
+      "size": {
+        "min": [
+          {
+            "mul": [
+              "@safeHeight",
+              0.3
+            ]
+          },
+          {
+            "mul": [
+              "@safeWidth",
+              0.09
+            ]
+          }
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@safeHeight",
+          0.14
+        ]
+      },
+      "maxLines": 2,
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "name",
+          {
+            "all": [
+              {
+                "not": {
+                  "format": [
+                    "avatar",
+                    "x-avatar",
+                    "youtube-avatar",
+                    "sticker",
+                    "sticker-square",
+                    "business-card",
+                    "business-card-us",
+                    "letterhead",
+                    "letterhead-us",
+                    "compliment-slip",
+                    "badge",
+                    "lanyard-pass",
+                    "ticket"
+                  ]
+                }
+              },
+              {
+                "aspect": "wide"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mark",
+      "type": "icon",
+      "markup": "{mark}",
+      "anchor": "center",
+      "offset": {
+        "y": {
+          "mul": [
+            "@safeHeight",
+            -0.1
+          ]
+        }
+      },
+      "size": {
+        "mul": [
+          {
+            "min": [
+              "@safeWidth",
+              "@safeHeight"
+            ]
+          },
+          0.42
+        ]
+      },
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "mark",
+          {
+            "all": [
+              {
+                "not": {
+                  "format": [
+                    "avatar",
+                    "x-avatar",
+                    "youtube-avatar",
+                    "sticker",
+                    "sticker-square",
+                    "business-card",
+                    "business-card-us",
+                    "letterhead",
+                    "letterhead-us",
+                    "compliment-slip",
+                    "badge",
+                    "lanyard-pass",
+                    "ticket"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "aspect": "wide"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "content": "{name}",
+      "label": {
+        "content": "{tagline}",
+        "color": {
+          "mix": [
+            "@onAccent",
+            "@accent",
+            0.3
+          ]
+        }
+      },
+      "anchor": {
+        "if": "mark",
+        "then": "bottom",
+        "else": "center"
+      },
+      "align": "center",
+      "weight": 700,
+      "letterSpacing": -0.03,
+      "size": {
+        "mul": [
+          "@safeWidth",
+          0.1
+        ]
+      },
+      "minSize": {
+        "mul": [
+          "@safeWidth",
+          0.06
+        ]
+      },
+      "maxLines": 2,
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "name",
+          {
+            "all": [
+              {
+                "not": {
+                  "format": [
+                    "avatar",
+                    "x-avatar",
+                    "youtube-avatar",
+                    "sticker",
+                    "sticker-square",
+                    "business-card",
+                    "business-card-us",
+                    "letterhead",
+                    "letterhead-us",
+                    "compliment-slip",
+                    "badge",
+                    "lanyard-pass",
+                    "ticket"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "aspect": "wide"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mark",
+      "type": "icon",
+      "markup": "{mark}",
+      "anchor": "center",
+      "offset": {
+        "y": {
+          "mul": [
+            "@trimHeight",
+            -0.08
+          ]
+        }
+      },
+      "size": {
+        "mul": [
+          "@trimHeight",
+          0.4
+        ]
+      },
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "mark",
+          {
+            "all": [
+              {
+                "format": [
+                  "business-card",
+                  "business-card-us"
+                ]
+              },
+              {
+                "not": {
+                  "page": "back"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "content": "{name}",
+      "anchor": "bottom",
+      "align": "center",
+      "weight": 700,
+      "letterSpacing": -0.02,
+      "size": {
+        "mul": [
+          "@trimHeight",
+          0.1
+        ]
+      },
+      "maxLines": 1,
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "name",
+          {
+            "all": [
+              {
+                "format": [
+                  "business-card",
+                  "business-card-us"
+                ]
+              },
+              {
+                "not": {
+                  "page": "back"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "person",
+      "type": "text",
+      "content": "{opt.person}",
+      "label": "{opt.role}",
+      "anchor": "top-left",
+      "weight": 700,
+      "letterSpacing": -0.02,
+      "size": {
+        "mul": [
+          "@trimHeight",
+          0.095
+        ]
+      },
+      "maxLines": 1,
+      "color": "@text",
+      "when": {
+        "all": [
+          "opt.person",
+          {
+            "all": [
+              {
+                "format": [
+                  "business-card",
+                  "business-card-us"
+                ]
+              },
+              {
+                "page": "back"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "lines",
+      "type": "table",
+      "rows": "{lines}",
+      "x": "@safeX",
+      "y": {
+        "mul": [
+          "@height",
+          0.6
+        ]
+      },
+      "columns": [
+        {
+          "x": "@safeX"
+        }
+      ],
+      "size": {
+        "mul": [
+          "@trimHeight",
+          0.058
+        ]
+      },
+      "color": "@text",
+      "when": {
+        "all": [
+          "lines",
+          {
+            "all": [
+              {
+                "format": [
+                  "business-card",
+                  "business-card-us"
+                ]
+              },
+              {
+                "page": "back"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mark",
+      "type": "icon",
+      "markup": "{mark}",
+      "anchor": "bottom-right",
+      "size": {
+        "mul": [
+          "@trimHeight",
+          0.22
+        ]
+      },
+      "color": "@accent",
+      "when": {
+        "all": [
+          "mark",
+          {
+            "all": [
+              {
+                "format": [
+                  "business-card",
+                  "business-card-us"
+                ]
+              },
+              {
+                "page": "back"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mark",
+      "type": "icon",
+      "markup": "{mark}",
+      "anchor": "top-left",
+      "size": {
+        "mul": [
+          "@trimWidth",
+          0.085
+        ]
+      },
+      "color": "@accent",
+      "when": {
+        "all": [
+          "mark",
+          {
+            "format": [
+              "letterhead",
+              "letterhead-us",
+              "compliment-slip"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "content": "{name}",
+      "label": {
+        "content": "{tagline}",
+        "color": "@muted"
+      },
+      "anchor": "top-right",
+      "align": "right",
+      "weight": 700,
+      "letterSpacing": -0.02,
+      "size": {
+        "mul": [
+          "@trimWidth",
+          0.03
+        ]
+      },
+      "maxLines": 1,
+      "color": "@text",
+      "when": {
+        "all": [
+          "name",
+          {
+            "format": [
+              "letterhead",
+              "letterhead-us",
+              "compliment-slip"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "compliments",
+      "type": "text",
+      "content": "{opt.compliments}",
+      "anchor": "left",
+      "weight": 400,
+      "size": {
+        "mul": [
+          "@trimHeight",
+          0.09
+        ]
+      },
+      "color": "@text",
+      "when": {
+        "all": [
+          "opt.compliments",
+          {
+            "format": "compliment-slip"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rule",
+      "type": "shape",
+      "kind": "line",
+      "x1": "@safeX",
+      "x2": {
+        "add": [
+          "@safeX",
+          "@safeWidth"
+        ]
+      },
+      "y1": {
+        "sub": [
+          {
+            "add": [
+              "@safeY",
+              "@safeHeight"
+            ]
+          },
+          {
+            "mul": [
+              "@trimHeight",
+              {
+                "if": {
+                  "format": "compliment-slip"
+                },
+                "then": 0.16,
+                "else": 0.05
+              }
+            ]
+          }
+        ]
+      },
+      "stroke": "@accent",
+      "strokeWidth": {
+        "mul": [
+          "@mm",
+          0.3
+        ]
+      },
+      "when": {
+        "format": [
+          "letterhead",
+          "letterhead-us",
+          "compliment-slip"
+        ]
+      }
+    },
+    {
+      "id": "lines",
+      "type": "table",
+      "rows": [
+        "{lines}"
+      ],
+      "y": {
+        "sub": [
+          {
+            "add": [
+              "@safeY",
+              "@safeHeight"
+            ]
+          },
+          {
+            "mul": [
+              "@trimHeight",
+              {
+                "if": {
+                  "format": "compliment-slip"
+                },
+                "then": 0.08,
+                "else": 0.025
+              }
+            ]
+          }
+        ]
+      },
+      "columns": [
+        {
+          "x": "@safeX"
+        },
+        {
+          "x": "37%"
+        },
+        {
+          "x": "68%"
+        }
+      ],
+      "size": {
+        "mul": [
+          "@mm",
+          2.6
+        ]
+      },
+      "color": "@muted",
+      "when": {
+        "all": [
+          "lines",
+          {
+            "format": [
+              "letterhead",
+              "letterhead-us",
+              "compliment-slip"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "band",
+      "type": "shape",
+      "kind": "rect",
+      "x": 0,
+      "y": 0,
+      "width": "@width",
+      "height": {
+        "mul": [
+          "@height",
+          0.36
+        ]
+      },
+      "fill": "@accent",
+      "when": {
+        "format": [
+          "badge",
+          "lanyard-pass"
+        ]
+      }
+    },
+    {
+      "id": "mark",
+      "type": "icon",
+      "markup": "{mark}",
+      "anchor": "top",
+      "size": {
+        "mul": [
+          "@trimHeight",
+          0.2
+        ]
+      },
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "mark",
+          {
+            "format": [
+              "badge",
+              "lanyard-pass"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "content": "{opt.person}",
+      "label": "{opt.role}",
+      "anchor": "center",
+      "align": "center",
+      "offset": {
+        "y": {
+          "mul": [
+            "@height",
+            0.1
+          ]
+        }
+      },
+      "weight": 700,
+      "letterSpacing": -0.03,
+      "size": {
+        "mul": [
+          "@trimWidth",
+          0.12
+        ]
+      },
+      "maxLines": 2,
+      "color": "@text",
+      "when": {
+        "all": [
+          "opt.person",
+          {
+            "format": [
+              "badge",
+              "lanyard-pass"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "footer",
+      "type": "text",
+      "content": "{name}",
+      "anchor": "bottom",
+      "align": "center",
+      "weight": 600,
+      "size": {
+        "mul": [
+          "@trimWidth",
+          0.055
+        ]
+      },
+      "letterSpacing": 0.08,
+      "transform": "uppercase",
+      "color": "@accent",
+      "when": {
+        "all": [
+          "name",
+          {
+            "format": [
+              "badge",
+              "lanyard-pass"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "content": "{name}",
+      "label": {
+        "content": "{tagline}",
+        "color": {
+          "mix": [
+            "@onAccent",
+            "@accent",
+            0.3
+          ]
+        }
+      },
+      "anchor": "left",
+      "weight": 700,
+      "letterSpacing": -0.03,
+      "size": {
+        "mul": [
+          "@trimHeight",
+          0.24
+        ]
+      },
+      "maxWidth": {
+        "mul": [
+          "@trimWidth",
+          0.6
+        ]
+      },
+      "maxLines": 2,
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "name",
+          {
+            "format": [
+              "ticket"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "perforation",
+      "type": "perforation",
+      "x": "74%",
+      "y1": "@bleed",
+      "y2": {
+        "sub": [
+          "@height",
+          "@bleed"
+        ]
+      },
+      "color": "@onAccent",
+      "size": {
+        "mul": [
+          "@mm",
+          0.5
+        ]
+      },
+      "gap": {
+        "mul": [
+          "@mm",
+          2.2
+        ]
+      },
+      "when": {
+        "format": [
+          "ticket"
+        ]
+      }
+    },
+    {
+      "id": "barcode",
+      "type": "barcode",
+      "value": {
+        "upper": "{opt.ticket}"
+      },
+      "x": "79%",
+      "y": "28%",
+      "width": "16%",
+      "height": "34%",
+      "text": true,
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "opt.ticket",
+          {
+            "format": [
+              "ticket"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "lines",
+      "type": "table",
+      "rows": [
+        "{lines.0}"
+      ],
+      "y": {
+        "mul": [
+          "@height",
+          0.82
+        ]
+      },
+      "columns": [
+        {
+          "x": {
+            "add": [
+              "@safeX",
+              0
+            ]
+          }
+        }
+      ],
+      "size": {
+        "mul": [
+          "@trimHeight",
+          0.065
+        ]
+      },
+      "color": "@onAccent",
+      "when": {
+        "all": [
+          "lines",
+          {
+            "format": [
+              "ticket"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

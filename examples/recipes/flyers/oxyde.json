@@ -1,0 +1,113 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "oxyde",
+  "description": "Acid, green: black and one acid green. The name stretched tall in an extra-condensed grotesk and melted with a displacement warp, the mark in a solid and a dashed orbit, registration crosses, small mono labels and a mono info grid (lineup, venue, doors, entry). With format 'release' it re-composes for a 3000×3000 cover: the warped name over the orbit, the release title stretched across the foot, no small type. Re-expressed from the Logomarks scenes lab (FlyerCards, 'Acid · green').",
+  "params": {
+    "ground": "#050505",
+    "acid": "#c6ff1a",
+    "name": "OXYDE",
+    "top": [[{ "content": "OXYDE/004", "weight": 700 }, "[ SAT 29.11.26 ]", "23:00—07:00"]],
+    "left": [[{ "content": "SND—SYS", "opacity": 0.6 }], ["FUNKTION 2"]],
+    "right": [[{ "content": "BPM", "opacity": 0.6 }], ["138—146"]],
+    "info": [
+      [{ "content": "LINEUP", "opacity": 0.55 }, { "content": "VENUE", "opacity": 0.55 }, { "content": "DOORS", "opacity": 0.55 }, { "content": "ENTRY", "opacity": 0.55 }],
+      ["KOVA LUNE", "UNIT 4", "23:00", "£12 ADV"],
+      ["DJ MERRICK", "MARROW YARD", "LAST ENTRY", "£15 OTD"],
+      ["OKKOLO", "E. HOLLOWAY", "02:00", "NO PHOTOS"]
+    ],
+    "artist": "OXYDE",
+    "release": "RUST PULSE"
+  },
+  "layers": [
+    { "id": "ground", "type": "solid", "color": "{ground}" },
+    {
+      "id": "poster",
+      "type": "group",
+      "when": { "not": { "format": "release" } },
+      "viewBox": [0, 0, 400, 500],
+      "fit": "contain",
+      "layers": [
+        {
+          "id": "top",
+          "type": "table",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 8.5,
+          "letterSpacing": 0,
+          "color": "{acid}",
+          "y": 24,
+          "columns": [{ "x": 16 }, { "x": 200, "align": "center" }, { "x": 384, "align": "right" }],
+          "rows": "{top}"
+        },
+        { "id": "rules", "type": "shape", "stroke": "{acid}", "strokeWidth": 0.7, "items": [{ "kind": "line", "x1": 16, "y1": 32, "x2": 384, "y2": 32 }, { "kind": "line", "x1": 16, "y1": 440, "x2": 384, "y2": 440 }] },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": { "wdth": 50 },
+          "size": 98,
+          "letterSpacing": 0,
+          "x": 14,
+          "y": 238,
+          "width": 372,
+          "stretch": [1, 2.5],
+          "color": "{acid}",
+          "effects": [{ "kind": "warp", "frequency": [0.005, 0.011], "octaves": 2, "seed": 11, "scale": 40 }]
+        },
+        { "id": "orbit", "type": "shape", "kind": "circle", "cx": 200, "cy": 342, "r": 62, "fill": "none", "stroke": "{acid}", "strokeWidth": 0.8 },
+        { "id": "dashes", "type": "shape", "kind": "circle", "cx": 200, "cy": 342, "r": 73.16, "fill": "none", "stroke": "{acid}", "strokeWidth": 0.944, "dash": [1.77, 4.72] },
+        { "id": "crosses", "type": "shape", "kind": "path", "d": "M16 260h10M21 255v10M374 260h10M379 255v10M16 426h10M21 421v10M374 426h10M379 421v10", "fill": "none", "stroke": "{acid}", "strokeWidth": 0.8 },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 152, "y": 294, "size": 96, "color": "{acid}", "when": "mark" },
+        { "id": "left", "type": "table", "font": "Space Mono", "weight": 400, "size": 7, "letterSpacing": 0, "color": "{acid}", "y": 290, "rowHeight": 10, "columns": [{ "x": 16 }], "rows": "{left}" },
+        { "id": "right", "type": "table", "font": "Space Mono", "weight": 400, "size": 7, "letterSpacing": 0, "color": "{acid}", "y": 290, "rowHeight": 10, "columns": [{ "x": 384, "align": "right" }], "rows": "{right}" },
+        {
+          "id": "info",
+          "type": "table",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 7.5,
+          "letterSpacing": 0,
+          "color": "{acid}",
+          "y": 452,
+          "rowHeight": 10.5,
+          "columns": [{ "x": 16 }, { "x": 108 }, { "x": 200 }, { "x": 292 }],
+          "rows": "{info}"
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "when": { "format": "release" },
+      "viewBox": [0, 0, 400, 400],
+      "fit": "contain",
+      "layers": [
+        { "id": "rules", "type": "shape", "stroke": "{acid}", "strokeWidth": 0.7, "items": [{ "kind": "line", "x1": 16, "y1": 16, "x2": 384, "y2": 16 }, { "kind": "line", "x1": 16, "y1": 326, "x2": 384, "y2": 326 }] },
+        {
+          "id": "artist",
+          "type": "text",
+          "content": "{artist}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": { "wdth": 50 },
+          "size": 98,
+          "letterSpacing": 0,
+          "x": 14,
+          "y": 172,
+          "width": 372,
+          "stretch": [1, 2.1],
+          "color": "{acid}",
+          "effects": [{ "kind": "warp", "frequency": [0.005, 0.011], "octaves": 2, "seed": 11, "scale": 40 }]
+        },
+        { "id": "orbit", "type": "shape", "kind": "circle", "cx": 200, "cy": 250, "r": 44, "fill": "none", "stroke": "{acid}", "strokeWidth": 0.8 },
+        { "id": "dashes", "type": "shape", "kind": "circle", "cx": 200, "cy": 250, "r": 53, "fill": "none", "stroke": "{acid}", "strokeWidth": 0.944, "dash": [1.77, 4.72] },
+        { "id": "crosses", "type": "shape", "kind": "path", "d": "M16 196h10M21 191v10M374 196h10M379 191v10M16 306h10M21 301v10M374 306h10M379 301v10", "fill": "none", "stroke": "{acid}", "strokeWidth": 0.8 },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 166, "y": 216, "size": 68, "color": "{acid}", "when": "mark" },
+        { "id": "title", "type": "text", "content": "{release}", "font": "Anybody", "weight": 900, "axes": { "wdth": 150 }, "size": 60, "fit": "width", "letterSpacing": 0, "x": 14, "y": 386, "width": 372, "stretch": [1, 1.25], "color": "{acid}" }
+      ]
+    },
+    { "id": "print", "type": "grain", "amount": 0.04, "size": 1.5, "blend": "multiply" }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "$schema": "../../../../schema/recipe.schema.json",
+  "name": "mark-window",
+  "description": "Series (v2): a photo under a giant outline mark. The photo fills the cover as a duotone from the field colour to the accent; the mark is drawn huge in a hairline outline, cropped off the bottom-right; a paper band across the top carries the label's name and the catalogue number on one line and the artist and title under it; the credits sit small in paper at the bottom-left. Slots: {photo}, {mark}, {label}, {catalog}, {artist}, {title}, {credits}, the palette (bg = the duotone shadow, accent = its highlight, text = paper). Fonts: Inter Tight.",
+  "requires": [
+    "mark",
+    "photo"
+  ],
+  "params": {
+    "artist": "Artist",
+    "catalog": "",
+    "credits": "",
+    "small": 26
+  },
+  "layers": [
+    {
+      "id": "field",
+      "type": "solid",
+      "color": "@bg"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "photo",
+          "type": "image",
+          "src": "{photo}",
+          "x": 0,
+          "y": 0,
+          "width": 1000,
+          "height": 1000,
+          "fit": "cover",
+          "focus": "attention",
+          "effects": [
+            {
+              "kind": "duotone",
+              "colors": [
+                "@bg",
+                "@accent"
+              ],
+              "contrast": 1.15
+            }
+          ]
+        },
+        {
+          "id": "outline",
+          "type": "icon",
+          "markup": "<svg viewBox='0 0 512 512' fill='none' stroke='currentColor' stroke-width='1.3'>{mark}</svg>",
+          "x": 260,
+          "y": 330,
+          "size": 1300,
+          "color": "@text"
+        },
+        {
+          "id": "band",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1000,
+          "height": 214,
+          "fill": "@text"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{label}",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 84,
+          "letterSpacing": -0.04,
+          "x": 44,
+          "y": 108,
+          "maxWidth": 620,
+          "fit": "shrink",
+          "maxLines": 1,
+          "color": "@bg"
+        },
+        {
+          "id": "number",
+          "type": "text",
+          "when": "catalog",
+          "content": "{catalog}",
+          "font": "Inter Tight",
+          "weight": 200,
+          "size": 84,
+          "letterSpacing": -0.03,
+          "x": 956,
+          "y": 108,
+          "align": "right",
+          "maxWidth": 300,
+          "fit": "shrink",
+          "maxLines": 1,
+          "color": "@bg"
+        },
+        {
+          "id": "names",
+          "type": "text",
+          "font": "Inter Tight",
+          "size": "{small}",
+          "letterSpacing": -0.01,
+          "x": 44,
+          "y": 170,
+          "maxWidth": 912,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "@bg",
+          "spans": [
+            {
+              "content": "{artist}",
+              "weight": 600
+            },
+            {
+              "content": "  \u00b7  {title}",
+              "weight": 400
+            }
+          ]
+        },
+        {
+          "id": "credits",
+          "type": "text",
+          "when": "credits",
+          "content": "{credits}",
+          "font": "Inter Tight",
+          "weight": 500,
+          "size": 15,
+          "lineHeight": 1.35,
+          "x": 44,
+          "y": 912,
+          "maxWidth": 420,
+          "maxLines": 3,
+          "color": "@text"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.04
+    }
+  ]
+}

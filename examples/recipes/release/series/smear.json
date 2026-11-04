@@ -1,0 +1,202 @@
+{
+  "$schema": "../../../../schema/recipe.schema.json",
+  "name": "smear",
+  "description": "Series (v2): a photo dragged into pastel streaks, set as an editorial page. The photo is dragged along a seeded angle with covers' motion blur (drawn on pixels in renderImage), lifted toward pastel and washed with the palette's stops. The series wordmark is small, tracked wide and centred under the top edge over a full-width hairline; the artist and title run as one line beneath it; the catalogue number is the image's anchor, huge solid numerals cropped off the bottom edge and fading out downward. Slots: {photo}, {label}, {artist}, {title}, {catalog}, the palette (colors = the wash, text = the type and numerals). Params: drag (the blur's length), lift, wash, small. Fonts: Outfit, Geist.",
+  "requires": [
+    "photo"
+  ],
+  "params": {
+    "artist": "Artist",
+    "catalog": "",
+    "small": 24,
+    "wash": 0.5,
+    "lift": 0.72,
+    "drag": 70
+  },
+  "vars": {
+    "hx": {
+      "range": [
+        300,
+        700
+      ]
+    },
+    "hy": {
+      "range": [
+        250,
+        600
+      ]
+    },
+    "angle": {
+      "pick": [
+        -38,
+        -32,
+        -46,
+        37,
+        45
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "page",
+      "type": "solid",
+      "color": "@colors.0"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "smear",
+          "type": "image",
+          "src": "{photo}",
+          "x": 0,
+          "y": 0,
+          "width": 1000,
+          "height": 1000,
+          "fit": "cover",
+          "effects": [
+            {
+              "kind": "motion",
+              "angle": "$angle",
+              "length": "{drag}"
+            },
+            {
+              "kind": "levels",
+              "slope": "{lift}",
+              "intercept": {
+                "sub": [
+                  1,
+                  "{lift}"
+                ]
+              }
+            },
+            {
+              "kind": "saturate",
+              "amount": 1.45
+            }
+          ]
+        },
+        {
+          "id": "wash",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1000,
+          "height": 1000,
+          "blend": "soft-light",
+          "opacity": "{wash}",
+          "fill": {
+            "type": "linear",
+            "colors": [
+              "@colors.0",
+              "@colors.1",
+              "@colors.2"
+            ],
+            "angle": 135
+          }
+        },
+        {
+          "id": "haze",
+          "type": "shape",
+          "kind": "ellipse",
+          "cx": "$hx",
+          "cy": "$hy",
+          "rx": 420,
+          "ry": 260,
+          "rotate": -35,
+          "fill": "#ffffff",
+          "opacity": 0.18,
+          "soft": 120
+        },
+        {
+          "id": "number",
+          "type": "text",
+          "when": "catalog",
+          "content": "{catalog}",
+          "font": "Outfit",
+          "weight": 800,
+          "size": 600,
+          "letterSpacing": -0.06,
+          "x": 500,
+          "y": 1105,
+          "align": "center",
+          "fill": {
+            "type": "linear",
+            "colors": [
+              "@text",
+              "@text"
+            ],
+            "opacities": [
+              0.92,
+              0.2
+            ],
+            "angle": 180
+          }
+        },
+        {
+          "id": "wordmark",
+          "type": "text",
+          "content": {
+            "upper": "{label}"
+          },
+          "font": "Outfit",
+          "weight": 600,
+          "size": 21,
+          "letterSpacing": 0.5,
+          "x": 500,
+          "y": 70,
+          "align": "center",
+          "color": "@text"
+        },
+        {
+          "id": "rule",
+          "type": "shape",
+          "kind": "line",
+          "x1": 56,
+          "y1": 104,
+          "x2": 944,
+          "y2": 104,
+          "stroke": "@text",
+          "strokeWidth": 1.2,
+          "opacity": 0.85
+        },
+        {
+          "id": "credit",
+          "type": "text",
+          "font": "Geist",
+          "size": "{small}",
+          "letterSpacing": -0.01,
+          "x": 56,
+          "y": 152,
+          "maxWidth": 888,
+          "lineHeight": 1.25,
+          "color": "@text",
+          "spans": [
+            {
+              "content": "{artist}",
+              "weight": 600
+            },
+            {
+              "content": "  \u00b7  {title}",
+              "weight": 400
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.06
+    }
+  ]
+}

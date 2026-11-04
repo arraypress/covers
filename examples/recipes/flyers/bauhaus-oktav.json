@@ -1,0 +1,319 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "bauhaus-oktav",
+  "description": "Bauhaus poster: red, yellow, blue and black on cream. A red circle sitting on a blue bowl, a black bar cutting across with type along it, the mark knocked into the circle in cream, the name set up the side. Square (release): the same parts re-set on a square, the name across the foot, the title on the bar. Re-expressed from the Logomarks scenes lab (FlyerCards3, 'Bauhaus · poster').",
+  "params": {
+    "artist": "OKTAV",
+    "release": "Light Form",
+    "issue": "N°4",
+    "bar": "SOUND · FORM · LIGHT · SOUND · FORM",
+    "event": "SOUND & FORM FESTIVAL",
+    "dates": "06—09.05",
+    "venue": "HALLE KESSLER · ROOM 4",
+    "cream": "#eee5cf",
+    "red": "#d63a24",
+    "yellow": "#f2b31a",
+    "blue": "#1f4d9c",
+    "black": "#161514"
+  },
+  "layers": [
+    {
+      "id": "paper",
+      "type": "solid",
+      "color": "{cream}"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "aspect": "square"
+        }
+      },
+      "layers": [
+        {
+          "id": "sun",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 252,
+          "cy": 166,
+          "r": 112,
+          "fill": "{red}"
+        },
+        {
+          "id": "bowl",
+          "type": "shape",
+          "kind": "sector",
+          "cx": 252,
+          "cy": 278,
+          "r": 112,
+          "start": 90,
+          "end": 270,
+          "fill": "{blue}"
+        },
+        {
+          "id": "corner",
+          "type": "shape",
+          "kind": "sector",
+          "cx": 385,
+          "cy": 485,
+          "r": 88,
+          "start": 270,
+          "end": 360,
+          "fill": "{yellow}"
+        },
+        {
+          "id": "bar",
+          "type": "group",
+          "transform": {
+            "rotate": -28,
+            "origin": [
+              252,
+              278
+            ]
+          },
+          "layers": [
+            {
+              "type": "shape",
+              "kind": "rect",
+              "x": 112,
+              "y": 268,
+              "width": 290,
+              "height": 20,
+              "fill": "{black}"
+            },
+            {
+              "type": "text",
+              "content": "{bar}",
+              "font": "Jost",
+              "weight": 600,
+              "size": 11,
+              "letterSpacing": 0,
+              "x": 122,
+              "y": 282.5,
+              "width": 270,
+              "lengthAdjust": "spacing",
+              "color": "{cream}"
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 187,
+          "y": 101,
+          "size": 130,
+          "color": "{cream}",
+          "when": "mark"
+        },
+        {
+          "id": "issue",
+          "type": "text",
+          "content": "{issue}",
+          "font": "Jost",
+          "weight": 800,
+          "size": 26,
+          "letterSpacing": 0,
+          "x": 385,
+          "y": 40,
+          "align": "right",
+          "color": "{black}"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{artist}",
+          "font": "Jost",
+          "weight": 800,
+          "size": 118,
+          "letterSpacing": 0,
+          "x": 100,
+          "y": 482,
+          "width": 462,
+          "color": "{black}",
+          "transform": {
+            "rotate": -90,
+            "origin": [
+              100,
+              482
+            ]
+          }
+        },
+        {
+          "id": "rule",
+          "type": "shape",
+          "kind": "rect",
+          "x": 122,
+          "y": 412,
+          "width": 150,
+          "height": 5,
+          "fill": "{black}"
+        },
+        {
+          "id": "event",
+          "type": "text",
+          "content": "{event}",
+          "font": "Jost",
+          "weight": 600,
+          "size": 11.5,
+          "letterSpacing": 0.104,
+          "x": 122,
+          "y": 436,
+          "color": "{black}"
+        },
+        {
+          "id": "dates",
+          "type": "text",
+          "content": "{dates}",
+          "font": "Jost",
+          "weight": 800,
+          "size": 25,
+          "letterSpacing": -0.02,
+          "x": 122,
+          "y": 462,
+          "color": "{black}"
+        },
+        {
+          "id": "venue",
+          "type": "text",
+          "content": "{venue}",
+          "font": "Jost",
+          "weight": 500,
+          "size": 11.5,
+          "letterSpacing": 0.104,
+          "x": 122,
+          "y": 481,
+          "color": "{black}"
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "aspect": "square"
+      },
+      "layers": [
+        {
+          "id": "sun",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 250,
+          "cy": 132,
+          "r": 100,
+          "fill": "{red}"
+        },
+        {
+          "id": "bowl",
+          "type": "shape",
+          "kind": "sector",
+          "cx": 250,
+          "cy": 232,
+          "r": 100,
+          "start": 90,
+          "end": 270,
+          "fill": "{blue}"
+        },
+        {
+          "id": "corner",
+          "type": "shape",
+          "kind": "sector",
+          "cx": 385,
+          "cy": 385,
+          "r": 66,
+          "start": 270,
+          "end": 360,
+          "fill": "{yellow}"
+        },
+        {
+          "id": "bar",
+          "type": "group",
+          "transform": {
+            "rotate": -28,
+            "origin": [
+              250,
+              232
+            ]
+          },
+          "layers": [
+            {
+              "type": "shape",
+              "kind": "rect",
+              "x": 96,
+              "y": 210,
+              "width": 316,
+              "height": 46,
+              "fill": "{black}"
+            },
+            {
+              "type": "text",
+              "content": {
+                "upper": "{release}"
+              },
+              "font": "Jost",
+              "weight": 800,
+              "size": 38,
+              "letterSpacing": 0,
+              "x": 114,
+              "y": 246.5,
+              "width": 280,
+              "lengthAdjust": "spacing",
+              "color": "{cream}"
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 192,
+          "y": 74,
+          "size": 116,
+          "color": "{cream}",
+          "when": "mark"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{artist}",
+          "font": "Jost",
+          "weight": 800,
+          "size": 96,
+          "letterSpacing": 0,
+          "x": 92,
+          "y": 386,
+          "width": 372,
+          "color": "{black}",
+          "transform": {
+            "rotate": -90,
+            "origin": [
+              92,
+              386
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05,
+      "blend": "multiply"
+    }
+  ]
+}

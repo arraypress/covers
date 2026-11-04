@@ -1,0 +1,730 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "solenne-ticket",
+  "description": "Event ticket, flat artwork for the ticket format (5.5×2 in): cream stock, the photo down the side with an accent rule, the name justified, date, doors and gate, seat boxes, a holographic foil strip, a perforated stub with seat, row and a Code 128 of the ticket number. Re-expressed from the Logomarks scenes lab (FlyerCards2, 'Ephemera · tickets'); the tickets on slate there are a mockup, this is the print. The release cover keeps the stock, the photo, the foil and the perforation, with the name and title set large.",
+  "params": {
+    "brand": "SOLENNE",
+    "line": "LIVE IN THE ROUND — WORLD TOUR 2027",
+    "date": "14 FEB 27",
+    "doors": "19:30",
+    "gate": "C",
+    "sec": "112",
+    "row": "14",
+    "seat": "22",
+    "venue": "THE CORAL HALL · HARLOW",
+    "price": "£48.50",
+    "no": "0048172",
+    "admit": "ADMIT ONE",
+    "artist": "Solenne",
+    "release": "Live in the Round",
+    "paper": "#f3eee4",
+    "ground": "#2b2a2c",
+    "ink": "#15120f",
+    "soft": "#6f675d",
+    "accent": "#e5372b"
+  },
+  "layers": [
+    {
+      "id": "ground",
+      "type": "solid",
+      "color": "{ground}",
+      "when": {
+        "format": "release"
+      }
+    },
+    {
+      "id": "ticket",
+      "type": "group",
+      "x": "@bleed",
+      "y": "@bleed",
+      "width": "@trimWidth",
+      "height": "@trimHeight",
+      "viewBox": [
+        0,
+        0,
+        352,
+        128
+      ],
+      "fit": "stretch",
+      "when": {
+        "not": {
+          "format": "release"
+        }
+      },
+      "layers": [
+        {
+          "id": "die",
+          "type": "group",
+          "knockout": [
+            {
+              "type": "shape",
+              "kind": "circle",
+              "cx": 248,
+              "cy": 0,
+              "r": 7
+            },
+            {
+              "type": "shape",
+              "kind": "circle",
+              "cx": 248,
+              "cy": 128,
+              "r": 7
+            },
+            {
+              "type": "perforation",
+              "kind": "holes",
+              "x1": 248,
+              "y1": 12,
+              "x2": 248,
+              "y2": 115,
+              "size": 1.05,
+              "gap": 5.7
+            }
+          ],
+          "layers": [
+            {
+              "id": "stock",
+              "type": "shape",
+              "kind": "rect",
+              "x": -10,
+              "y": -10,
+              "width": 372,
+              "height": 148,
+              "fill": "{paper}"
+            },
+            {
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 352,
+              "height": 128,
+              "viewBox": [
+                0,
+                0,
+                2816,
+                1024
+              ],
+              "fit": "stretch",
+              "layers": [
+                {
+                  "id": "photo",
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": -80,
+                  "y": -80,
+                  "width": 768,
+                  "height": 1184,
+                  "fit": "cover"
+                }
+              ],
+              "id": "photoBox",
+              "when": "photo"
+            },
+            {
+              "id": "accentRule",
+              "type": "shape",
+              "kind": "rect",
+              "x": 86,
+              "y": -10,
+              "width": 3.5,
+              "height": 148,
+              "fill": "{accent}"
+            },
+            {
+              "id": "mark",
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 98,
+              "y": 10,
+              "size": 17,
+              "color": "{ink}",
+              "when": "mark"
+            },
+            {
+              "id": "admit",
+              "type": "text",
+              "content": "{admit}",
+              "font": "Space Mono",
+              "weight": 700,
+              "size": 5.6,
+              "letterSpacing": 0.107,
+              "x": 224,
+              "y": 21,
+              "color": "{ink}",
+              "align": "right"
+            },
+            {
+              "id": "brand",
+              "type": "text",
+              "content": "{brand}",
+              "font": "Unbounded",
+              "weight": 800,
+              "size": 20,
+              "letterSpacing": 0,
+              "x": 98,
+              "y": 47,
+              "width": 126,
+              "color": "{ink}"
+            },
+            {
+              "id": "line",
+              "type": "text",
+              "content": "{line}",
+              "font": "Space Mono",
+              "weight": 700,
+              "size": 5.4,
+              "letterSpacing": 0,
+              "x": 98,
+              "y": 58,
+              "color": "{ink}",
+              "width": 126
+            },
+            {
+              "id": "lineRule",
+              "type": "shape",
+              "kind": "rect",
+              "x": 98,
+              "y": 64,
+              "width": 126,
+              "height": 0.6,
+              "fill": "{ink}"
+            },
+            {
+              "id": "dateKey",
+              "type": "text",
+              "content": "DATE",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 4.6,
+              "letterSpacing": 0.087,
+              "x": 98,
+              "y": 73,
+              "color": "{soft}"
+            },
+            {
+              "id": "doorsKey",
+              "type": "text",
+              "content": "DOORS",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 4.6,
+              "letterSpacing": 0.087,
+              "x": 156,
+              "y": 73,
+              "color": "{soft}"
+            },
+            {
+              "id": "gateKey",
+              "type": "text",
+              "content": "GATE",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 4.6,
+              "letterSpacing": 0.087,
+              "x": 196,
+              "y": 73,
+              "color": "{soft}"
+            },
+            {
+              "id": "date",
+              "type": "text",
+              "content": "{date}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 15,
+              "letterSpacing": 0,
+              "x": 98,
+              "y": 87,
+              "color": "{ink}"
+            },
+            {
+              "id": "doors",
+              "type": "text",
+              "content": "{doors}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 15,
+              "letterSpacing": 0,
+              "x": 156,
+              "y": 87,
+              "color": "{ink}"
+            },
+            {
+              "id": "gate",
+              "type": "text",
+              "content": "{gate}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 15,
+              "letterSpacing": 0,
+              "x": 196,
+              "y": 87,
+              "color": "{accent}"
+            },
+            {
+              "id": "SECBox",
+              "type": "shape",
+              "kind": "rect",
+              "x": 98,
+              "y": 93,
+              "width": 40,
+              "height": 19,
+              "fill": "none",
+              "stroke": "{ink}",
+              "strokeWidth": 0.6
+            },
+            {
+              "id": "SECKey",
+              "type": "text",
+              "content": "SEC",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 4.2,
+              "letterSpacing": 0,
+              "x": 101,
+              "y": 100,
+              "color": "{soft}"
+            },
+            {
+              "id": "SECVal",
+              "type": "text",
+              "content": "{sec}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 13,
+              "letterSpacing": 0,
+              "x": 135,
+              "y": 109.5,
+              "color": "{ink}",
+              "align": "right"
+            },
+            {
+              "id": "ROWBox",
+              "type": "shape",
+              "kind": "rect",
+              "x": 141,
+              "y": 93,
+              "width": 40,
+              "height": 19,
+              "fill": "none",
+              "stroke": "{ink}",
+              "strokeWidth": 0.6
+            },
+            {
+              "id": "ROWKey",
+              "type": "text",
+              "content": "ROW",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 4.2,
+              "letterSpacing": 0,
+              "x": 144,
+              "y": 100,
+              "color": "{soft}"
+            },
+            {
+              "id": "ROWVal",
+              "type": "text",
+              "content": "{row}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 13,
+              "letterSpacing": 0,
+              "x": 178,
+              "y": 109.5,
+              "color": "{ink}",
+              "align": "right"
+            },
+            {
+              "id": "SEATBox",
+              "type": "shape",
+              "kind": "rect",
+              "x": 184,
+              "y": 93,
+              "width": 40,
+              "height": 19,
+              "fill": "none",
+              "stroke": "{ink}",
+              "strokeWidth": 0.6
+            },
+            {
+              "id": "SEATKey",
+              "type": "text",
+              "content": "SEAT",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 4.2,
+              "letterSpacing": 0,
+              "x": 187,
+              "y": 100,
+              "color": "{soft}"
+            },
+            {
+              "id": "SEATVal",
+              "type": "text",
+              "content": "{seat}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 13,
+              "letterSpacing": 0,
+              "x": 221,
+              "y": 109.5,
+              "color": "{ink}",
+              "align": "right"
+            },
+            {
+              "id": "venue",
+              "type": "text",
+              "content": "{venue}",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 4.8,
+              "letterSpacing": 0,
+              "x": 98,
+              "y": 121,
+              "color": "{soft}"
+            },
+            {
+              "id": "price",
+              "type": "text",
+              "content": "{price}",
+              "font": "Space Mono",
+              "weight": 700,
+              "size": 5.6,
+              "letterSpacing": 0,
+              "x": 224,
+              "y": 121,
+              "color": "{ink}",
+              "align": "right"
+            },
+            {
+              "id": "foil",
+              "type": "shape",
+              "kind": "rect",
+              "x": 230,
+              "y": -10,
+              "width": 11,
+              "height": 148,
+              "fill": {
+                "type": "linear",
+                "colors": [
+                  "#ff9fd8",
+                  "#ffe28a",
+                  "#a6ffd6",
+                  "#8fd6ff",
+                  "#c7a6ff",
+                  "#ffb8e8"
+                ],
+                "angle": 135,
+                "spread": "reflect",
+                "length": 85
+              }
+            },
+            {
+              "id": "foilLines",
+              "type": "svg",
+              "opacity": 0.45,
+              "defs": "<pattern id=\"{{id}}p\" width=\"2.2\" height=\"2.2\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(35)\"><rect width=\"1\" height=\"2.2\" fill=\"#fff\"/></pattern>",
+              "markup": "<rect x=\"230\" y=\"-10\" width=\"11\" height=\"148\" fill=\"url(#{{id}}p)\"/>"
+            },
+            {
+              "id": "foilMark",
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 230.5,
+              "y": 54,
+              "size": 10,
+              "color": "#ffffff",
+              "opacity": 0.6,
+              "when": "mark"
+            },
+            {
+              "id": "stubBrand",
+              "type": "text",
+              "content": "{brand}",
+              "font": "Space Mono",
+              "weight": 700,
+              "size": 5.6,
+              "letterSpacing": 0.089,
+              "x": 274,
+              "y": 20,
+              "color": "{ink}"
+            },
+            {
+              "id": "stubDate",
+              "type": "text",
+              "content": "{date}",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 4.4,
+              "letterSpacing": 0,
+              "x": 274,
+              "y": 28,
+              "color": "{soft}"
+            },
+            {
+              "id": "stubSec",
+              "type": "text",
+              "content": "SEC {sec}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 16,
+              "letterSpacing": 0,
+              "x": 274,
+              "y": 49,
+              "color": "{ink}"
+            },
+            {
+              "id": "stubRow",
+              "type": "text",
+              "content": "ROW {row}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 16,
+              "letterSpacing": 0,
+              "x": 274,
+              "y": 64,
+              "color": "{ink}"
+            },
+            {
+              "id": "stubSeat",
+              "type": "text",
+              "content": "SEAT {seat}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 16,
+              "letterSpacing": 0,
+              "x": 274,
+              "y": 79,
+              "color": "{accent}"
+            },
+            {
+              "id": "barcode",
+              "type": "barcode",
+              "value": "{no}",
+              "x": 274,
+              "y": 88,
+              "width": 68,
+              "height": 22,
+              "color": "{ink}"
+            },
+            {
+              "id": "no",
+              "type": "text",
+              "content": "No. {no}",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 4.6,
+              "letterSpacing": 0.174,
+              "x": 274,
+              "y": 119,
+              "color": "{ink}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "format": "release"
+      },
+      "layers": [
+        {
+          "id": "die",
+          "type": "group",
+          "knockout": [
+            {
+              "type": "shape",
+              "kind": "circle",
+              "cx": 352,
+              "cy": 0,
+              "r": 16
+            },
+            {
+              "type": "shape",
+              "kind": "circle",
+              "cx": 352,
+              "cy": 400,
+              "r": 16
+            },
+            {
+              "type": "perforation",
+              "kind": "holes",
+              "x1": 352,
+              "y1": 26,
+              "x2": 352,
+              "y2": 376,
+              "size": 2.4,
+              "gap": 12
+            }
+          ],
+          "layers": [
+            {
+              "id": "stock",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 400,
+              "fill": "{paper}"
+            },
+            {
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 400,
+              "viewBox": [
+                0,
+                0,
+                3200,
+                3200
+              ],
+              "fit": "stretch",
+              "layers": [
+                {
+                  "id": "photo",
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1200,
+                  "height": 3200,
+                  "fit": "cover"
+                }
+              ],
+              "id": "photoBox",
+              "when": "photo"
+            },
+            {
+              "id": "accentRule",
+              "type": "shape",
+              "kind": "rect",
+              "x": 150,
+              "y": 0,
+              "width": 7,
+              "height": 400,
+              "fill": "{accent}"
+            },
+            {
+              "id": "mark",
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 174,
+              "y": 26,
+              "size": 44,
+              "color": "{ink}",
+              "when": "mark"
+            },
+            {
+              "id": "brand",
+              "type": "text",
+              "content": {
+                "upper": "{artist}"
+              },
+              "font": "Unbounded",
+              "weight": 800,
+              "size": 40,
+              "letterSpacing": 0,
+              "x": 173,
+              "y": 140,
+              "width": 154,
+              "color": "{ink}"
+            },
+            {
+              "id": "lineRule",
+              "type": "shape",
+              "kind": "rect",
+              "x": 174,
+              "y": 158,
+              "width": 154,
+              "height": 1.4,
+              "fill": "{ink}"
+            },
+            {
+              "id": "title1",
+              "type": "text",
+              "content": {
+                "upper": {
+                  "slice": [
+                    "{release}",
+                    0,
+                    7
+                  ]
+                }
+              },
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 74,
+              "letterSpacing": 0,
+              "x": 172,
+              "y": 238,
+              "color": "{ink}",
+              "width": 156
+            },
+            {
+              "id": "title2",
+              "type": "text",
+              "content": {
+                "upper": {
+                  "slice": [
+                    "{release}",
+                    8
+                  ]
+                }
+              },
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 74,
+              "letterSpacing": 0,
+              "x": 172,
+              "y": 312,
+              "color": "{accent}",
+              "width": 156
+            },
+            {
+              "id": "foil",
+              "type": "shape",
+              "kind": "rect",
+              "x": 366,
+              "y": 0,
+              "width": 34,
+              "height": 400,
+              "fill": {
+                "type": "linear",
+                "colors": [
+                  "#ff9fd8",
+                  "#ffe28a",
+                  "#a6ffd6",
+                  "#8fd6ff",
+                  "#c7a6ff",
+                  "#ffb8e8"
+                ],
+                "angle": 135,
+                "spread": "reflect",
+                "length": 85
+              }
+            },
+            {
+              "id": "foilLines",
+              "type": "svg",
+              "opacity": 0.45,
+              "defs": "<pattern id=\"{{id}}p\" width=\"2.2\" height=\"2.2\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(35)\"><rect width=\"1\" height=\"2.2\" fill=\"#fff\"/></pattern>",
+              "markup": "<rect x=\"366\" y=\"0\" width=\"34\" height=\"400\" fill=\"url(#{{id}}p)\"/>"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

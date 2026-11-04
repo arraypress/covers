@@ -1,19 +1,27 @@
 /**
- * @arraypress/covers — build-time cover images for posts, products and
- * pages: soft mesh gradients, grain, patterns, stripes, shapes, icons and
- * type, from one seed, as SVG or WebP/PNG/AVIF/JPEG.
+ * @arraypress/covers — covers, flyers, posters, release art, social
+ * formats and print stationery from one seed and a stack of layers, as SVG
+ * or WebP/PNG/AVIF/JPEG. Runs in Node, browsers and Cloudflare Workers.
  *
  * @module @arraypress/covers
  */
 
-export { cover, renderSvg, renderImage, coverKey, MIME, DEFAULT_QUALITY, VERSION } from './render.js';
+export { cover, renderSvg, renderImage, renderPages, renderBlob, coverKey, safeBox, MIME, DEFAULT_QUALITY, VERSION } from './render.js';
 export { recipes } from './recipes.js';
 export { defineRecipe, loadRecipe } from './json-recipe.js';
 export { palettes, resolvePalette, derivePalette } from './palette.js';
 export { toHex, toOklch, fromOklch, mixOklab, mixOklch, onBackground, gradientAt } from './color.js';
 export { registerIcons } from './icons.js';
+export { registerFont } from './fonts.js';
+export { configure } from './platform/index.js';
 export { resolveSize, ASPECTS } from './geometry.js';
+export { FORMATS } from './formats/index.js';
 export { createRng, hashString } from './rng.js';
 export { LAYERS as layers } from './layers.js';
 export { extractPalette } from './extract.js';
 export { RISO_INKS } from './print.js';
+export { EFFECTS, EFFECT_OPTIONS } from './effects/index.js';
+export { rasterize } from './raster/index.js';
+export { lint } from './lint/index.js';
+export { kit, KIT_FORMATS } from './kit/index.js';
+export { valueAt } from './animate/index.js';

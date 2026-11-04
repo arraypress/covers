@@ -1,0 +1,301 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "liquid-glass",
+  "description": "Liquid glass: an abstract render (liquid, bubbles, holographic) full bleed, and in the middle a disc of frosted glass (the same image blurred behind it, a light rim and a highlight) carrying the mark in white; the artist and title small, top and bottom. Slots: {name} (artist), {title} (release), {photo} (the abstract image), {mark}, `focus`. Fonts: Geist (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "requires": [
+    "photo",
+    "mark"
+  ],
+  "params": {
+    "focus": "center",
+    "tint": "#0a0a14"
+  },
+  "layers": [
+    {
+      "id": "image",
+      "type": "image",
+      "src": "{photo}",
+      "fit": "cover",
+      "focus": "{focus}"
+    },
+    {
+      "id": "glass",
+      "type": "image",
+      "src": "{photo}",
+      "fit": "cover",
+      "focus": "{focus}",
+      "blur": "4.6vmin",
+      "effects": [
+        {
+          "kind": "levels",
+          "brightness": 0.06
+        }
+      ],
+      "clip": [
+        {
+          "type": "shape",
+          "kind": "circle",
+          "cx": "50%",
+          "cy": "43.2%",
+          "r": "23.6vmin"
+        }
+      ]
+    },
+    {
+      "id": "disc",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "frost",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 432,
+          "r": 236,
+          "fill": {
+            "type": "linear",
+            "angle": 160,
+            "colors": [
+              "#ffffff",
+              "#ffffff"
+            ],
+            "opacities": [
+              0.28,
+              0.04
+            ]
+          }
+        },
+        {
+          "id": "rim",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 432,
+          "r": 234,
+          "fill": "none",
+          "strokeWidth": 3,
+          "stroke": {
+            "type": "linear",
+            "angle": 150,
+            "colors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ],
+            "opacities": [
+              0.95,
+              0.1,
+              0.6
+            ]
+          }
+        },
+        {
+          "id": "drop",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 432,
+          "r": 236,
+          "fill": "none",
+          "stroke": "#000000",
+          "strokeWidth": 2,
+          "opacity": 0.25,
+          "effects": [
+            {
+              "kind": "blur",
+              "radius": 18
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 385,
+          "y": 317,
+          "size": 230,
+          "color": "#ffffff",
+          "effects": [
+            {
+              "kind": "glow",
+              "blur": 24,
+              "color": "#ffffff",
+              "opacity": 0.45
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "topGlass",
+      "type": "image",
+      "src": "{photo}",
+      "fit": "cover",
+      "focus": "{focus}",
+      "blur": "4vmin",
+      "clip": [
+        {
+          "type": "shape",
+          "kind": "rect",
+          "x": "4%",
+          "y": "5%",
+          "width": "92%",
+          "height": "13.6%",
+          "radius": "6.8vmin"
+        }
+      ]
+    },
+    {
+      "id": "bottomGlass",
+      "type": "image",
+      "src": "{photo}",
+      "fit": "cover",
+      "focus": "{focus}",
+      "blur": "4vmin",
+      "clip": [
+        {
+          "type": "shape",
+          "kind": "rect",
+          "x": "4%",
+          "y": "81.4%",
+          "width": "92%",
+          "height": "13.6%",
+          "radius": "6.8vmin"
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "topTint",
+          "type": "shape",
+          "kind": "rect",
+          "x": 40,
+          "y": 50,
+          "width": 920,
+          "height": 136,
+          "radius": 68,
+          "fill": "{tint}",
+          "opacity": 0.32
+        },
+        {
+          "id": "topRim",
+          "type": "shape",
+          "kind": "rect",
+          "x": 41,
+          "y": 51,
+          "width": 918,
+          "height": 134,
+          "radius": 67,
+          "fill": "none",
+          "strokeWidth": 2.5,
+          "stroke": {
+            "type": "linear",
+            "angle": 170,
+            "colors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ],
+            "opacities": [
+              0.9,
+              0.12,
+              0.55
+            ]
+          }
+        },
+        {
+          "id": "bottomTint",
+          "type": "shape",
+          "kind": "rect",
+          "x": 40,
+          "y": 814,
+          "width": 920,
+          "height": 136,
+          "radius": 68,
+          "fill": "{tint}",
+          "opacity": 0.32
+        },
+        {
+          "id": "bottomRim",
+          "type": "shape",
+          "kind": "rect",
+          "x": 41,
+          "y": 815,
+          "width": 918,
+          "height": 134,
+          "radius": 67,
+          "fill": "none",
+          "strokeWidth": 2.5,
+          "stroke": {
+            "type": "linear",
+            "angle": 170,
+            "colors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ],
+            "opacities": [
+              0.9,
+              0.12,
+              0.55
+            ]
+          }
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Geist",
+          "weight": 600,
+          "size": 90,
+          "letterSpacing": -0.03,
+          "x": 500,
+          "y": 150,
+          "align": "center",
+          "maxWidth": 850,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "#ffffff"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Geist",
+          "weight": 400,
+          "size": 90,
+          "letterSpacing": -0.03,
+          "x": 500,
+          "y": 914,
+          "align": "center",
+          "maxWidth": 850,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "#ffffff"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05
+    }
+  ]
+}

@@ -5,6 +5,36 @@
  */
 
 /** A CSS colour: hex (3/4/6/8 digits), `rgb()`/`rgba()` or `hsl()`/`hsla()`. Alpha is ignored. */
+import type { LayerTransform, Effect, EffectKind, EffectMask } from './effects/index.js';
+import type { Paint } from './effects/paint.js';
+import type { TextPath } from './type/path.js';
+import type { GroupLayer } from './render/group.js';
+import type { DefsLayer, UseLayer } from './render/use.js';
+import type { RepeatLayer } from './layers/repeat.js';
+import type { TextSpan } from './type/spans.js';
+import type { GlyphControl } from './type/glyphs.js';
+import type { Cut } from './formats/cut.js';
+import type { ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer } from './layers/index.js';
+import type { Zones, PrintInfo, FormatName } from './formats/index.js';
+
+export type { RepeatLayer, DefsLayer, UseLayer, TextSpan, GlyphControl, Cut };
+export type { LayerTransform, Effect, EffectKind, EffectMask, Paint, TextPath, GroupLayer, ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, Zones, PrintInfo, FormatName };
+export type { ShapeSpec, TableCell } from './layers/index.js';
+export type { Format } from './formats/index.js';
+export type { LintIssue } from './lint/index.js';
+export type { Settings } from './platform/index.js';
+
+export { safeBox } from './formats/index.js';
+export { rasterize } from './raster/index.js';
+import type { RasterizeOptions } from './raster/index.js';
+export type { RasterizeOptions };
+export { lint } from './lint/index.js';
+export { kit, KIT_FORMATS } from './kit/index.js';
+export { FORMATS } from './formats/index.js';
+export { configure } from './platform/index.js';
+export { EFFECTS, EFFECT_OPTIONS } from './effects/index.js';
+export { valueAt } from './animate/index.js';
+
 export type Color = string;
 
 /** Pixels, or a viewport unit of the canvas: `'6vmin'`, `'4vw'`, `'4vh'`, `'5vmax'`. */
@@ -67,15 +97,22 @@ export type PaletteInput =
       onAccent?: Color;
     };
 
-/** A font the text layers can use. TrueType, OpenType or WOFF (not WOFF2). */
+/** A font the text layers can use. TrueType, OpenType or WOFF (WOFF2 only for live text). */
 export interface FontSource {
   /** Family name, as text layers ask for it (`font: 'Inter'`). */
   name: string;
-  data: Uint8Array | ArrayBuffer;
-  /** Default 400. */
-  weight?: number;
+  /** The font's bytes; or give `src`. */
+  data?: Uint8Array | ArrayBuffer;
+  /** Where to load it from: a path (Node), a URL, or anything a `configure({ load })` hook reads. */
+  src?: string | URL;
+  /** Default 400. A variable font's range (`[100, 900]`) matches any weight in it and sets `wght`. */
+  weight?: number | [number, number];
   /** Default `'normal'`. */
   style?: 'normal' | 'italic';
+  /** Variable-font axes applied whenever this face is used. */
+  axes?: Record<string, number>;
+  /** Use this face for characters other fonts lack (glyph fallback). */
+  fallback?: boolean;
 }
 
 /** Options every layer takes. */
@@ -87,6 +124,18 @@ export interface BaseLayer {
   /** 0–1. */
   opacity?: number;
   blend?: BlendMode;
+  /** Move, turn, scale, skew or mirror the layer. (On a text layer, a case keyword is still its case.) */
+  transform?: LayerTransform | string;
+  /** Effects (filters, pixel effects, copies), applied in order; a kind alone takes its defaults. */
+  effects?: Effect | EffectKind | (Effect | EffectKind)[];
+  /** Layers whose luminance masks this one (white shows). */
+  mask?: Layer[];
+  /** Layers cut out of this one (knockout type and marks, punched holes). */
+  knockout?: Layer[];
+  /** Layers this one shows only inside. */
+  clip?: Layer[];
+  /** Draw the layer in a box: the print `'trim'` or `'safe'` area, or fractions of the canvas. */
+  area?: 'bleed' | 'trim' | 'safe' | Region;
 }
 
 export interface SolidLayer extends BaseLayer {
@@ -196,10 +245,15 @@ export interface StripesLayer extends BaseLayer {
 
 export interface ImageLayer extends BaseLayer {
   type: 'image';
-  /** A local file path, a `data:` URI, or bytes. Never fetched from the network. */
-  src: string | Uint8Array;
+  /** A local file path, a `data:` URI, bytes, or a URL (fetched in browsers and Workers; in Node only with `configure({ network: true })` or a loader). */
+  src: string | URL | Uint8Array | ArrayBuffer;
   /** Default `'cover'`. */
-  fit?: 'cover' | 'contain';
+  fit?: 'cover' | 'contain' | 'stretch';
+  /** An explicit box in px or `'%'` (instead of `region`). */
+  x?: Length | `${number}%`;
+  y?: Length | `${number}%`;
+  width?: Length | `${number}%`;
+  height?: Length | `${number}%`;
   /** Crop focus: an anchor, or (with sharp) `'attention'` / `'entropy'`. Default `'center'`. */
   focus?: Anchor | 'attention' | 'entropy';
   /** Default the whole canvas. */
@@ -311,12 +365,19 @@ export interface IconLayer extends BaseLayer {
   svg?: string;
   /** A bare path `d` (filled with the colour). */
   path?: string;
-  /** For `path`. Default `[0, 0, 24, 24]`. */
+  /** For `path`. Default `[0, 0, 24, 24]` (`[0, 0, 512, 512]` for `markup`). */
   viewBox?: [number, number, number, number];
+  /** Inner SVG markup (a mark's `<path>`s on a 512 grid), filled with `color`. */
+  markup?: string;
+  /** Top-left corner in px (a mark at `translate(x y) scale(size / 512)`), instead of anchoring. */
+  x?: Length | `${number}%`;
+  y?: Length | `${number}%`;
   /** Default `'24vmin'` (`'15vmin'` on a tile). */
   size?: Length;
   /** Default the accent on a tile, else `palette.text`. */
   color?: Color;
+  /** A paint instead of `color`: a gradient, tile or preset laid over the icon's grid. */
+  fill?: Paint;
   /** Override stroke icons' `stroke-width` (in icon units). */
   strokeWidth?: number;
   /** Default `'center'`. */
@@ -347,10 +408,60 @@ export interface TextLabel {
   gap?: Length;
 }
 
-export interface TextLayer extends BaseLayer {
+export interface TextLayer extends Omit<BaseLayer, 'transform'> {
   type: 'text';
-  content: string;
-  /** Family. Default `'Inter'` (bundled). */
+  /** The text; an array is one line per item. (Optional with `spans`.) */
+  content?: string | string[];
+  /** First baseline x (px or `'%'`): places the text like SVG `<text x y>`, `align` acting as the anchor. */
+  x?: Length | `${number}%`;
+  y?: Length | `${number}%`;
+  /** Justify every line to this width (`textLength`). */
+  width?: Length;
+  /** Justify every line to `maxWidth`. */
+  justify?: boolean;
+  /** Default `'spacingAndGlyphs'` (scale the glyphs); `'spacing'` opens the letter-spacing. */
+  lengthAdjust?: 'spacingAndGlyphs' | 'spacing';
+  /** `'width'`: the block fills the width; `'lines'`: each line does; `'words'`: a word a line, the widest filling the width; `'wrap'`: wrap at the width, then fill it; `'shrink'`: shrink before wrapping. */
+  fit?: 'width' | 'lines' | 'words' | 'wrap' | 'shrink';
+  /** `'words'`: a word a line. */
+  split?: 'words';
+  /** Shrink the block to this height. */
+  maxHeight?: Length;
+  /** Mixed runs on the same lines, each with its own font, weight, size, colour (instead of `content`). */
+  spans?: (TextSpan | string)[];
+  /** Per-glyph scale, shift, turn and colour (arrays cycle). */
+  glyphs?: GlyphControl;
+  /** A family (or list) for characters the font lacks; then fonts registered with `fallback: true`, then built-in symbols. */
+  fallback?: string | string[];
+  /** Dashes on the stroke (`stroke`): `[on, off]` lengths, `'dashed'` or `'dotted'`. */
+  dash?: 'dashed' | 'dotted' | Length[];
+  /** Block extrusion: a depth, or its options. */
+  extrude?: Length | { depth?: Length; angle?: number; offset?: [Length, Length]; steps?: number; color?: Color; to?: Color };
+  /** `color: 'auto'` takes the dark colour above this backdrop luma (0–1). Default 0.72. */
+  autoThreshold?: number;
+  /** Stretch about the first baseline: `[sx, sy]`, or `sy`. */
+  stretch?: number | [number, number];
+  /** Variable-font axes: `{ wdth: 50, SOFT: 100, WONK: 1, opsz: 144 }`. */
+  axes?: Record<string, number>;
+  /** Outline colour (with `fill: 'none'` for outline type). */
+  stroke?: Color;
+  strokeWidth?: Length;
+  /** Keylines under the fill, widest first (a preset paint brings its own). */
+  strokes?: { color: Color; width: Length; fill?: Color; dash?: 'dashed' | 'dotted' | Length[] }[];
+  fill?: Paint;
+  /** Set the text along a path. */
+  path?: TextPath;
+  /** Along the path: 0–1, or px. Default 0.5 (centred). */
+  startOffset?: number | Length;
+  /** Space the text to fill the path (a ring); a length leaves that gap. */
+  fitPath?: boolean | Length;
+  /** Shift off the path. */
+  dy?: Length;
+  /** `'live'`: `<text>` with the font embedded by `@font-face` (or linked by URL). Default `'outline'`. */
+  render?: 'outline' | 'live';
+  /** For `color: 'auto'`. Default `['#ffffff', '#0b0b0b']`. */
+  autoColors?: [Color, Color];
+  /** Family. Default `'Inter'` (bundled). `'pixel'`: the built-in 5×7 face. */
   font?: string;
   /** Default 600. */
   weight?: number;
@@ -363,8 +474,8 @@ export interface TextLayer extends BaseLayer {
   lineHeight?: number;
   /** Em. Default -0.02. */
   letterSpacing?: number;
-  /** Default `palette.text`. */
-  color?: Color;
+  /** Default `palette.text`. `'auto'`: white or near-black, whichever reads better on what's drawn underneath. */
+  color?: Color | 'auto';
   /** Default from the anchor. */
   align?: 'left' | 'center' | 'right';
   /** Default `'bottom-left'`. */
@@ -381,7 +492,8 @@ export interface TextLayer extends BaseLayer {
   ellipsis?: string;
   /** Even out line lengths. Default true. */
   balance?: boolean;
-  transform?: 'none' | 'uppercase' | 'lowercase';
+  /** The case (`'uppercase'`, `'lowercase'`), or a geometric transform. */
+  transform?: 'none' | 'uppercase' | 'lowercase' | LayerTransform;
   /** A small line above (a string, or its options). */
   label?: string | TextLabel;
   /** A pill or box behind the block. */
@@ -601,13 +713,15 @@ export interface RuleLayer extends BaseLayer {
 }
 
 export type Layer =
+  | GroupLayer | ShapeLayer | SvgLayer | TableLayer | BarcodeLayer | PerforationLayer | TearLayer | TextureLayer
   | InkLayer | DitherLayer | ContourLayer | WaveformLayer | TilesLayer | RuleLayer
   | DiagramLayer | PaperLayer | ScribbleLayer
   | SolidLayer | LinearLayer | RadialLayer | MeshLayer | StripesLayer | ImageLayer
-  | GrainLayer | PatternLayer | ShapesLayer | IconLayer | TextLayer | FrameLayer;
+  | GrainLayer | PatternLayer | ShapesLayer | IconLayer | TextLayer | FrameLayer
+  | RepeatLayer | DefsLayer | UseLayer;
 
 /** Built-in recipe names. */
-export type RecipeName = 'aurora' | 'gridTitle' | 'iconTile' | 'bigType' | 'stripes' | 'duotone' | 'mark' | 'diagram' | 'cutout' | 'riso' | 'dither' | 'contour' | 'waveform' | 'bauhaus' | 'issue' | 'photo';
+export type RecipeName = 'aurora' | 'gridTitle' | 'iconTile' | 'bigType' | 'stripes' | 'duotone' | 'mark' | 'diagram' | 'cutout' | 'riso' | 'dither' | 'contour' | 'waveform' | 'bauhaus' | 'issue' | 'photo' | 'brand';
 
 /** What a recipe function receives besides the options. */
 export interface RecipeContext {
@@ -619,6 +733,12 @@ export interface RecipeContext {
   u: number;
   /** The cover's seed. */
   seed?: string;
+  /** The safe box (a format's safe zone, a print piece's trim less its safe margin, else the canvas). */
+  safeX?: number; safeY?: number; safeWidth?: number; safeHeight?: number;
+  /** Print: bleed and safe margin in px, the trim size, px per mm, dpi. */
+  bleed?: number; safe?: number; trimWidth?: number; trimHeight?: number; mm?: number; dpi?: number;
+  /** The format's name, when one was given. */
+  format?: string;
 }
 
 /** A custom recipe. JSON recipes defined with {@link defineRecipe} also carry `recipeName` and `json`. */
@@ -645,6 +765,9 @@ export type RecipeValue =
   | { ramp: RecipeValue[] }
   | { taper: [RecipeValue, RecipeValue] }
   | { reverse: RecipeValue }
+  | { join: [RecipeValue] | [RecipeValue, RecipeValue] } | { upper: RecipeValue } | { lower: RecipeValue }
+  | { slice: [RecipeValue, RecipeValue] | [RecipeValue, RecipeValue, RecipeValue] }
+  | { keyframes: [number, RecipeValue][]; ease?: 'linear' | 'in' | 'out' | 'inOut' | 'step'; loop?: boolean | 'pingpong' }
   | { [key: string]: RecipeValue };
 
 /** A condition: an option name (set?), `{ name: value }` (equals; `mode` is the palette's), `not`, `all`, `any`. */
@@ -677,6 +800,10 @@ export interface RecipeJson {
   output?: { lossless?: boolean };
   /** Named values, resolved in order; referenced as `"$name"`. */
   vars?: Record<string, RecipeValue>;
+  /** The pages of a two-sided piece; layers pick theirs with `when: { page: 'back' }`. */
+  pages?: string[];
+  /** Fonts the recipe uses: a path beside the recipe file, or a URL. */
+  fonts?: { name: string; src: string; weight?: number | [number, number]; style?: 'normal' | 'italic'; axes?: Record<string, number>; fallback?: boolean }[];
   layers: RecipeJsonLayer[];
 }
 
@@ -742,6 +869,23 @@ export interface RecipeOptions {
   show?: 'blur';
   /** `mark` icon colour. `'auto'` (default): white whenever it clears 3:1 against everything under the icon, else near-black. */
   iconColor?: 'auto' | 'white' | 'black' | Color;
+  /** Brand and event data, for recipes that read them (`{name}`, `{lineup.0}`). */
+  name?: string;
+  tagline?: string;
+  /** A mark: `<path>` markup on a 512 grid. */
+  mark?: string;
+  photo?: string | Uint8Array | URL;
+  /** The photo's subject cut out (transparent, in the same frame). */
+  cutout?: string | Uint8Array | URL;
+  lines?: string[];
+  lineup?: string[];
+  dates?: string[];
+  tracklist?: (string | string[] | Record<string, string>)[];
+  venue?: string;
+  address?: string;
+  time?: string;
+  price?: string;
+  meta?: unknown;
   /** Any recipe layer by id: `mesh`, `grid`, `grain`, `bg`, `glow`, `rings`, `wash`, `stripes`, `spot`, `scrim`… */
   [layerId: string]: unknown;
 }
@@ -768,6 +912,28 @@ export interface CoverOptions extends RecipeOptions {
   radius?: Length;
   /** Preferred encoding, overriding the recipe's. */
   output?: { lossless?: boolean };
+  /** A named format (`'release'`, `'instagram-story'`, `'business-card'`, …; see `FORMATS`) or a custom size with a unit. */
+  format?: FormatName | { width: number; height: number; unit?: 'px' | 'mm' | 'in'; bleed?: number; safe?: number; zones?: Zones };
+  /** Print: dots per inch. Default 300. */
+  dpi?: number;
+  /** Print: bleed in mm (default the format's, usually 3), or `false`. */
+  bleed?: number | false;
+  /** Print: safe margin inside the trim, mm. */
+  safe?: number;
+  /** Print: crop marks in a slug round the bleed. */
+  cropMarks?: boolean;
+  /** Print: draw the die line (`CutContour`). */
+  cutLine?: boolean;
+  /** Print: the die-cut shape. */
+  cut?: Cut;
+  /** Draw the format's safe zones over the art (for previews). */
+  overlay?: boolean;
+  /** Which page of a two-sided piece to draw. Default `'front'`. */
+  page?: string;
+  /** `'live'`: every text layer as `<text>` with `@font-face`. */
+  textRender?: 'outline' | 'live';
+  /** Seconds: the length of an animated cover's loop (keyframes with `loop` wrap at it). */
+  loop?: number;
 }
 
 /** A resolved cover (from {@link cover}). */
@@ -782,6 +948,17 @@ export interface Cover {
   radius?: Length;
   /** Preferred encoding (from the recipe, or set here). */
   output?: { lossless?: boolean };
+  /** Print set-up, when the format is a print size. */
+  print?: PrintInfo;
+  /** The format's name. */
+  format?: string;
+  /** The format's safe zones, px. */
+  zones?: Zones;
+  page?: string;
+  pages?: string[];
+  overlay?: boolean;
+  loop?: number;
+  textRender?: 'outline' | 'live';
 }
 
 export interface RenderImageOptions {
@@ -821,10 +998,19 @@ export interface IconSet {
 /** Resolve a cover's size and palette and expand its recipe. Pure and synchronous. */
 export function cover(options: CoverOptions | Cover): Cover;
 
-/** Render to an SVG string (text and icons as outlines; byte-identical for the same input). */
-export function renderSvg(input: CoverOptions | Cover): Promise<string>;
+/** Render to an SVG string (text and icons as outlines; byte-identical for the same input). `t`: the time to draw, in seconds, for keyframed layers. */
+export function renderSvg(input: CoverOptions | Cover, options?: { t?: number }): Promise<string>;
 
-/** Render to image bytes with sharp (a peer dependency). */
+/** Render each page of a two-sided piece: `{ front, back }`. */
+export function renderPages(input: CoverOptions, options?: { pages?: string[] }): Promise<Record<string, string>>;
+
+/** Render to an image in the browser (a canvas; no sharp). */
+export function renderBlob(input: CoverOptions | Cover, options?: RasterizeOptions): Promise<Blob>;
+
+/** Register a font for every cover. */
+export function registerFont(font: FontSource): void;
+
+/** Render to image bytes with sharp (a peer dependency; Node). */
 export function renderImage(input: CoverOptions | Cover, options?: RenderImageOptions): Promise<Buffer>;
 
 /** The content-hash cache key for a cover and output options (40 hex chars). */

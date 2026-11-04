@@ -14,12 +14,8 @@
  * @module icons
  */
 
-import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const require = createRequire(import.meta.url);
+import { node, settings, loadBytes } from './platform/index.js';
+import { utf8 } from './platform/bytes.js';
 
 /** @type {Map<string, IconSet>} */
 const sets = new Map();
@@ -72,15 +68,51 @@ function loadSet(prefix) {
   let set = sets.get(prefix);
   if (set) return set;
   const pkg = `@iconify-json/${prefix}`;
+  const mod = node('module');
+  const fs = node('fs');
+  const path = node('path');
+  const url = node('url');
   let file;
   try {
-    file = join(require.resolve(`${pkg}/package.json`, { paths: [process.cwd(), fileURLToPath(new URL('.', import.meta.url))] }), '..', 'icons.json');
+    if (!mod || !fs) throw new Error('no node');
+    const require = mod.createRequire(import.meta.url);
+    const here = String(import.meta.url).startsWith('file:') ? [url.fileURLToPath(new URL('.', import.meta.url))] : [];
+    file = path.join(require.resolve(`${pkg}/package.json`, { paths: [/** @type {any} */ (globalThis).process.cwd(), ...here] }), '..', 'icons.json');
   } catch {
-    throw new Error(`Icon set "${prefix}" is not available. Install ${pkg}, or pass the set to registerIcons().`);
+    throw new Error(`Icon set "${prefix}" is not available. Install ${pkg}, or pass the set to registerIcons()${mod ? '' : ' (or configure({ icons }) with a URL to load sets from)'}.`);
   }
-  set = /** @type {IconSet} */ (JSON.parse(readFileSync(file, 'utf8')));
+  set = /** @type {IconSet} */ (JSON.parse(fs.readFileSync(file, 'utf8')));
   sets.set(prefix, set);
   return set;
+}
+
+/**
+ * Make sure the icon sets these names need are loaded: from Node's
+ * `node_modules`, or (in a browser or Worker) from `configure({ icons })`,
+ * a URL template like `'https://cdn.jsdelivr.net/npm/@iconify-json/{prefix}/icons.json'`
+ * or a function of the prefix. Names whose set can't be found are left for
+ * {@link resolveIcon} to report.
+ *
+ * @param {Iterable<string>} names - Candidate icon names (`prefix:name`).
+ * @returns {Promise<void>}
+ */
+export async function preloadIcons(names) {
+  const prefixes = new Set();
+  for (const n of names) {
+    const m = /^([a-z0-9-]+):([a-z0-9-]+)$/i.exec(n);
+    if (m && !sets.has(m[1])) prefixes.add(m[1]);
+  }
+  for (const prefix of prefixes) {
+    if (node('module')) {
+      try { loadSet(prefix); } catch { /* reported when drawn */ }
+      continue;
+    }
+    const where = typeof settings.icons === 'function' ? settings.icons(prefix) : settings.icons?.replace('{prefix}', prefix);
+    if (!where) continue;
+    try {
+      registerIcons(JSON.parse(utf8(await loadBytes(where, 'icons'))));
+    } catch { /* reported when drawn */ }
+  }
 }
 
 /**
@@ -128,6 +160,8 @@ export function resolveIcon(name) {
  */
 export function parseSvgIcon(svg) {
   const open = svg.match(/<svg\b[^>]*>/i);
+  // Bare markup (a mark's paths on a 512 grid): wrap it.
+  if (!open && /^\s*<(path|g|circle|rect|polygon|ellipse|line|polyline)\b/i.test(svg)) return parseSvgIcon(`<svg viewBox="0 0 512 512">${svg}</svg>`);
   if (!open) throw new Error('Icon SVG must contain an <svg> element');
   const tag = open[0];
   const vb = tag.match(/viewBox\s*=\s*["']([^"']+)["']/i);

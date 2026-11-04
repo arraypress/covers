@@ -1,0 +1,29 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>covers browser smoke</title>
+<script type="importmap">
+{ "imports": {
+  "#harfbuzz": "/node_modules/harfbuzzjs/dist/index.mjs",
+  "@arraypress/color-utils": "/node_modules/@arraypress/color-utils/src/index.js"
+} }
+</script>
+<script type="module">
+  // Loaded by tests/browser.test.js through headless Chrome. Exposes window.smoke().
+  window.smoke = async (cases, opts = {}) => {
+    const covers = await import('/src/index.js');
+    if (opts.wasm) covers.configure({ harfbuzz: opts.wasm });
+    if (opts.icons) covers.configure({ icons: opts.icons });
+    const out = { svgs: [], errors: [] };
+    for (const c of cases) {
+      try { out.svgs.push(await covers.renderSvg(c)); } catch (e) { out.errors.push(String(e.stack ?? e)); out.svgs.push(null); }
+    }
+    try {
+      const blob = await covers.renderBlob(cases[0], { format: 'png', width: 300 });
+      out.png = { type: blob.type, size: blob.size };
+      const webp = await covers.renderBlob(cases[0], { format: 'webp', width: 300 });
+      out.webp = { type: webp.type, size: webp.size };
+    } catch (e) { out.errors.push(String(e.stack ?? e)); }
+    return out;
+  };
+  window.ready = true;
+</script>

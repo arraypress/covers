@@ -4,28 +4,42 @@
  * @module render
  */
 
-import { createHash } from 'node:crypto';
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
-import { readFileSync } from 'node:fs';
+import { node } from './platform/index.js';
 import { createRng } from './rng.js';
 import { resolveSize, unit, len } from './geometry.js';
+import { resolveFormat, printMarks, zonesOverlay, safeBox } from './formats/index.js';
+import { animate, isAnimated } from './animate/index.js';
+import { preloadIcons } from './icons.js';
+import { rasterize } from './raster/index.js';
 import { resolvePalette } from './palette.js';
-import { bundledFonts } from './fonts.js';
-import { LAYERS, VARY_FLOOR, VARY_PEAK } from './layers.js';
+import { fontPool } from './fonts.js';
+import { LAYERS } from './layers.js';
+import { wrapped, renderWrapped } from './render/wrap.js';
+import { renderGroup } from './render/group.js';
+import { registerDefs, renderUse } from './render/use.js';
+import { expandRepeat } from './layers/repeat.js';
+import { scaledReport } from './render/report.js';
+import { hasLayoutRef, resolveLayoutRefs } from './type/layout-ref.js';
+import { svgPixels } from './render/tiles.js';
+import { IDENTITY, compose } from './effects/transform.js';
+import { needsPixels } from './effects/index.js';
+import { backdropSampler } from './render/backdrop.js';
+import { noise, applyGrain } from './render/grain.js';
 import { extractPalette } from './extract.js';
 import { recipes, applyOverrides } from './recipes.js';
 import { defineRecipe } from './json-recipe.js';
 import { attrs, esc, num } from './svg.js';
 
-/** The package version, part of every cache key. */
-export const VERSION = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
+export { VERSION } from './version.js';
+export { coverKey } from './render/key.js';
+import { coverKey } from './render/key.js';
+export { safeBox } from './formats/index.js';
 
 /** Covers built by {@link cover}, so rendering one doesn't resolve it twice. */
 const built = new WeakSet();
 
 /** Options that belong to the cover itself, never to a recipe layer. */
-const COVER_KEYS = new Set(['width', 'height', 'aspect', 'seed', 'palette', 'recipe', 'layers', 'fonts', 'alt', 'radius', 'output']);
+const COVER_KEYS = new Set(['width', 'height', 'aspect', 'seed', 'palette', 'recipe', 'layers', 'fonts', 'alt', 'radius', 'output', 'format', 'dpi', 'bleed', 'safe', 'cropMarks', 'cutLine', 'cut', 'textRender', 'overlay', 'loop']);
 
 /**
  * Build a cover: resolve its size and palette and expand its recipe into a
@@ -43,13 +57,19 @@ const COVER_KEYS = new Set(['width', 'height', 'aspect', 'seed', 'palette', 'rec
 export function cover(options) {
   if (built.has(/** @type {object} */ (options))) return /** @type {import('./index.js').Cover} */ (options);
   const o = /** @type {import('./index.js').CoverOptions} */ (options ?? {});
-  const { width, height } = resolveSize(o);
+  const fmt = resolveFormat(o);
+  const { width, height } = fmt ?? resolveSize(o);
+  const print = fmt?.print;
   const palette = resolvePalette(o.palette);
   const seed = String(o.seed ?? (typeof o.title === 'string' ? o.title : 'cover'));
 
   let layers;
   /** @type {{ lossless?: boolean } | undefined} */
   let output;
+  /** @type {string[] | undefined} */
+  let pages;
+  /** @type {import('./index.js').FontSource[] | undefined} */
+  let recipeFonts;
   if (o.recipe) {
     const recipe = typeof o.recipe === 'function'
       ? o.recipe
@@ -57,10 +77,17 @@ export function cover(options) {
         ? defineRecipe(o.recipe)
         : Object.hasOwn(recipes, o.recipe) ? recipes[/** @type {keyof typeof recipes} */ (o.recipe)] : undefined;
     if (!recipe) throw new TypeError(`Unknown recipe "${o.recipe}". Recipes: ${Object.keys(recipes).join(', ')}`);
+    /** @type {Record<string, unknown>} */
     const ctx = { width, height, palette, rng: createRng(`${seed}:recipe`), u: unit({ width, height }), seed };
+    if (print) Object.assign(ctx, { bleed: print.bleed, safe: print.safe, trimWidth: print.trimWidth, trimHeight: print.trimHeight, mm: print.mm, dpi: print.dpi });
+    const sb = safeBox({ width, height, print, zones: fmt?.zones }) ?? { x: 0, y: 0, width, height };
+    Object.assign(ctx, { safeX: sb.x, safeY: sb.y, safeWidth: sb.width, safeHeight: sb.height });
+    if (fmt?.format) ctx.format = fmt.format;
     const recipeOptions = Object.fromEntries(Object.entries(o).filter(([k]) => !COVER_KEYS.has(k)));
-    layers = [...applyOverrides(recipe(/** @type {any} */ (recipeOptions), ctx), recipeOptions), ...(o.layers ?? [])];
+    layers = [...applyOverrides(recipe(/** @type {any} */ (recipeOptions), /** @type {any} */ (ctx)), recipeOptions), ...(o.layers ?? [])];
     output = /** @type {any} */ (recipe).json?.output;
+    recipeFonts = /** @type {any} */ (recipe).json?.fonts;
+    pages = /** @type {any} */ (recipe).json?.pages;
   } else {
     layers = o.layers ?? [{ type: 'mesh' }, { type: 'grain' }];
   }
@@ -77,54 +104,180 @@ export function cover(options) {
     seed,
     palette,
     layers,
-    fonts: o.fonts ?? [],
+    // The caller's fonts first, then any the recipe declares.
+    fonts: recipeFonts?.length ? [...(o.fonts ?? []), ...recipeFonts] : o.fonts ?? [],
     alt: o.alt ?? (typeof o.title === 'string' ? o.title : undefined),
     radius: o.radius,
     // A recipe's preferred encoding (e.g. dither: lossless). renderImage options win.
     output: o.output ?? output,
   };
+  // 1.1 fields, set only when used (a 1.0 cover's data is unchanged).
+  if (print) /** @type {any} */ (result).print = print;
+  if (fmt?.format) /** @type {any} */ (result).format = fmt.format;
+  if (o.page) /** @type {any} */ (result).page = o.page;
+  if (pages) /** @type {any} */ (result).pages = pages;
+  if (o.textRender) /** @type {any} */ (result).textRender = o.textRender;
+  if (fmt?.zones) /** @type {any} */ (result).zones = fmt.zones;
+  if (o.overlay) /** @type {any} */ (result).overlay = o.overlay;
+  if (o.loop != null) /** @type {any} */ (result).loop = o.loop;
   built.add(result);
   return result;
 }
 
 /**
- * Render every layer to markup, each with its own seeded stream.
+ * @typedef {object} Scope
+ * @property {import('./index.js').Cover} c
+ * @property {any} sharp
+ * @property {import('./index.js').FontSource[]} fonts
+ * @property {string} prefix - Id prefix ('' at the top).
+ * @property {string} seedPrefix - Stream key prefix ('' at the top).
+ * @property {number} width
+ * @property {number} height
+ * @property {((box: { x: number, y: number, width: number, height: number }) => Promise<string | undefined>) | undefined} backdrop
+ * @property {((entry: any) => void) | undefined} report
+ * @property {object} doc - Identity of the document being rendered.
+ * @property {number} [t] - The time being drawn (seconds), for animated layers.
+ */
+
+/**
+ * Render a stack of layers, each with its own seeded stream.
  *
  * A layer's stream is keyed by its `seed`, else its `id`, else its type
  * and how many layers of that type came before it, so adding a layer
- * leaves every other layer's random choices alone.
+ * leaves every other layer's random choices alone. Nested stacks (groups,
+ * masks) key their streams under their parent's.
  *
- * @param {import('./index.js').Cover} c - The cover.
- * @param {any} sharp - The sharp module, or undefined.
+ * @param {import('./index.js').Layer[]} layers
+ * @param {Scope} scope
  * @returns {Promise<{ layer: import('./index.js').Layer, defs: string, body: string, pad?: number, finest?: number, ctx: import('./layers.js').RenderContext }[]>}
  */
-async function renderLayers(c, sharp) {
-  const fonts = [...c.fonts, ...bundledFonts()];
+async function renderStack(layers, scope) {
+  const { c } = scope;
   /** @type {Record<string, number>} */
   const seen = {};
+  /** @type {any[]} */
   const out = [];
-  for (let i = 0; i < c.layers.length; i++) {
-    const layer = c.layers[i];
+  const top = !scope.prefix;
+  const zones = top ? /** @type {any} */ (c).zones : undefined;
+  for (let i = 0; i < layers.length; i++) {
+    let layer = /** @type {any} */ (layers[i]);
+    if (isAnimated(layer)) layer = animate(layer, scope.t ?? 0, /** @type {any} */ (c).loop);
+    // `{layout.<id>.bottom}` and the like: where an earlier text block landed.
+    if (scope.layout && hasLayoutRef(layer)) layer = resolveLayoutRefs(layer, scope.layout);
+    // A format's safe zone: anchored text and icons are laid out inside it.
+    if (zones && (layer.type === 'text' || layer.type === 'icon') && layer.x == null && layer.y == null && layer.position == null && layer.area == null && layer.path == null) {
+      const [zx, zy, zw, zh] = zones.safe;
+      layer = { ...layer, area: { x: zx / c.width, y: zy / c.height, width: zw / c.width, height: zh / c.height } };
+    }
+    if (!layer || !Object.hasOwn(LAYERS, layer.type)) throw new TypeError(`Unknown layer type "${layer?.type}". Types: ${Object.keys(LAYERS).join(', ')}`);
     const n = (seen[layer.type] = (seen[layer.type] ?? -1) + 1);
     const key = layer.seed ?? layer.id ?? `${layer.type}#${n}`;
-    const ctx = {
-      width: c.width,
-      height: c.height,
-      canvas: { width: c.width, height: c.height },
+    const ctx = /** @type {any} */ ({
+      width: scope.width,
+      height: scope.height,
+      canvas: { width: scope.width, height: scope.height },
       palette: c.palette,
-      rng: createRng(`${c.seed}:${key}`),
-      id: `l${i}`,
-      fonts,
-      sharp,
+      rng: createRng(scope.seedPrefix ? `${c.seed}:${scope.seedPrefix}/${key}` : `${c.seed}:${key}`),
+      id: top ? `l${i}` : `${scope.prefix}_${i}`,
+      fonts: scope.fonts,
+      sharp: scope.sharp,
+    });
+    // 1.1 context, present only when it applies (1.0 layers never read it).
+    const print = /** @type {any} */ (c).print;
+    if (print && top) ctx.inset = print.bleed + print.safe;
+    if (print) ctx.cut = { x: print.bleed, y: print.bleed, width: print.trimWidth, height: print.trimHeight, cut: print.cut, mm: print.mm };
+    if (scope.raster) ctx.raster = true;
+    if (scope.reach) ctx.noteReach = (/** @type {number} */ px) => { /** @type {any} */ (scope.reach).px = Math.max(/** @type {any} */ (scope.reach).px, px); };
+    if (/** @type {any} */ (c).textRender) ctx.textRender = /** @type {any} */ (c).textRender;
+    if (scope.report) ctx.report = scope.report;
+    ctx.scale = scope.scale ?? 1;
+    ctx.res = scope.res ?? 1;
+    ctx.matrix = scope.matrix ?? IDENTITY;
+    ctx.doc = scope.doc;
+    ctx.defs = scope.defs;
+    if (scope.layout) ctx.layout = scope.layout;
+    ctx.backdrop = top && scope.backdrop ? (/** @type {any} */ box) => /** @type {any} */ (scope.backdrop)(box, out) : undefined;
+    // A nested stack (group, mask) inherits the scale of the context it's
+    // called on (a transformed layer's copy carries its own), times its grid's.
+    ctx.stack = function stack(/** @type {any[]} */ list, /** @type {any} */ sub) {
+      const self = this ?? ctx;
+      const k = sub.scale ?? 1;
+      return renderStack(list, {
+        ...scope,
+        report: scaledReport(self.report, k),
+        scale: (self.scale ?? 1) * k,
+        res: (self.res ?? 1) * (sub.res ?? k),
+        matrix: compose(self.matrix ?? IDENTITY, sub.matrix ?? IDENTITY),
+        prefix: `${ctx.id}${sub.tag}`,
+        seedPrefix: `${scope.seedPrefix ? `${scope.seedPrefix}/` : ''}${key}${sub.tag}`,
+        width: sub.width ?? self.width,
+        height: sub.height ?? self.height,
+      });
     };
-    // A mesh can take its colours from a photo (`from`), extracted at render.
-    const resolved = layer.type === 'mesh' && /** @type {any} */ (layer).from && !/** @type {any} */ (layer).colors
-      ? { ...layer, colors: await extractPalette(/** @type {any} */ (layer).from, { count: 4 }) }
-      : layer;
-    const markup = await LAYERS[layer.type](/** @type {any} */ (resolved), ctx);
+    const markup = wrapped(layer) ? await renderWrapped(/** @type {any} */ (layer), ctx, scope, renderOne) : await renderOne(/** @type {any} */ (layer), ctx);
     out.push({ layer, ...markup, ctx });
   }
   return out;
+}
+
+/**
+ * One layer's own markup.
+ *
+ * @param {any} layer
+ * @param {any} ctx
+ * @returns {Promise<{ defs: string, body: string, pad?: number, finest?: number }>}
+ */
+async function renderOne(layer, ctx) {
+  if (layer.type === 'group') return renderGroup(layer, ctx);
+  if (layer.type === 'repeat') return renderGroup(expandRepeat(layer, ctx), ctx);
+  if (layer.type === 'defs') return registerDefs(layer, ctx);
+  if (layer.type === 'use') return renderUse(layer, ctx);
+  // A mesh can take its colours from a photo (`from`), extracted at render.
+  const resolved = layer.type === 'mesh' && layer.from && !layer.colors
+    ? { ...layer, colors: await extractPalette(layer.from, { count: 4 }) }
+    : layer;
+  return LAYERS[/** @type {keyof typeof LAYERS} */ (layer.type)](/** @type {any} */ (resolved), ctx);
+}
+
+/**
+ * Render every layer of a cover.
+ *
+ * @param {import('./index.js').Cover} c
+ * @param {any} sharp
+ * @param {{ report?: (entry: any) => void, t?: number, raster?: boolean, reach?: { px: number } }} [extra] - `raster`: drawn for `renderImage` (librsvg), so effects may take its faster forms; `reach` collects how far filters reach, output px.
+ */
+async function renderLayers(c, sharp, extra = {}) {
+  // Icon sets named anywhere in the stack load first (from node_modules, or configure({ icons }) elsewhere).
+  const names = new Set();
+  const scan = (/** @type {unknown} */ v) => {
+    if (typeof v === 'string') { if (/^[a-z0-9-]+:[a-z0-9-]+$/i.test(v)) names.add(v); } else if (Array.isArray(v)) v.forEach(scan); else if (v && typeof v === 'object' && !(v instanceof Uint8Array)) Object.values(v).forEach(scan);
+  };
+  scan(c.layers);
+  if (names.size) await preloadIcons(names);
+  const auto = c.layers.some(usesAuto);
+  const t = /** @type {any} */ (extra).t;
+  return renderStack(c.layers, {
+    c,
+    sharp,
+    fonts: fontPool(c.fonts),
+    prefix: '',
+    seedPrefix: '',
+    width: c.width,
+    height: c.height,
+    backdrop: auto ? backdropSampler(c, sharp, documentFor, loadSharp) : undefined,
+    report: extra.report,
+    doc: {},
+    layout: new Map(),
+    defs: new Map(),
+    t,
+    raster: extra.raster,
+    reach: extra.reach,
+  });
+}
+
+/** @param {any} l @returns {boolean} Whether a layer (or its children) picks its colour from the backdrop. */
+function usesAuto(l) {
+  return Boolean(l) && (l.color === 'auto' || (Array.isArray(l.layers) && l.layers.some(usesAuto)));
 }
 
 /**
@@ -143,6 +296,18 @@ function documentFor(c, parts) {
     body = `<g clip-path="url(#r)">${body}</g>`;
   }
   const title = c.alt ? `<title>${esc(c.alt)}</title>` : '';
+  const zones = /** @type {any} */ (c).overlay ? /** @type {any} */ (c).zones ?? (/** @type {any} */ (c).print ? { safe: Object.values(/** @type {any} */ (safeBox(/** @type {any} */ (c))) ?? {}) } : undefined) : undefined;
+  if (zones) body += zonesOverlay(zones, w, h);
+  const print = /** @type {import('./formats.js').PrintInfo | undefined} */ (/** @type {any} */ (c).print);
+  if (print && (print.cropMarks || print.cutLine)) {
+    const { marks, cut } = printMarks(print, w, h);
+    const s = print.slug;
+    const W = w + 2 * s;
+    const H = h + 2 * s;
+    defs += `<clipPath id="bleed"><rect${attrs({ width: w, height: h })}/></clipPath>`;
+    const art = `<g transform="translate(${num(s)} ${num(s)})"><g clip-path="url(#bleed)">${body}</g>${cut}</g>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg"${attrs({ width: W, height: H, viewBox: `0 0 ${num(W)} ${num(H)}`, role: c.alt ? 'img' : undefined })}>${title}${defs ? `<defs>${defs}</defs>` : ''}${s ? `<rect width="${num(W)}" height="${num(H)}" fill="#fff"/>` : ''}${art}${marks}</svg>`;
+  }
   return `<svg xmlns="http://www.w3.org/2000/svg"${attrs({ width: w, height: h, viewBox: `0 0 ${num(w)} ${num(h)}`, role: c.alt ? 'img' : undefined })}>${title}${defs ? `<defs>${defs}</defs>` : ''}${body}</svg>`;
 }
 
@@ -152,15 +317,80 @@ function documentFor(c, parts) {
  * The same cover always gives byte-identical output.
  *
  * @param {import('./index.js').CoverOptions | import('./index.js').Cover} input - The cover.
+ * @param {{ t?: number }} [options] - `t`: the time to draw, in seconds, for layers with keyframes (static covers ignore it).
  * @returns {Promise<string>} The SVG document.
  *
  * @example
  * const svg = await renderSvg({ recipe: 'aurora', seed: 'hello', palette: 'paper' });
  */
-export async function renderSvg(input) {
+export async function renderSvg(input, options = {}) {
   const c = cover(input);
-  const sharp = c.layers.some((l) => l.type === 'image') ? await loadSharp(false) : undefined;
-  return documentFor(c, await renderLayers(c, sharp));
+  const sharp = c.layers.some(hasImage) ? await loadSharp(false) : undefined;
+  return documentFor(c, await renderLayers(c, sharp, { t: options.t }));
+}
+
+/**
+ * Whether a layer (or one inside it) needs pixels to draw: an image, or an
+ * effect computed on pixels (`dither`, a round `border`).
+ *
+ * @param {any} l
+ * @returns {boolean}
+ */
+function hasImage(l) {
+  if (!l) return false;
+  if (l.type === 'image') return true;
+  const fx = l.effects == null ? [] : [].concat(l.effects);
+  if (fx.some((/** @type {any} */ e) => needsPixels(e) || (e?.mask?.layers ?? []).some(hasImage) || (e?.map?.layers ?? []).some(hasImage))) return true;
+  return ['layers', 'mask', 'knockout', 'clip'].some((k) => Array.isArray(l[k]) && l[k].some(hasImage))
+    || (l.type === 'repeat' && hasImage(l.layer));
+}
+
+/**
+ * Render each page of a two-sided piece (a business card, a ticket, a
+ * flyer): one SVG per page the recipe declares (`"pages": ["front", "back"]`),
+ * or the pages you ask for. A layer is on a page by its `when`
+ * (`{ "page": "back" }`); layers without one are on every page.
+ *
+ * @param {import('./index.js').CoverOptions} input
+ * @param {{ pages?: string[] }} [options]
+ * @returns {Promise<Record<string, string>>} SVG by page name.
+ *
+ * @example
+ * const { front, back } = await renderPages({ recipe: card, format: 'business-card', name: 'Mira Okafor' });
+ */
+export async function renderPages(input, options = {}) {
+  const probe = cover({ ...input, page: undefined });
+  const pages = options.pages ?? /** @type {any} */ (probe).pages ?? ['front', 'back'];
+  /** @type {Record<string, string>} */
+  const out = {};
+  for (const page of pages) out[page] = await renderSvg({ ...input, page });
+  return out;
+}
+
+/**
+ * Render a cover and note what was drawn (text sizes and boxes), for `lint`.
+ *
+ * @param {import('./index.js').CoverOptions | import('./index.js').Cover} input
+ * @returns {Promise<{ svg: string, drawn: any[] }>}
+ */
+export async function renderReport(input) {
+  const c = cover(input);
+  const sharp = c.layers.some(hasImage) ? await loadSharp(false) : undefined;
+  /** @type {any[]} */
+  const drawn = [];
+  const parts = await renderLayers(c, sharp, { report: (e) => drawn.push(e) });
+  return { svg: documentFor(c, parts), drawn };
+}
+
+/**
+ * Render a cover to an image in the browser (a canvas; no sharp).
+ *
+ * @param {import('./index.js').CoverOptions | import('./index.js').Cover} input
+ * @param {{ format?: 'png' | 'jpeg' | 'webp', quality?: number, scale?: number, width?: number }} [options]
+ * @returns {Promise<Blob>}
+ */
+export async function renderBlob(input, options = {}) {
+  return rasterize(await renderSvg(input), options);
 }
 
 /** @type {Promise<any> | undefined} */
@@ -173,7 +403,9 @@ let sharpPromise;
  * @returns {Promise<any>} The module's default export, or undefined.
  */
 async function loadSharp(required) {
-  sharpPromise ??= import('sharp').then((m) => m.default ?? m, () => undefined);
+  // A computed specifier: bundlers for browsers and Workers leave the optional peer alone.
+  const name = 'sharp';
+  sharpPromise ??= import(/* @vite-ignore */ name).then((m) => m.default ?? m, () => undefined);
   const sharp = await sharpPromise;
   if (!sharp && required) throw new Error('renderImage() needs sharp: npm install sharp');
   return sharp;
@@ -206,18 +438,22 @@ export async function renderImage(input, options = {}) {
   if (!Object.hasOwn(MIME, format)) throw new TypeError(`Unknown format "${format}" (webp, png, avif, jpeg)`);
 
   let cacheFile;
-  if (options.cache) {
-    const dir = options.cache === true ? join(process.cwd(), 'node_modules', '.cache', 'covers') : resolve(String(options.cache));
-    cacheFile = join(dir, `${await coverKey(c, options)}.${format}`);
+  const fsp = node('fs/promises');
+  const path = node('path');
+  if (options.cache && fsp && path) {
+    const dir = options.cache === true ? path.join(/** @type {any} */ (globalThis).process.cwd(), 'node_modules', '.cache', 'covers') : path.resolve(String(options.cache));
+    cacheFile = path.join(dir, `${await coverKey(c, options)}.${format}`);
     try {
-      return await readFile(cacheFile);
+      return await fsp.readFile(cacheFile);
     } catch {
       // Not cached yet.
     }
   }
 
   const sharp = await loadSharp(true);
-  const parts = await renderLayers(c, sharp);
+  /** How far any effect's filter reaches, output px (tiles overlap by it). */
+  const reach = { px: 0 };
+  const parts = await renderLayers(c, sharp, { raster: true, reach });
   const { width, height } = c;
 
   // Split the stack: [svg] grain [svg] …, with each heavily blurred layer
@@ -238,7 +474,9 @@ export async function renderImage(input, options = {}) {
   if (run.length) steps.push({ svg: run });
 
   const raw = { width, height, channels: /** @type {const} */ (4) };
-  const svgOf = (/** @type {typeof parts} */ p) => Buffer.from(documentFor({ ...c, radius: undefined, alt: undefined }, p));
+  // Every step's document carries every layer's defs (a pattern or a used stack defined in another step).
+  const allDefs = parts.map((p) => p.defs).join('');
+  const svgOf = (/** @type {typeof parts} */ p) => Buffer.from(documentFor(/** @type {any} */ ({ ...c, radius: undefined, alt: undefined, print: undefined, overlay: undefined }), [{ defs: allDefs, body: '' }, ...p.map((x) => ({ ...x, defs: '' }))]));
   /** @type {Buffer | undefined} */
   let pixels;
   for (const step of steps) {
@@ -263,9 +501,10 @@ export async function renderImage(input, options = {}) {
         : layerPx;
     } else if (step.svg) {
       const svg = svgOf(step.svg);
+      const layerPx = await svgPixels(sharp, svg.toString(), width, height, reach.px);
       pixels = pixels
-        ? await sharp(pixels, { raw }).composite([{ input: svg }]).raw().toBuffer()
-        : await sharp(svg).ensureAlpha().raw().toBuffer();
+        ? await sharp(pixels, { raw }).composite([{ input: layerPx, raw }]).raw().toBuffer()
+        : Buffer.from(layerPx.buffer, layerPx.byteOffset, layerPx.byteLength);
     } else if (step.grain) {
       pixels ??= Buffer.alloc(width * height * 4);
       const g = /** @type {import('./index.js').GrainLayer} */ (step.grain.layer);
@@ -278,6 +517,20 @@ export async function renderImage(input, options = {}) {
     image = image.composite([{ input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><rect width="${width}" height="${height}" rx="${num(rx)}"/></svg>`), blend: 'dest-in' }]);
   }
 
+  // Preview overlay and print furniture (crop marks, die line) go on last.
+  const cx = /** @type {any} */ (c);
+  if (cx.overlay && (cx.zones || cx.print)) {
+    const z = cx.zones ?? { safe: Object.values(/** @type {any} */ (safeBox(cx))) };
+    image = sharp(await image.png().toBuffer()).composite([{ input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${zonesOverlay(z, width, height)}</svg>`) }]);
+  }
+  if (cx.print && (cx.print.cropMarks || cx.print.cutLine)) {
+    const s = cx.print.slug;
+    const { marks, cut } = printMarks(cx.print, width, height);
+    image = sharp(await image.png().toBuffer()).extend({ top: s, bottom: s, left: s, right: s, background: '#ffffff' })
+      .composite([{ input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${width + 2 * s}" height="${height + 2 * s}"><g transform="translate(${s} ${s})">${cut}</g>${marks}</svg>`) }]);
+  }
+  if (cx.print) image = image.withMetadata({ density: cx.print.dpi });
+
   // Grain is the first thing a lossy encoder throws away. Measured on an
   // aurora cover: WebP q82 keeps ~40% of the grain (11 KB), q90 ~60% (41 KB),
   // q94 ~78% (125 KB). 90 is the default; raise it for crisper grain.
@@ -289,174 +542,12 @@ export async function renderImage(input, options = {}) {
   else image = image.png({ compressionLevel: options.effort ?? 6 });
   const out = await image.toBuffer();
 
-  if (cacheFile) {
-    await mkdir(join(cacheFile, '..'), { recursive: true });
-    const tmp = `${cacheFile}.${process.pid}.tmp`;
-    await writeFile(tmp, out);
-    await rename(tmp, cacheFile);
+  if (cacheFile && fsp && path) {
+    await fsp.mkdir(path.join(cacheFile, '..'), { recursive: true });
+    const tmp = `${cacheFile}.${/** @type {any} */ (globalThis).process.pid}.tmp`;
+    await fsp.writeFile(tmp, out);
+    await fsp.rename(tmp, cacheFile);
   }
   return out;
 }
 
-/**
- * Seeded film-grain values, one per pixel (three with `monochrome: false`),
- * at `size` px per grain (upscaled smoothly). Each value is the mean of two
- * uniform draws, a triangular distribution: fewer harsh extremes than flat
- * noise, closer to film.
- *
- * @param {any} sharp - The sharp module.
- * @param {number} width @param {number} height
- * @param {import('./index.js').GrainLayer} layer
- * @param {import('./rng.js').Rng} rng - The layer's stream.
- * @returns {Promise<{ data: Buffer, channels: 1 | 3 }>} Full-size noise.
- */
-async function noise(sharp, width, height, layer, rng) {
-  const size = Math.max(1, layer.size ?? 1);
-  const channels = layer.monochrome === false ? 3 : 1;
-  const nw = Math.ceil(width / size);
-  const nh = Math.ceil(height / size);
-  const data = Buffer.alloc(nw * nh * channels);
-  // xorshift32 seeded from the layer's stream: one 32-bit draw gives two
-  // values, so 1.4M pixels cost a few milliseconds.
-  let x = (rng.next() * 4294967296) >>> 0 || 1;
-  for (let i = 0; i < data.length; i++) {
-    x ^= x << 13; x ^= x >>> 17; x ^= x << 5;
-    data[i] = ((x & 255) + ((x >>> 8) & 255)) >>> 1;
-  }
-  if (nw === width && nh === height) return { data, channels };
-  const out = await sharp(data, { raw: { width: nw, height: nh, channels } })
-    .resize(width, height, { kernel: 'cubic', fit: 'fill' })
-    .raw()
-    .toBuffer();
-  return { data: out, channels };
-}
-
-/** Separable blend modes (W3C Compositing Level 1), channel values 0–1. */
-const BLENDS = /** @type {Record<string, (b: number, s: number) => number>} */ ({
-  normal: (_b, s) => s,
-  multiply: (b, s) => b * s,
-  screen: (b, s) => b + s - b * s,
-  overlay: (b, s) => (b <= 0.5 ? 2 * b * s : 1 - 2 * (1 - b) * (1 - s)),
-  'soft-light': (b, s) => {
-    if (s <= 0.5) return b - (1 - 2 * s) * b * (1 - b);
-    const d = b <= 0.25 ? ((16 * b - 12) * b + 4) * b : Math.sqrt(b);
-    return b + (2 * s - 1) * (d - b);
-  },
-});
-
-/**
- * A 256×256 lookup (backdrop × noise → result) for one blend and strength:
- * cheaper than the blend maths per pixel.
- *
- * @param {(b: number, s: number) => number} blend
- * @param {number} amount
- * @returns {Uint8Array}
- */
-function grainTable(blend, amount) {
-  const table = new Uint8Array(65536);
-  for (let b = 0; b < 256; b++) {
-    for (let s = 0; s < 256; s++) {
-      const cb = b / 255;
-      table[(b << 8) | s] = Math.round((cb + amount * (blend(cb, s / 255) - cb)) * 255);
-    }
-  }
-  return table;
-}
-
-/**
- * Blend grain into RGBA pixels in place, at the layer's `amount`.
- * Done in JS rather than with sharp's `composite` blend modes, whose
- * overlay with a partly transparent layer flattens the noise to almost
- * nothing (measured σ 0.5 against the expected 5.9 on mid grey).
- *
- * @param {Buffer} pixels - RGBA pixels (modified).
- * @param {{ data: Buffer, channels: 1 | 3, width: number, height: number }} grain - Noise from {@link noise}, and the canvas size.
- * @param {import('./index.js').GrainLayer} layer - The grain layer.
- * @returns {void}
- */
-function applyGrain(pixels, grain, layer) {
-  const amount = Math.max(0, Math.min(1, (layer.amount ?? 0.08) * (layer.opacity ?? 1)));
-  const blend = BLENDS[layer.blend ?? 'overlay'];
-  if (!blend) throw new TypeError(`Unknown grain blend "${layer.blend}" (${Object.keys(BLENDS).join(', ')})`);
-  const table = grainTable(blend, amount);
-  const { data, channels } = grain;
-  if (layer.vary === 'edges') {
-    // Heavier toward the edges: per-pixel strength from the centre out, as in the SVG mask.
-    const { width, height } = grain;
-    const peak = Math.min(1, amount * VARY_PEAK);
-    const tables = Array.from({ length: 17 }, (_, k) => grainTable(blend, peak * (VARY_FLOOR + (1 - VARY_FLOOR) * (k / 16))));
-    const half = Math.hypot(width, height) / 2;
-    for (let y = 0, i = 0, j = 0; y < height; y++) {
-      for (let x = 0; x < width; x++, i += 4, j += channels) {
-        const t = tables[Math.min(16, Math.round((Math.hypot(x - width / 2, y - height / 2) / half) * 16))];
-        pixels[i] = t[(pixels[i] << 8) | data[j]];
-        pixels[i + 1] = t[(pixels[i + 1] << 8) | data[j + (channels === 3 ? 1 : 0)]];
-        pixels[i + 2] = t[(pixels[i + 2] << 8) | data[j + (channels === 3 ? 2 : 0)]];
-      }
-    }
-    return;
-  }
-  for (let i = 0, j = 0; i < pixels.length; i += 4, j += channels) {
-    pixels[i] = table[(pixels[i] << 8) | data[j]];
-    pixels[i + 1] = table[(pixels[i + 1] << 8) | data[j + (channels === 3 ? 1 : 0)]];
-    pixels[i + 2] = table[(pixels[i + 2] << 8) | data[j + (channels === 3 ? 2 : 0)]];
-  }
-}
-
-/**
- * A stable cache key for a cover and its output options: a SHA-256 of the
- * resolved cover (font and image bytes hashed by content), the output
- * format and quality, and this package's version.
- *
- * @param {import('./index.js').CoverOptions | import('./index.js').Cover} input - The cover.
- * @param {import('./index.js').RenderImageOptions} [options]
- * @returns {Promise<string>} 40 hex characters.
- *
- * @example
- * await coverKey({ recipe: 'aurora', seed: 'a' }, { format: 'webp' }); // 'f3a9…'
- */
-export async function coverKey(input, options = {}) {
-  const c = cover(input);
-  const h = createHash('sha256');
-  h.update(`covers@${VERSION}\n${options.format ?? 'webp'}:${options.quality ?? ''}:${options.effort ?? ''}:${options.lossless ?? c.output?.lossless ?? ''}\n`);
-  // Files a layer reads (an image's src, a mesh's photo, a waveform's audio) are hashed by content.
-  const file = async (/** @type {any} */ v) => (typeof v === 'string' && !v.startsWith('data:') ? digest(await readFile(v)) : v instanceof Uint8Array ? digest(v) : v);
-  const layers = await Promise.all(c.layers.map(async (l) => {
-    const x = /** @type {any} */ (l);
-    if (l.type === 'image') return { ...l, src: await file(x.src) };
-    if (l.type === 'mesh' && x.from) return { ...l, from: await file(x.from) };
-    if (l.type === 'waveform' && x.audio) return { ...l, audio: await file(x.audio) };
-    return l;
-  }));
-  h.update(stable({
-    width: c.width,
-    height: c.height,
-    seed: c.seed,
-    palette: c.palette,
-    layers,
-    radius: c.radius,
-    fonts: c.fonts.map((f) => ({ ...f, data: digest(f.data) })),
-  }));
-  return h.digest('hex').slice(0, 40);
-}
-
-/** @param {string | Uint8Array | ArrayBuffer} data @returns {string} */
-function digest(data) {
-  return createHash('sha1').update(data instanceof ArrayBuffer ? new Uint8Array(data) : data).digest('hex');
-}
-
-/**
- * JSON with sorted keys and bytes hashed, for hashing.
- *
- * @param {unknown} v
- * @returns {string}
- */
-function stable(v) {
-  if (v instanceof Uint8Array || v instanceof ArrayBuffer) return JSON.stringify(digest(v));
-  if (Array.isArray(v)) return `[${v.map(stable).join(',')}]`;
-  if (v && typeof v === 'object') {
-    return `{${Object.keys(v).sort().filter((k) => /** @type {any} */ (v)[k] !== undefined).map((k) => `${JSON.stringify(k)}:${stable(/** @type {any} */ (v)[k])}`).join(',')}}`;
-  }
-  if (typeof v === 'function') return JSON.stringify(String(v));
-  return JSON.stringify(v) ?? 'null';
-}

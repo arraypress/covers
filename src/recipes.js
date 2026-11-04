@@ -23,8 +23,8 @@
  * @module recipes
  */
 
-import { readFileSync } from 'node:fs';
 import { defineRecipe } from './json-recipe.js';
+import { BUILTIN_JSON } from './builtins.js';
 
 /**
  * What a recipe receives besides the options.
@@ -51,12 +51,13 @@ export function contentOf(v) {
 }
 
 /** The built-in recipe names (each is `recipes/<name>.json`). */
-const BUILT_IN = ['aurora', 'gridTitle', 'iconTile', 'bigType', 'stripes', 'duotone', 'mark', 'diagram', 'cutout', 'riso', 'dither', 'contour', 'waveform', 'bauhaus', 'issue', 'photo'];
+const BUILT_IN = ['aurora', 'gridTitle', 'iconTile', 'bigType', 'stripes', 'duotone', 'mark', 'diagram', 'cutout', 'riso', 'dither', 'contour', 'waveform', 'bauhaus', 'issue', 'photo', 'brand'];
 
 /** Every built-in recipe, by name, defined from its JSON document. */
 export const recipes = Object.freeze(Object.fromEntries(BUILT_IN.map((name) => [
   name,
-  defineRecipe(JSON.parse(readFileSync(new URL(`../recipes/${name}.json`, import.meta.url), 'utf8'))),
+  // A fresh copy: the documents are shared module data.
+  defineRecipe(structuredClone(/** @type {any} */ (BUILTIN_JSON)[name])),
 ])));
 
 /**

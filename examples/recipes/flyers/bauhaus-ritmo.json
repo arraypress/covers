@@ -1,0 +1,735 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "bauhaus-ritmo",
+  "description": "Bauhaus tile grid: sixteen 90-unit modules on cream (quarter discs, half discs, rings, a triangle, two quarter-disc pairs), each a ground and one shape in red, yellow, blue or black, the mark as one of them; the name in a heavy block below with a red rule, lowercase notes beside it. Square (release): twelve of the modules, the name and the title below. Re-expressed from the Logomarks scenes lab (FlyerCards3, 'Bauhaus · tile grid').",
+  "params": {
+    "artist": "RITMO",
+    "release": "Onda",
+    "kicker": [
+      "a week",
+      "of rhythm"
+    ],
+    "notes": [
+      "workshops",
+      "talks, dance"
+    ],
+    "dates": "11—17.06",
+    "cream": "#eee5cf",
+    "red": "#d63a24",
+    "yellow": "#f2b31a",
+    "blue": "#1f4d9c",
+    "black": "#161514"
+  },
+  "layers": [
+    {
+      "id": "paper",
+      "type": "solid",
+      "color": "{cream}"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "aspect": "square"
+        }
+      },
+      "layers": [
+        {
+          "id": "tiles",
+          "type": "shape",
+          "items": [
+            {
+              "kind": "rect",
+              "x": 20,
+              "y": 20,
+              "width": 90,
+              "height": 90,
+              "fill": "{red}"
+            },
+            {
+              "kind": "sector",
+              "cx": 20.0,
+              "cy": 110.0,
+              "r": 90,
+              "start": 0,
+              "end": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "rect",
+              "x": 110,
+              "y": 20,
+              "width": 90,
+              "height": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "circle",
+              "cx": 155.0,
+              "cy": 65.0,
+              "r": 45.0,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "rect",
+              "x": 200,
+              "y": 20,
+              "width": 90,
+              "height": 90,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "sector",
+              "cx": 245.0,
+              "cy": 20.0,
+              "r": 45.0,
+              "start": 450,
+              "end": 630,
+              "fill": "{black}"
+            },
+            {
+              "kind": "rect",
+              "x": 290,
+              "y": 20,
+              "width": 90,
+              "height": 90,
+              "fill": "{black}"
+            },
+            {
+              "kind": "sector",
+              "cx": 290.0,
+              "cy": 20.0,
+              "r": 90,
+              "start": 90,
+              "end": 180,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "rect",
+              "x": 20,
+              "y": 110,
+              "width": 90,
+              "height": 90,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "sector",
+              "cx": 65.0,
+              "cy": 200.0,
+              "r": 45.0,
+              "start": 270,
+              "end": 450,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "rect",
+              "x": 110,
+              "y": 110,
+              "width": 90,
+              "height": 90,
+              "fill": "{black}"
+            },
+            {
+              "kind": "sector",
+              "cx": 200.0,
+              "cy": 200.0,
+              "r": 90,
+              "start": 270,
+              "end": 360,
+              "fill": "{red}"
+            },
+            {
+              "kind": "rect",
+              "x": 200,
+              "y": 110,
+              "width": 90,
+              "height": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "rect",
+              "x": 290,
+              "y": 110,
+              "width": 90,
+              "height": 90,
+              "fill": "{red}"
+            },
+            {
+              "kind": "circle",
+              "cx": 335.0,
+              "cy": 155.0,
+              "r": 21.429,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "rect",
+              "x": 20,
+              "y": 200,
+              "width": 90,
+              "height": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "ring",
+              "cx": 65.0,
+              "cy": 245.0,
+              "r": 45,
+              "inner": 22,
+              "fill": "{red}"
+            },
+            {
+              "kind": "rect",
+              "x": 110,
+              "y": 200,
+              "width": 90,
+              "height": 90,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "sector",
+              "cx": 110.0,
+              "cy": 200.0,
+              "r": 45.0,
+              "start": 90,
+              "end": 180,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "sector",
+              "cx": 200.0,
+              "cy": 290.0,
+              "r": 45.0,
+              "start": 270,
+              "end": 360,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "circle",
+              "cx": 155.0,
+              "cy": 245.0,
+              "r": 12.857,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "rect",
+              "x": 200,
+              "y": 200,
+              "width": 90,
+              "height": 90,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "polygon",
+              "points": [
+                [
+                  245.0,
+                  212
+                ],
+                [
+                  280,
+                  278
+                ],
+                [
+                  210,
+                  278
+                ]
+              ],
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "rect",
+              "x": 290,
+              "y": 200,
+              "width": 90,
+              "height": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "sector",
+              "cx": 290.0,
+              "cy": 245.0,
+              "r": 45.0,
+              "start": 360,
+              "end": 540,
+              "fill": "{black}"
+            },
+            {
+              "kind": "rect",
+              "x": 20,
+              "y": 290,
+              "width": 90,
+              "height": 90,
+              "fill": "{black}"
+            },
+            {
+              "kind": "circle",
+              "cx": 65.0,
+              "cy": 335.0,
+              "r": 45.0,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "rect",
+              "x": 110,
+              "y": 290,
+              "width": 90,
+              "height": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "sector",
+              "cx": 155.0,
+              "cy": 290.0,
+              "r": 45.0,
+              "start": 450,
+              "end": 630,
+              "fill": "{red}"
+            },
+            {
+              "kind": "rect",
+              "x": 200,
+              "y": 290,
+              "width": 90,
+              "height": 90,
+              "fill": "{red}"
+            },
+            {
+              "kind": "sector",
+              "cx": 290.0,
+              "cy": 290.0,
+              "r": 90,
+              "start": 180,
+              "end": 270,
+              "fill": "{black}"
+            },
+            {
+              "kind": "rect",
+              "x": 290,
+              "y": 290,
+              "width": 90,
+              "height": 90,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "sector",
+              "cx": 380.0,
+              "cy": 290.0,
+              "r": 45.0,
+              "start": 180,
+              "end": 270,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "sector",
+              "cx": 290.0,
+              "cy": 380.0,
+              "r": 45.0,
+              "start": 360,
+              "end": 450,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "circle",
+              "cx": 335.0,
+              "cy": 335.0,
+              "r": 12.857,
+              "fill": "{blue}"
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 209,
+          "y": 119,
+          "size": 72,
+          "color": "{black}",
+          "when": "mark"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{artist}",
+          "font": "Jost",
+          "weight": 800,
+          "size": 88,
+          "letterSpacing": 0,
+          "x": 18,
+          "y": 468,
+          "color": "{black}",
+          "width": 262
+        },
+        {
+          "id": "bar",
+          "type": "shape",
+          "kind": "rect",
+          "x": 20,
+          "y": 482,
+          "width": 262,
+          "height": 6,
+          "fill": "{red}"
+        },
+        {
+          "id": "kicker1",
+          "type": "text",
+          "content": "{kicker.0}",
+          "font": "Jost",
+          "weight": 800,
+          "size": 12.5,
+          "letterSpacing": 0,
+          "x": 296,
+          "y": 410,
+          "color": "{black}"
+        },
+        {
+          "id": "kicker2",
+          "type": "text",
+          "content": "{kicker.1}",
+          "font": "Jost",
+          "weight": 800,
+          "size": 12.5,
+          "letterSpacing": 0,
+          "x": 296,
+          "y": 424,
+          "color": "{black}"
+        },
+        {
+          "id": "note1",
+          "type": "text",
+          "content": "{notes.0}",
+          "font": "Jost",
+          "weight": 500,
+          "size": 11,
+          "letterSpacing": 0,
+          "x": 296,
+          "y": 446,
+          "color": "{black}"
+        },
+        {
+          "id": "note2",
+          "type": "text",
+          "content": "{notes.1}",
+          "font": "Jost",
+          "weight": 500,
+          "size": 11,
+          "letterSpacing": 0,
+          "x": 296,
+          "y": 459,
+          "color": "{black}"
+        },
+        {
+          "id": "dates",
+          "type": "text",
+          "content": "{dates}",
+          "font": "Jost",
+          "weight": 800,
+          "size": 15,
+          "letterSpacing": 0,
+          "x": 296,
+          "y": 482,
+          "color": "{black}"
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "aspect": "square"
+      },
+      "layers": [
+        {
+          "id": "tiles",
+          "type": "shape",
+          "items": [
+            {
+              "kind": "rect",
+              "x": 20,
+              "y": 20,
+              "width": 90,
+              "height": 90,
+              "fill": "{red}"
+            },
+            {
+              "kind": "sector",
+              "cx": 20.0,
+              "cy": 110.0,
+              "r": 90,
+              "start": 0,
+              "end": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "rect",
+              "x": 110,
+              "y": 20,
+              "width": 90,
+              "height": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "circle",
+              "cx": 155.0,
+              "cy": 65.0,
+              "r": 45.0,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "rect",
+              "x": 200,
+              "y": 20,
+              "width": 90,
+              "height": 90,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "sector",
+              "cx": 245.0,
+              "cy": 20.0,
+              "r": 45.0,
+              "start": 450,
+              "end": 630,
+              "fill": "{black}"
+            },
+            {
+              "kind": "rect",
+              "x": 290,
+              "y": 20,
+              "width": 90,
+              "height": 90,
+              "fill": "{black}"
+            },
+            {
+              "kind": "sector",
+              "cx": 290.0,
+              "cy": 20.0,
+              "r": 90,
+              "start": 90,
+              "end": 180,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "rect",
+              "x": 20,
+              "y": 110,
+              "width": 90,
+              "height": 90,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "sector",
+              "cx": 65.0,
+              "cy": 200.0,
+              "r": 45.0,
+              "start": 270,
+              "end": 450,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "rect",
+              "x": 110,
+              "y": 110,
+              "width": 90,
+              "height": 90,
+              "fill": "{black}"
+            },
+            {
+              "kind": "sector",
+              "cx": 200.0,
+              "cy": 200.0,
+              "r": 90,
+              "start": 270,
+              "end": 360,
+              "fill": "{red}"
+            },
+            {
+              "kind": "rect",
+              "x": 200,
+              "y": 110,
+              "width": 90,
+              "height": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "rect",
+              "x": 290,
+              "y": 110,
+              "width": 90,
+              "height": 90,
+              "fill": "{red}"
+            },
+            {
+              "kind": "circle",
+              "cx": 335.0,
+              "cy": 155.0,
+              "r": 21.429,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "rect",
+              "x": 20,
+              "y": 200,
+              "width": 90,
+              "height": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "ring",
+              "cx": 65.0,
+              "cy": 245.0,
+              "r": 45,
+              "inner": 22,
+              "fill": "{red}"
+            },
+            {
+              "kind": "rect",
+              "x": 110,
+              "y": 200,
+              "width": 90,
+              "height": 90,
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "sector",
+              "cx": 110.0,
+              "cy": 200.0,
+              "r": 45.0,
+              "start": 90,
+              "end": 180,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "sector",
+              "cx": 200.0,
+              "cy": 290.0,
+              "r": 45.0,
+              "start": 270,
+              "end": 360,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "circle",
+              "cx": 155.0,
+              "cy": 245.0,
+              "r": 12.857,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "rect",
+              "x": 200,
+              "y": 200,
+              "width": 90,
+              "height": 90,
+              "fill": "{blue}"
+            },
+            {
+              "kind": "polygon",
+              "points": [
+                [
+                  245.0,
+                  212
+                ],
+                [
+                  280,
+                  278
+                ],
+                [
+                  210,
+                  278
+                ]
+              ],
+              "fill": "{yellow}"
+            },
+            {
+              "kind": "rect",
+              "x": 290,
+              "y": 200,
+              "width": 90,
+              "height": 90,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "sector",
+              "cx": 290.0,
+              "cy": 245.0,
+              "r": 45.0,
+              "start": 360,
+              "end": 540,
+              "fill": "{black}"
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 209,
+          "y": 119,
+          "size": 72,
+          "color": "{black}",
+          "when": "mark"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{artist}",
+          "font": "Jost",
+          "weight": 800,
+          "size": 80,
+          "letterSpacing": 0,
+          "x": 18,
+          "y": 378,
+          "color": "{black}",
+          "width": 236
+        },
+        {
+          "id": "bar",
+          "type": "shape",
+          "kind": "rect",
+          "x": 20,
+          "y": 388,
+          "width": 236,
+          "height": 6,
+          "fill": "{red}"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": {
+            "upper": "{release}"
+          },
+          "font": "Jost",
+          "weight": 800,
+          "size": 38,
+          "letterSpacing": 0,
+          "x": 380,
+          "y": 378,
+          "color": "{black}",
+          "align": "right"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05,
+      "blend": "multiply"
+    }
+  ]
+}

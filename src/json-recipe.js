@@ -21,6 +21,8 @@
  * |---|---|
  * | `"@bg"` … | palette fields (`bg`, `text`, `accent`, `onAccent`, `muted`, `surface`, `mode`, `colors`, `colors.N`) and canvas numbers (`width`, `height`, `u`) |
  * | `"$name"`, `"$name.0"` | a value from `vars` (and an item or field of it) |
+ * | `"{layout.title.bottom}"`, `"{layout.title.bottom + 12}"` | where an earlier text layer's block landed (`top`, `bottom`, `left`, `right`, `width`, `height`, `x`, `y`, `baseline`, `size`, `lines`), filled in when drawn |
+ * | `"{#col * 40}"` | inside a `repeat`: an expression over the instance (`i`, `row`, `col`, `n`, `odd`, …), filled when drawn |
  * | `"{title}"` | a param or content option (`title`, `label`, `icon`, `image`); `"{opt.x}"` any cover option. A whole-string token keeps the value's type; inside a longer string it's interpolated. |
  * | `{ "mix": [a, b, t, space?] }` | two colours mixed in OKLab (or `"oklch"`: hue the short way, stays vivid) |
  * | `{ "readable": c }` | white, or near-black on a light colour (`[c, light, dark]` to choose) |
@@ -40,6 +42,10 @@
  * is the palette's, `aspect` the canvas's: `wide`, `square` or `tall`),
  * `{ "not": c }`, `{ "all": [...] }`, `{ "any": [...] }`.
  *
+ * Fonts: `"fonts": [{ "name": "Fraunces", "src": "fonts/Fraunces.woff2", "weight": [100, 900] }]`
+ * declares the faces a recipe uses (a path beside the recipe file, or a URL),
+ * so a caller needn't register them.
+ *
  * Seeding: `vars` draw from the cover's recipe stream in order; draws inside
  * a layer use that layer's own stream, so adding a layer never changes
  * another's choices.
@@ -47,33 +53,44 @@
  * @module json-recipe
  */
 
-import { readFileSync } from 'node:fs';
+import { readTextSync, node } from './platform/index.js';
 import { readableText } from '@arraypress/color-utils';
 import { createRng } from './rng.js';
-import { len } from './geometry.js';
+import { len, ANCHORS } from './geometry.js';
 import { toHex, mixOklab, mixOklch, onBackground, gradientAt } from './color.js';
 import { LAYERS, toneColor } from './layers.js';
 import { LAYER_OPTIONS, COMMON } from './layer-options.js';
+import { EFFECT_OPTIONS, EFFECT_COMMON } from './effects/options.js';
+import { MASK_GRADIENTS } from './effects/mask.js';
+import { shapesOnly } from './layers/svg.js';
+import { LAYOUT_FIELDS } from './type/layout-ref.js';
 
 /** Options every recipe can read without declaring them. */
-const CONTENT = ['title', 'label', 'icon', 'image'];
+const CONTENT = ['title', 'label', 'icon', 'image', 'name', 'mark', 'photo', 'cutout', 'date', 'dates', 'time', 'venue', 'address', 'lines', 'lineup', 'tracklist', 'price', 'meta', 'page'];
 
 /** `@` tokens. */
 const PALETTE = ['bg', 'text', 'accent', 'onAccent', 'muted', 'surface', 'mode', 'colors'];
-const CANVAS = ['width', 'height', 'u'];
+const CANVAS = ['width', 'height', 'u', 'bleed', 'safe', 'mm', 'dpi', 'trimWidth', 'trimHeight', 'safeX', 'safeY', 'safeWidth', 'safeHeight'];
 
 /** Value operators, by name, with their argument arity. */
 const OPS = /** @type {Record<string, [number, number]>} */ ({
   mix: [3, 4], readable: [1, 3], gradientUnder: [3, 3], tone: [2, 2], length: [1, 1], pick: [1, Infinity], range: [2, 2], int: [2, 2],
   add: [1, Infinity], sub: [2, Infinity], mul: [1, Infinity], div: [2, 2], min: [1, Infinity], max: [1, Infinity],
   ramp: [3, 4], taper: [2, 2], reverse: [1, 1],
+  join: [1, 2], upper: [1, 1], lower: [1, 1], slice: [2, 3],
 });
+
+/** Layer options holding nested layers. */
+const NESTED = ['layers', 'mask', 'knockout', 'clip'];
+
+/** svg-layer options holding raw markup (their `{{name}}` slots are filled; nothing else is touched). */
+const MARKUP = ['markup', 'defs'];
 
 /** Keys of a layer that aren't layer options. */
 const LAYER_META = new Set(['id', 'type', 'when']);
 
 /** Top-level keys of a recipe document. */
-const TOP = new Set(['$schema', 'name', 'description', 'params', 'requires', 'vars', 'output', 'layers']);
+const TOP = new Set(['$schema', 'name', 'description', 'params', 'requires', 'vars', 'output', 'layers', 'pages', 'fonts']);
 
 /** Recipes defined from the same JSON object are reused. */
 const defined = new WeakMap();
@@ -139,11 +156,17 @@ export function defineRecipe(json) {
 export function loadRecipe(path) {
   let json;
   try {
-    json = JSON.parse(readFileSync(path, 'utf8'));
+    json = JSON.parse(readTextSync(path));
   } catch (err) {
     throw new TypeError(`Couldn't read recipe ${String(path)}: ${/** @type {Error} */ (err).message}`);
   }
   if (isPlain(json) && !json.name) json.name = String(path).split('/').pop()?.replace(/\.json$/, '');
+  // Fonts given as paths are beside the recipe.
+  const p = node('path');
+  if (isPlain(json) && Array.isArray(json.fonts) && p) {
+    const dir = p.dirname(path instanceof URL ? path.pathname : String(path));
+    json.fonts = json.fonts.map((/** @type {any} */ f) => (isPlain(f) && typeof f.src === 'string' && !/^[a-z][\w+.-]*:|^\//i.test(f.src) ? { ...f, src: p.resolve(dir, f.src) } : f));
+  }
   return defineRecipe(json);
 }
 
@@ -189,16 +212,58 @@ function build(json, name, options, c) {
     let stream;
     const own = { ...scope, rng: () => (stream ??= createRng(`${c.seed ?? ''}:recipe:${layer.id ?? `${layer.type}#${n}`}`)) };
     if (layer.when !== undefined && !test(own, layer.when)) continue;
-    /** @type {Record<string, unknown>} */
-    const out = { ...(layer.id ? { id: layer.id } : {}), type: layer.type };
-    for (const [k, v] of Object.entries(layer)) {
-      if (LAYER_META.has(k)) continue;
-      const r = resolve(own, v);
-      if (r !== undefined) out[k] = r;
-    }
-    layers.push(/** @type {any} */ (out));
+    layers.push(/** @type {any} */ (resolveLayer(own, layer)));
   }
   return layers;
+}
+
+/**
+ * Resolve one layer's options (and any layers nested in it).
+ *
+ * @param {Scope} s
+ * @param {any} layer
+ * @returns {Record<string, unknown>}
+ */
+function resolveLayer(s, layer) {
+  /** @type {Record<string, unknown>} */
+  const out = { ...(layer.id ? { id: layer.id } : {}), type: layer.type };
+  for (const [k, v] of Object.entries(layer)) {
+    if (LAYER_META.has(k)) continue;
+    let r;
+    if (NESTED.includes(k) && Array.isArray(v) && v.every((x) => isPlain(x) && typeof x.type === 'string')) {
+      r = v.filter((x) => x.when === undefined || test(s, x.when)).map((x) => resolveLayer(s, x));
+    } else if (k === 'layer' && isPlain(v) && typeof v.type === 'string') {
+      r = resolveLayer(s, v);
+    } else if (layer.type === 'svg' && MARKUP.includes(k) && typeof v === 'string') {
+      r = fillSlots(s, v);
+    } else {
+      r = resolve(s, v);
+    }
+    if (r !== undefined) out[k] = r;
+  }
+  return out;
+}
+
+/**
+ * Fill `{{name}}` slots in raw markup: options and params (escaped; a
+ * markup value such as `{{mark}}` between elements goes in as sanitised
+ * shapes), vars (`{{$name}}`). Palette and canvas tokens (`{{@accent}}`), `{{id}}` and
+ * `{{seed}}` are left for the layer to fill when it's drawn.
+ *
+ * @param {Scope} s
+ * @param {string} markup
+ * @returns {string}
+ */
+function fillSlots(s, markup) {
+  return markup.replace(/\{\{\s*([$\w.]+)\s*\}\}/g, (m, k, at) => {
+    if (k === 'id' || k === 'seed') return m;
+    const v = k.startsWith('$') ? resolveString(s, k) : valueOf(lookup(s, k));
+    if (v == null) return '';
+    // Between elements, a value that is markup (a mark's paths) goes in as shapes; anything else is text.
+    const inTag = markup.lastIndexOf('<', at) > markup.lastIndexOf('>', at);
+    if (!inTag && /^\s*</.test(String(v))) return shapesOnly(String(v));
+    return String(v).replace(/[&<>"']/g, (ch) => /** @type {Record<string, string>} */ ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+  });
 }
 
 /**
@@ -211,7 +276,11 @@ function build(json, name, options, c) {
 function lookup(s, key) {
   if (key.startsWith('opt.')) return s.options[key.slice(4)];
   if (Object.hasOwn(s.params, key)) return s.params[key];
-  return s.options[key];
+  if (Object.hasOwn(s.options, key) || !key.includes('.')) return s.options[key];
+  // A path into an option: "lineup.0", "meta.venue".
+  const [head, ...rest] = key.split('.');
+  const base = Object.hasOwn(s.params, head) ? s.params[head] : s.options[head];
+  return rest.reduce((/** @type {any} */ acc, k) => acc?.[k], base);
 }
 
 /**
@@ -255,9 +324,12 @@ function resolveString(s, str) {
     const [head, ...path] = str.slice(1).split('.');
     return path.reduce((/** @type {any} */ acc, k) => acc?.[k], s.vars[head]);
   }
+  // Layout references are filled in when the cover is drawn.
+  if (/^\{layout\.[\w-]+\.\w+\s*(?:[+-]\s*[\d.]+)?\}$/.test(str)) return str;
   const whole = str.match(/^\{([\w.]+)\}$/);
   if (whole) return lookup(s, whole[1]);
-  return str.replace(/\{([\w.]+)\}/g, (_, k) => {
+  return str.replace(/\{([\w.]+)\}/g, (m, k) => {
+    if (k.startsWith('layout.')) return m;
     const x = valueOf(lookup(s, k));
     return x == null ? '' : String(x);
   });
@@ -280,6 +352,10 @@ function op(s, name, raw) {
   if (name === 'pick') {
     const items = Array.isArray(raw) ? raw : resolve(s, raw);
     return resolve(s, s.rng().pick(/** @type {unknown[]} */ (items)));
+  }
+  if (name === 'join' || name === 'slice' || name === 'upper' || name === 'lower') {
+    const a = Array.isArray(raw) && (name !== 'upper' && name !== 'lower') ? raw.map((x) => resolve(s, x)) : [resolve(s, raw)];
+    return op2(name, /** @type {any[]} */ (a));
   }
   const args = /** @type {any[]} */ ([].concat(resolve(s, raw)));
   const nums = () => args.map((a) => (typeof a === 'number' ? a : len(a, s.c)));
@@ -338,7 +414,9 @@ function test(s, cond) {
   if ('any' in cond) return cond.any.some((/** @type {unknown} */ c) => test(s, c));
   return Object.entries(cond).every(([k, want]) => {
     const ratio = s.c.width / s.c.height;
-    const have = k === 'mode' ? s.c.palette.mode
+    const have = k === 'page' ? s.options.page ?? 'front'
+      : k === 'format' ? s.c.format
+      : k === 'mode' ? s.c.palette.mode
       : k === 'aspect' ? (ratio > 1.15 ? 'wide' : ratio < 0.87 ? 'tall' : 'square')
       : valueOf(lookup(s, k));
     return Array.isArray(want) ? want.includes(have) : have === want;
@@ -367,13 +445,21 @@ export function validate(json) {
   if (json.params !== undefined && !isPlain(json.params)) fail('params', 'must be an object of defaults');
   if (json.output !== undefined && !(isPlain(json.output) && Object.keys(json.output).every((k) => k === 'lossless'))) fail('output', 'is { "lossless": true | false }');
   if (json.vars !== undefined && !isPlain(json.vars)) fail('vars', 'must be an object');
+  if (json.pages !== undefined && !(Array.isArray(json.pages) && json.pages.every((/** @type {unknown} */ p) => typeof p === 'string'))) fail('pages', 'must be an array of page names (["front", "back"])');
   if (json.requires !== undefined && !(Array.isArray(json.requires) && json.requires.every((/** @type {unknown} */ r) => typeof r === 'string'))) fail('requires', 'must be an array of option names');
   if (!Array.isArray(json.layers) || json.layers.length === 0) fail('layers', 'must be a non-empty array');
+  if (json.fonts !== undefined) {
+    if (!Array.isArray(json.fonts)) fail('fonts', 'must be an array of { name, src, weight, style, axes }');
+    json.fonts.forEach((/** @type {any} */ f, /** @type {number} */ i) => {
+      if (!isPlain(f) || typeof f.name !== 'string' || typeof f.src !== 'string') fail(`fonts[${i}]`, 'needs a name and a src (a path, beside the recipe, or a URL)');
+      for (const k of Object.keys(f)) if (!['name', 'src', 'weight', 'style', 'axes', 'fallback'].includes(k)) fail(`fonts[${i}].${k}`, 'unknown key (name, src, weight, style, axes, fallback)');
+    });
+  }
 
   const names = new Set([...Object.keys(json.params ?? {}), ...CONTENT]);
   const vars = new Set();
   const checkName = (/** @type {string} */ path, /** @type {string} */ key) => {
-    if (!key.startsWith('opt.') && !names.has(key)) {
+    if (!key.startsWith('opt.') && !names.has(key.split('.')[0])) {
       fail(path, `unknown param "${key}" (declare it in "params", or use "{opt.${key}}" for any cover option)`);
     }
   };
@@ -389,7 +475,7 @@ export function validate(json) {
         return c[k].forEach((/** @type {unknown} */ x, /** @type {number} */ i) => checkCond(`${path}.${k}[${i}]`, x));
       }
     }
-    for (const k of Object.keys(c)) if (k !== 'mode' && k !== 'aspect') checkName(`${path}.${k}`, k);
+    for (const k of Object.keys(c)) if (k !== 'mode' && k !== 'aspect' && k !== 'page' && k !== 'format') checkName(`${path}.${k}`, k);
   };
 
   const checkValue = (/** @type {string} */ path, /** @type {any} */ v) => {
@@ -407,6 +493,13 @@ export function validate(json) {
         return;
       }
       for (const m of v.matchAll(/\{([^{}]*)\}/g)) {
+        // `{#…}`: a repeat instance's expression, filled when drawn.
+        if (m[1].startsWith('#')) continue;
+        if (/^layout\.[\w-]+\.\w+\s*(?:[+-]\s*[\d.]+)?$/.test(m[1])) {
+          const field = m[1].split('.')[2].replace(/[\s+-].*$/, '');
+          if (!LAYOUT_FIELDS.includes(/** @type {any} */ (field))) fail(path, `unknown layout field "${field}" (${LAYOUT_FIELDS.join(', ')})`);
+          continue;
+        }
         if (!/^[\w.]+$/.test(m[1])) fail(path, `bad template "{${m[1]}}"`);
         checkName(path, m[1]);
       }
@@ -442,8 +535,7 @@ export function validate(json) {
     checkValue(`vars.${k}`, v);
     vars.add(k);
   }
-  json.layers.forEach((/** @type {any} */ layer, /** @type {number} */ i) => {
-    const path = `layers[${i}]${layer?.id ? ` (${layer.id})` : ''}`;
+  const checkLayer = (/** @type {string} */ path, /** @type {any} */ layer) => {
     if (!isPlain(layer)) return fail(path, 'must be an object');
     if (!Object.hasOwn(LAYERS, layer.type)) fail(`${path}.type`, `unknown layer type "${layer.type}" (${Object.keys(LAYERS).join(', ')})`);
     if (layer.id !== undefined && typeof layer.id !== 'string') fail(`${path}.id`, 'must be a string');
@@ -452,7 +544,73 @@ export function validate(json) {
     for (const [k, v] of Object.entries(layer)) {
       if (LAYER_META.has(k)) continue;
       if (!Object.hasOwn(known, k)) fail(`${path}.${k}`, `"${layer.type}" layers have no option "${k}" (${Object.keys(known).join(', ')})`);
-      checkValue(`${path}.${k}`, v);
+      if (k === 'effects') {
+        checkEffects(`${path}.effects`, v);
+      } else if (NESTED.includes(k) && Array.isArray(v) && v.every((x) => isPlain(x) && typeof x.type === 'string')) {
+        v.forEach((x, j) => checkLayer(`${path}.${k}[${j}]${x.id ? ` (${x.id})` : ''}`, x));
+      } else if (k === 'layer' && isPlain(v) && typeof v.type === 'string') {
+        checkLayer(`${path}.layer`, v);
+      } else if (layer.type === 'svg' && MARKUP.includes(k) && typeof v === 'string') {
+        for (const m of v.matchAll(/\{\{\s*([$@\w.]+)\s*\}\}/g)) {
+          const t = m[1];
+          if (t === 'id' || t === 'seed' || t.startsWith('@')) continue;
+          if (t.startsWith('$')) { if (!vars.has(t.slice(1).split('.')[0])) fail(`${path}.${k}`, `unknown var "{{${t}}}"`); continue; }
+          checkName(`${path}.${k}`, t);
+        }
+      } else {
+        checkValue(`${path}.${k}`, v);
+        checkAnchor(`${path}.${k}`, layer.type, k, v);
+      }
     }
-  });
+  };
+  // Effects: known kinds, their options, masks and nested layers (computed values are checked when drawn).
+  const checkEffects = (/** @type {string} */ path, /** @type {any} */ v) => {
+    if (!Array.isArray(v)) return checkValue(path, v);
+    v.forEach((e, i) => {
+      const at = `${path}[${i}]`;
+      if (typeof e === 'string') {
+        if (!/[{$@]/.test(e) && !Object.hasOwn(EFFECT_OPTIONS, e)) fail(at, `unknown effect "${e}" (${Object.keys(EFFECT_OPTIONS).join(', ')})`);
+        return;
+      }
+      if (!isPlain(e) || typeof e.kind !== 'string' || 'if' in e) return checkValue(at, e);
+      if (!/[{$@]/.test(e.kind) && !Object.hasOwn(EFFECT_OPTIONS, e.kind)) fail(`${at}.kind`, `unknown effect "${e.kind}" (${Object.keys(EFFECT_OPTIONS).join(', ')})`);
+      const known = { ...(EFFECT_OPTIONS[e.kind] ?? {}), ...EFFECT_COMMON };
+      for (const [k, x] of Object.entries(e)) {
+        if (Object.hasOwn(EFFECT_OPTIONS, e.kind) && !Object.hasOwn(known, k)) fail(`${at}.${k}`, `"${e.kind}" effects have no option "${k}" (${Object.keys(known).join(', ')})`);
+        if (k === 'mask' && isPlain(x)) checkEffectMask(`${at}.mask`, x);
+        else if (k === 'map' && isPlain(x) && Array.isArray(x.layers)) x.layers.forEach((/** @type {any} */ l, /** @type {number} */ j) => checkLayer(`${at}.map.layers[${j}]`, l));
+        else checkValue(`${at}.${k}`, x);
+      }
+    });
+  };
+  const checkEffectMask = (/** @type {string} */ path, /** @type {any} */ m) => {
+    const keys = ['gradient', 'from', 'to', 'center', 'angle', 'aspect', 'invert', 'ease', 'layers'];
+    for (const k of Object.keys(m)) if (!keys.includes(k)) fail(`${path}.${k}`, `unknown mask option (${keys.join(', ')})`);
+    if (Array.isArray(m.layers)) return m.layers.forEach((/** @type {any} */ l, /** @type {number} */ j) => checkLayer(`${path}.layers[${j}]`, l));
+    if (typeof m.gradient !== 'string' || (!/[{$@]/.test(m.gradient) && !MASK_GRADIENTS.includes(m.gradient))) fail(`${path}.gradient`, `"${m.gradient}" (${MASK_GRADIENTS.join(', ')}), or give layers`);
+    for (const [k, x] of Object.entries(m)) checkValue(`${path}.${k}`, x);
+  };
+  // Anchors, as literal strings (templates are checked when drawn).
+  const checkAnchor = (/** @type {string} */ path, /** @type {string} */ type, /** @type {string} */ k, /** @type {any} */ v) => {
+    if (typeof v !== 'string' || /[{$@]/.test(v)) return;
+    const allowed = k === 'anchor' || (k === 'align' && type === 'group') ? Object.keys(ANCHORS) : k === 'focus' && type === 'image' ? [...Object.keys(ANCHORS), 'attention', 'entropy'] : null;
+    if (allowed && !allowed.includes(v)) fail(path, `unknown anchor "${v}" (${allowed.join(', ')})`);
+  };
+  json.layers.forEach((/** @type {any} */ layer, /** @type {number} */ i) => checkLayer(`layers[${i}]${layer?.id ? ` (${layer.id})` : ''}`, layer));
+}
+
+/**
+ * The string and list operators.
+ *
+ * @param {string} name
+ * @param {any[]} args
+ * @returns {unknown}
+ */
+function op2(name, args) {
+  switch (name) {
+    case 'join': return Array.isArray(args[0]) ? args[0].map((x) => valueOf(x)).join(args[1] ?? ' ') : String(valueOf(args[0]) ?? '');
+    case 'upper': return String(valueOf(args[0]) ?? '').toUpperCase();
+    case 'lower': return String(valueOf(args[0]) ?? '').toLowerCase();
+    default: return Array.isArray(args[0]) || typeof args[0] === 'string' ? args[0].slice(args[1], args[2]) : args[0];
+  }
 }

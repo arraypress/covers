@@ -1,0 +1,282 @@
+{
+  "$schema": "../../../../schema/recipe.schema.json",
+  "name": "halo",
+  "description": "Series (v2): a figure and its afterimage. The photo's figure, blurred soft and toned so its ground goes white and its figure dark, is multiplied over a pale backlight low on the right: a soft dark silhouette; a faint mirrored echo of it stands on the left; behind its head a hard-edged ring stroked with the palette's two colours over a soft glow; an offset copy in screen gives its edge a coloured fringe. The label's wordmark, the artist and the title are stacked in a block at the top-left. The photo is defined once and drawn three times (defs/use). Slots: {photo} (a dark figure on a light ground), {artist}, {title}, {label}, the palette (bg = the dark, colors.0/colors.1 = ring and fringe, colors.2 = backlight; text = type). Params: figX, figY, figScale (where the figure stands), ringX, ringY, ringR, soft, small. Fonts: Urbanist, Manrope.",
+  "requires": [
+    "photo"
+  ],
+  "params": {
+    "artist": "Artist",
+    "soft": 18,
+    "small": 24,
+    "figX": 300,
+    "figY": 250,
+    "figScale": 0.76,
+    "ringX": 660,
+    "ringY": 420,
+    "ringR": 200
+  },
+  "vars": {},
+  "layers": [
+    {
+      "id": "dark",
+      "type": "solid",
+      "color": "@bg"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "stills",
+          "type": "defs",
+          "layers": [
+            {
+              "id": "still",
+              "type": "image",
+              "src": "{photo}",
+              "x": 0,
+              "y": 0,
+              "width": 1000,
+              "height": 1000,
+              "fit": "cover",
+              "focus": "attention"
+            }
+          ]
+        },
+        {
+          "id": "backlight",
+          "type": "shape",
+          "kind": "ellipse",
+          "cx": {
+            "add": [
+              "{ringX}",
+              -40
+            ]
+          },
+          "cy": 520,
+          "rx": 420,
+          "ry": 470,
+          "fill": "@colors.2",
+          "opacity": 0.75,
+          "soft": 160
+        },
+        {
+          "id": "glow",
+          "type": "shape",
+          "kind": "circle",
+          "cx": "{ringX}",
+          "cy": "{ringY}",
+          "r": {
+            "mul": [
+              "{ringR}",
+              1.05
+            ]
+          },
+          "fill": "@colors.0",
+          "opacity": 0.55,
+          "soft": 90
+        },
+        {
+          "id": "ring",
+          "type": "shape",
+          "kind": "circle",
+          "cx": "{ringX}",
+          "cy": "{ringY}",
+          "r": "{ringR}",
+          "fill": "none",
+          "strokeWidth": 16,
+          "stroke": {
+            "type": "linear",
+            "colors": [
+              "@colors.0",
+              "@colors.1"
+            ],
+            "angle": 135
+          }
+        },
+        {
+          "id": "fringe",
+          "type": "group",
+          "blend": "screen",
+          "opacity": 0.85,
+          "effects": [
+            {
+              "kind": "blur",
+              "radius": 18
+            },
+            {
+              "kind": "duotone",
+              "colors": [
+                "@colors.1",
+                "#000000"
+              ],
+              "contrast": 1.6
+            }
+          ],
+          "layers": [
+            {
+              "id": "fringeUse",
+              "type": "use",
+              "ref": "still",
+              "x": {
+                "add": [
+                  "{figX}",
+                  -18
+                ]
+              },
+              "y": "{figY}",
+              "scale": "{figScale}"
+            }
+          ]
+        },
+        {
+          "id": "echo",
+          "type": "group",
+          "blend": "multiply",
+          "opacity": 0.42,
+          "transform": {
+            "mirror": "x",
+            "origin": [
+              500,
+              500
+            ]
+          },
+          "effects": [
+            {
+              "kind": "blur",
+              "radius": "{soft}"
+            },
+            {
+              "kind": "duotone",
+              "colors": [
+                "@bg",
+                {
+                  "mix": [
+                    "@bg",
+                    "#ffffff",
+                    0.55
+                  ]
+                },
+                "#ffffff"
+              ],
+              "contrast": 1.3
+            }
+          ],
+          "layers": [
+            {
+              "id": "echoUse",
+              "type": "use",
+              "ref": "still",
+              "x": "{figX}",
+              "y": "{figY}",
+              "scale": "{figScale}"
+            }
+          ]
+        },
+        {
+          "id": "figure",
+          "type": "group",
+          "blend": "multiply",
+          "effects": [
+            {
+              "kind": "blur",
+              "radius": "{soft}"
+            },
+            {
+              "kind": "duotone",
+              "colors": [
+                "@bg",
+                {
+                  "mix": [
+                    "@bg",
+                    "#ffffff",
+                    0.55
+                  ]
+                },
+                "#ffffff"
+              ],
+              "contrast": 1.3
+            }
+          ],
+          "layers": [
+            {
+              "id": "figureUse",
+              "type": "use",
+              "ref": "still",
+              "x": "{figX}",
+              "y": "{figY}",
+              "scale": "{figScale}"
+            }
+          ]
+        },
+        {
+          "id": "wordmark",
+          "type": "text",
+          "content": "{label}",
+          "font": "Urbanist",
+          "weight": 700,
+          "size": 36,
+          "letterSpacing": -0.02,
+          "x": 60,
+          "y": 92,
+          "color": {
+            "mix": [
+              "@text",
+              "@colors.0",
+              0.35
+            ]
+          }
+        },
+        {
+          "id": "artist",
+          "type": "text",
+          "content": {
+            "upper": "{artist}"
+          },
+          "font": "Manrope",
+          "weight": 600,
+          "size": "{small}",
+          "letterSpacing": 0.06,
+          "x": 60,
+          "y": 146,
+          "maxWidth": 420,
+          "fit": "shrink",
+          "maxLines": 1,
+          "color": "@text"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": {
+            "upper": "{title}"
+          },
+          "font": "Manrope",
+          "weight": 400,
+          "size": "{small}",
+          "letterSpacing": 0.06,
+          "x": 60,
+          "y": 182,
+          "maxWidth": 420,
+          "fit": "shrink",
+          "maxLines": 1,
+          "color": "@text",
+          "opacity": 0.85
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.11,
+      "size": 1.2
+    }
+  ]
+}

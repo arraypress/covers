@@ -1,0 +1,688 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "odd-tile-dark",
+  "description": "The odd tile, dark: a 4 × 3 grid of the mark in a pale ink on a near-black ground tinted by the accent, faint rules, one tile (param `odd`) turned 45° on a square of the accent; the artist and title under the grid. Slots: {name} (artist), {title} (release), {mark}, the palette (accent), `odd`. Fonts: Inter Tight (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "params": {
+    "odd": 5
+  },
+  "requires": [
+    "mark"
+  ],
+  "vars": {
+    "ground": {
+      "mix": [
+        "@accent",
+        "#08080a",
+        0.9
+      ]
+    },
+    "light": {
+      "mix": [
+        "#f4f1ea",
+        "@accent",
+        0.08
+      ]
+    },
+    "onTile": {
+      "readable": "@accent"
+    }
+  },
+  "layers": [
+    {
+      "id": "page",
+      "type": "solid",
+      "color": "$ground"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "bg0",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 0
+          }
+        },
+        {
+          "id": "odd0",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 50,
+          "y": 50,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              125,
+              125
+            ]
+          },
+          "when": {
+            "odd": 0
+          }
+        },
+        {
+          "id": "m0",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 50,
+          "y": 50,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 0
+            }
+          }
+        },
+        {
+          "id": "bg1",
+          "type": "shape",
+          "kind": "rect",
+          "x": 250,
+          "y": 0,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 1
+          }
+        },
+        {
+          "id": "odd1",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 300,
+          "y": 50,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              375,
+              125
+            ]
+          },
+          "when": {
+            "odd": 1
+          }
+        },
+        {
+          "id": "m1",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 300,
+          "y": 50,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 1
+            }
+          }
+        },
+        {
+          "id": "bg2",
+          "type": "shape",
+          "kind": "rect",
+          "x": 500,
+          "y": 0,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 2
+          }
+        },
+        {
+          "id": "odd2",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 550,
+          "y": 50,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              625,
+              125
+            ]
+          },
+          "when": {
+            "odd": 2
+          }
+        },
+        {
+          "id": "m2",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 550,
+          "y": 50,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 2
+            }
+          }
+        },
+        {
+          "id": "bg3",
+          "type": "shape",
+          "kind": "rect",
+          "x": 750,
+          "y": 0,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 3
+          }
+        },
+        {
+          "id": "odd3",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 800,
+          "y": 50,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              875,
+              125
+            ]
+          },
+          "when": {
+            "odd": 3
+          }
+        },
+        {
+          "id": "m3",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 800,
+          "y": 50,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 3
+            }
+          }
+        },
+        {
+          "id": "bg4",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 250,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 4
+          }
+        },
+        {
+          "id": "odd4",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 50,
+          "y": 300,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              125,
+              375
+            ]
+          },
+          "when": {
+            "odd": 4
+          }
+        },
+        {
+          "id": "m4",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 50,
+          "y": 300,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 4
+            }
+          }
+        },
+        {
+          "id": "bg5",
+          "type": "shape",
+          "kind": "rect",
+          "x": 250,
+          "y": 250,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 5
+          }
+        },
+        {
+          "id": "odd5",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 300,
+          "y": 300,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              375,
+              375
+            ]
+          },
+          "when": {
+            "odd": 5
+          }
+        },
+        {
+          "id": "m5",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 300,
+          "y": 300,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 5
+            }
+          }
+        },
+        {
+          "id": "bg6",
+          "type": "shape",
+          "kind": "rect",
+          "x": 500,
+          "y": 250,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 6
+          }
+        },
+        {
+          "id": "odd6",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 550,
+          "y": 300,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              625,
+              375
+            ]
+          },
+          "when": {
+            "odd": 6
+          }
+        },
+        {
+          "id": "m6",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 550,
+          "y": 300,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 6
+            }
+          }
+        },
+        {
+          "id": "bg7",
+          "type": "shape",
+          "kind": "rect",
+          "x": 750,
+          "y": 250,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 7
+          }
+        },
+        {
+          "id": "odd7",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 800,
+          "y": 300,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              875,
+              375
+            ]
+          },
+          "when": {
+            "odd": 7
+          }
+        },
+        {
+          "id": "m7",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 800,
+          "y": 300,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 7
+            }
+          }
+        },
+        {
+          "id": "bg8",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 500,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 8
+          }
+        },
+        {
+          "id": "odd8",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 50,
+          "y": 550,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              125,
+              625
+            ]
+          },
+          "when": {
+            "odd": 8
+          }
+        },
+        {
+          "id": "m8",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 50,
+          "y": 550,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 8
+            }
+          }
+        },
+        {
+          "id": "bg9",
+          "type": "shape",
+          "kind": "rect",
+          "x": 250,
+          "y": 500,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 9
+          }
+        },
+        {
+          "id": "odd9",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 300,
+          "y": 550,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              375,
+              625
+            ]
+          },
+          "when": {
+            "odd": 9
+          }
+        },
+        {
+          "id": "m9",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 300,
+          "y": 550,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 9
+            }
+          }
+        },
+        {
+          "id": "bg10",
+          "type": "shape",
+          "kind": "rect",
+          "x": 500,
+          "y": 500,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 10
+          }
+        },
+        {
+          "id": "odd10",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 550,
+          "y": 550,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              625,
+              625
+            ]
+          },
+          "when": {
+            "odd": 10
+          }
+        },
+        {
+          "id": "m10",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 550,
+          "y": 550,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 10
+            }
+          }
+        },
+        {
+          "id": "bg11",
+          "type": "shape",
+          "kind": "rect",
+          "x": 750,
+          "y": 500,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 11
+          }
+        },
+        {
+          "id": "odd11",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 800,
+          "y": 550,
+          "size": 150,
+          "color": "$onTile",
+          "transform": {
+            "rotate": 45,
+            "origin": [
+              875,
+              625
+            ]
+          },
+          "when": {
+            "odd": 11
+          }
+        },
+        {
+          "id": "m11",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 800,
+          "y": 550,
+          "size": 150,
+          "color": "$light",
+          "when": {
+            "not": {
+              "odd": 11
+            }
+          }
+        },
+        {
+          "id": "rules",
+          "type": "shape",
+          "stroke": "$light",
+          "strokeWidth": 1.4,
+          "opacity": 0.16,
+          "items": [
+            {
+              "kind": "line",
+              "x1": 250,
+              "y1": 0,
+              "x2": 250,
+              "y2": 750
+            },
+            {
+              "kind": "line",
+              "x1": 500,
+              "y1": 0,
+              "x2": 500,
+              "y2": 750
+            },
+            {
+              "kind": "line",
+              "x1": 750,
+              "y1": 0,
+              "x2": 750,
+              "y2": 750
+            },
+            {
+              "kind": "line",
+              "x1": 0,
+              "y1": 250,
+              "x2": 1000,
+              "y2": 250
+            },
+            {
+              "kind": "line",
+              "x1": 0,
+              "y1": 500,
+              "x2": 1000,
+              "y2": 500
+            },
+            {
+              "kind": "line",
+              "x1": 0,
+              "y1": 750,
+              "x2": 1000,
+              "y2": 750
+            }
+          ]
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 88,
+          "letterSpacing": -0.015,
+          "x": 44,
+          "y": 848,
+          "maxWidth": 912,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "$light"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 88,
+          "letterSpacing": -0.01,
+          "x": 44,
+          "y": 950,
+          "maxWidth": 912,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "$light"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05
+    }
+  ]
+}

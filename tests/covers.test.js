@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, readdir, rm } from 'node:fs/promises';
+import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import sharp from 'sharp';
@@ -105,10 +105,22 @@ const every = [
   { type: 'waveform', style: 'mirrored' },
   { type: 'tiles', cols: 3 },
   { type: 'rule', y: 0.2 },
+  { type: 'group', viewBox: [0, 0, 400, 500], layers: [{ type: 'shape', kind: 'circle', cx: 200, cy: 250, r: 100, fill: '#ff48b0' }] },
+  { type: 'shape', items: [{ kind: 'rect', x: 10, y: 10, width: 100, height: 60, edge: 'deckle' }, { kind: 'burst', cx: 300, cy: 150, r: 60 }, { kind: 'line', x1: 0, y1: 290, x2: 400, y2: 290, stroke: '#000' }] },
+  { type: 'svg', markup: '<circle cx="50" cy="50" r="40" fill="{{@accent}}"/>' },
+  { type: 'table', x: 16, y: 30, columns: [{ x: 16, weight: 700 }, { x: 384, align: 'right' }], rows: [['Doors', '7 pm'], ['Entry', 'Free']] },
+  { type: 'barcode', value: 'COVERS-11', x: 20, y: 200, width: 160, height: 50, text: true },
+  { type: 'perforation', x: 300, kind: 'holes' },
+  { type: 'tear', from: [0, 200], to: [400, 120] },
+  { type: 'texture', kind: 'creases' },
+  { type: 'repeat', rows: 2, cols: 3, layer: { type: 'shape', kind: 'circle', cx: 20, cy: 20, r: '{#10 + col * 4}' } },
+  { type: 'group', layers: [{ type: 'defs', layers: [{ id: 'dot', type: 'shape', kind: 'circle', cx: 0, cy: 0, r: 30 }] }, { type: 'use', ref: 'dot', x: 100, y: 100 }, { type: 'use', ref: 'dot', x: 200, y: 100, scale: 0.5 }] },
 ];
+// defs and use draw together (defs alone draws nothing).
+const pairsOnly = new Set(['defs', 'use']);
 
 test('every layer type renders', async () => {
-  assert.deepEqual(new Set(every.map((l) => l.type)), new Set(Object.keys(layers)));
+  assert.deepEqual(new Set([...every.map((l) => l.type), ...pairsOnly]), new Set(Object.keys(layers)));
   for (const layer of every) {
     const svg = await renderSvg({ seed: 'layers', width: 400, height: 300, layers: [layer] });
     assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" width="400" height="300"/, layer.type);
@@ -198,10 +210,16 @@ test('kerning comes from the font (GPOS)', async () => {
   assert.ok(av < sum - 1, `AV ${av} should be kerned tighter than ${sum}`);
 });
 
-test('fonts: WOFF decodes to sfnt, WOFF2 is refused', () => {
+test('fonts: WOFF and WOFF2 decode to sfnt; damaged WOFF2 is refused', async () => {
   const sfnt = decodeFont(bundledFonts()[0].data);
   assert.equal(new DataView(sfnt.buffer, sfnt.byteOffset).getUint32(0), 0x00010000);
   assert.throws(() => decodeFont(new Uint8Array([0x77, 0x4f, 0x46, 0x32, 0, 0, 0, 0, 0, 0, 0, 0])), /WOFF2/);
+  // Space Mono (OFL) as WOFF2: glyf, loca and hmtx rebuilt from their transforms.
+  const w2 = await readFile(new URL('fixtures/space-mono-400.woff2', import.meta.url));
+  const out = decodeFont(w2);
+  assert.equal(new DataView(out.buffer, out.byteOffset).getUint32(0), 0x00010000);
+  const svg = await renderSvg({ width: 400, fonts: [{ name: 'Mono', data: w2 }], layers: [{ type: 'text', content: 'Hamburg 0123', font: 'Mono', weight: 400, x: 10, y: 100, size: 40 }] });
+  assert.ok((svg.match(/<path d="([^"]+)"/)?.[1].length ?? 0) > 1000, 'outlines drawn from the WOFF2');
 });
 
 // ---------------------------------------------------------------------------

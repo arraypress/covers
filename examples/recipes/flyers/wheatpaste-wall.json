@@ -1,0 +1,984 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "wheatpaste-wall",
+  "description": "Wheatpaste, poster wall: the words-and-mark poster pasted four times on a concrete wall, overlapping and a little crooked, one corner peeling back. Square (release): three of them, the middle one in front and peeling. Re-expressed from the Logomarks scenes lab (ZineCards, 'Wheatpaste · poster wall').",
+  "params": {
+    "artist": "VELORA",
+    "words": [
+      "MAKE IT",
+      "LOUDER",
+      "CALL IT"
+    ],
+    "sheet": "#f29ad8",
+    "release": "Make It Louder",
+    "wall": "#8a8580",
+    "concrete": "#bfbcb8"
+  },
+  "layers": [
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "aspect": "square"
+        }
+      },
+      "layers": [
+        {
+          "id": "wall",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 500,
+          "fill": "{wall}"
+        },
+        {
+          "id": "concrete",
+          "type": "texture",
+          "kind": "concrete",
+          "color": "{concrete}"
+        },
+        {
+          "id": "poster1",
+          "type": "group",
+          "x": 14,
+          "y": 16,
+          "width": 176,
+          "height": 220,
+          "viewBox": [
+            0,
+            0,
+            400,
+            500
+          ],
+          "fit": "stretch",
+          "transform": {
+            "rotate": -2.2,
+            "origin": [
+              102.0,
+              126.0
+            ]
+          },
+          "layers": [
+            {
+              "id": "photo",
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "viewBox": [
+                0,
+                0,
+                1200,
+                1500
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1200,
+                  "height": 1500,
+                  "fit": "cover"
+                }
+              ]
+            },
+            {
+              "id": "sheet",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "fill": "{sheet}",
+              "opacity": 0.9,
+              "knockout": [
+                {
+                  "type": "text",
+                  "content": "{words.0}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 118,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.1}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 236,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.2}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 354,
+                  "width": 372
+                },
+                {
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 14,
+                  "y": 366,
+                  "size": 112,
+                  "when": "mark"
+                },
+                {
+                  "type": "text",
+                  "content": "{artist}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 136,
+                  "y": 472,
+                  "width": 250
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "poster2",
+          "type": "group",
+          "x": 206,
+          "y": 30,
+          "width": 176,
+          "height": 220,
+          "viewBox": [
+            0,
+            0,
+            400,
+            500
+          ],
+          "fit": "stretch",
+          "transform": {
+            "rotate": 1.6,
+            "origin": [
+              294.0,
+              140.0
+            ]
+          },
+          "layers": [
+            {
+              "id": "photo",
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "viewBox": [
+                0,
+                0,
+                1200,
+                1500
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1200,
+                  "height": 1500,
+                  "fit": "cover"
+                }
+              ]
+            },
+            {
+              "id": "sheet",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "fill": "{sheet}",
+              "opacity": 0.9,
+              "knockout": [
+                {
+                  "type": "text",
+                  "content": "{words.0}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 118,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.1}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 236,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.2}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 354,
+                  "width": 372
+                },
+                {
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 14,
+                  "y": 366,
+                  "size": 112,
+                  "when": "mark"
+                },
+                {
+                  "type": "text",
+                  "content": "{artist}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 136,
+                  "y": 472,
+                  "width": 250
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "poster3",
+          "type": "group",
+          "x": 22,
+          "y": 262,
+          "width": 176,
+          "height": 220,
+          "viewBox": [
+            0,
+            0,
+            400,
+            500
+          ],
+          "fit": "stretch",
+          "transform": {
+            "rotate": 1.3,
+            "origin": [
+              110.0,
+              372.0
+            ]
+          },
+          "layers": [
+            {
+              "id": "photo",
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "viewBox": [
+                0,
+                0,
+                1200,
+                1500
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1200,
+                  "height": 1500,
+                  "fit": "cover"
+                }
+              ]
+            },
+            {
+              "id": "sheet",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "fill": "{sheet}",
+              "opacity": 0.9,
+              "knockout": [
+                {
+                  "type": "text",
+                  "content": "{words.0}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 118,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.1}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 236,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.2}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 354,
+                  "width": 372
+                },
+                {
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 14,
+                  "y": 366,
+                  "size": 112,
+                  "when": "mark"
+                },
+                {
+                  "type": "text",
+                  "content": "{artist}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 136,
+                  "y": 472,
+                  "width": 250
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "poster4",
+          "type": "group",
+          "x": 198,
+          "y": 250,
+          "width": 176,
+          "height": 220,
+          "viewBox": [
+            0,
+            0,
+            400,
+            500
+          ],
+          "fit": "stretch",
+          "transform": {
+            "rotate": -1.5,
+            "origin": [
+              286.0,
+              360.0
+            ]
+          },
+          "layers": [
+            {
+              "id": "photo",
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "viewBox": [
+                0,
+                0,
+                1200,
+                1500
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1200,
+                  "height": 1500,
+                  "fit": "cover"
+                }
+              ]
+            },
+            {
+              "id": "sheet",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "fill": "{sheet}",
+              "opacity": 0.9,
+              "knockout": [
+                {
+                  "type": "text",
+                  "content": "{words.0}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 118,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.1}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 236,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.2}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 354,
+                  "width": 372
+                },
+                {
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 14,
+                  "y": 366,
+                  "size": 112,
+                  "when": "mark"
+                },
+                {
+                  "type": "text",
+                  "content": "{artist}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 138,
+                  "letterSpacing": 0,
+                  "x": 136,
+                  "y": 472,
+                  "width": 250
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "shape",
+          "kind": "polygon",
+          "points": [
+            [
+              352,
+              33
+            ],
+            [
+              384,
+              37
+            ],
+            [
+              380,
+              70
+            ]
+          ],
+          "fill": "#2b2826",
+          "opacity": 0.35
+        },
+        {
+          "type": "shape",
+          "kind": "polygon",
+          "points": [
+            [
+              352,
+              33
+            ],
+            [
+              382,
+              36
+            ],
+            [
+              364,
+              62
+            ]
+          ],
+          "fill": "#f4ede7"
+        },
+        {
+          "type": "shape",
+          "kind": "polygon",
+          "points": [
+            [
+              352,
+              33
+            ],
+            [
+              364,
+              62
+            ],
+            [
+              357,
+              64
+            ]
+          ],
+          "fill": "#d8cfc8"
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "aspect": "square"
+      },
+      "layers": [
+        {
+          "id": "wall",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 400,
+          "fill": "{wall}"
+        },
+        {
+          "id": "concrete",
+          "type": "texture",
+          "kind": "concrete",
+          "color": "{concrete}"
+        },
+        {
+          "id": "poster1",
+          "type": "group",
+          "x": -70,
+          "y": 40,
+          "width": 200,
+          "height": 250,
+          "viewBox": [
+            0,
+            0,
+            400,
+            500
+          ],
+          "fit": "stretch",
+          "transform": {
+            "rotate": -3,
+            "origin": [
+              30.0,
+              165.0
+            ]
+          },
+          "layers": [
+            {
+              "id": "photo",
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "viewBox": [
+                0,
+                0,
+                1200,
+                1500
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1200,
+                  "height": 1500,
+                  "fit": "cover"
+                }
+              ]
+            },
+            {
+              "id": "sheet",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "fill": "{sheet}",
+              "opacity": 0.9,
+              "knockout": [
+                {
+                  "type": "text",
+                  "content": "{words.0}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 168,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 150,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.1}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 168,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 306,
+                  "width": 372
+                },
+                {
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 14,
+                  "y": 352,
+                  "size": 124,
+                  "when": "mark"
+                },
+                {
+                  "type": "text",
+                  "content": "{artist}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 150,
+                  "letterSpacing": 0,
+                  "x": 146,
+                  "y": 472,
+                  "width": 240
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "poster3",
+          "type": "group",
+          "x": 270,
+          "y": 70,
+          "width": 200,
+          "height": 250,
+          "viewBox": [
+            0,
+            0,
+            400,
+            500
+          ],
+          "fit": "stretch",
+          "transform": {
+            "rotate": 2.4,
+            "origin": [
+              370.0,
+              195.0
+            ]
+          },
+          "layers": [
+            {
+              "id": "photo",
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "viewBox": [
+                0,
+                0,
+                1200,
+                1500
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1200,
+                  "height": 1500,
+                  "fit": "cover"
+                }
+              ]
+            },
+            {
+              "id": "sheet",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "fill": "{sheet}",
+              "opacity": 0.9,
+              "knockout": [
+                {
+                  "type": "text",
+                  "content": "{words.0}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 168,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 150,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.1}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 168,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 306,
+                  "width": 372
+                },
+                {
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 14,
+                  "y": 352,
+                  "size": 124,
+                  "when": "mark"
+                },
+                {
+                  "type": "text",
+                  "content": "{artist}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 150,
+                  "letterSpacing": 0,
+                  "x": 146,
+                  "y": 472,
+                  "width": 240
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "poster2",
+          "type": "group",
+          "x": 84,
+          "y": 55,
+          "width": 232,
+          "height": 290,
+          "viewBox": [
+            0,
+            0,
+            400,
+            500
+          ],
+          "fit": "stretch",
+          "transform": {
+            "rotate": -1.2,
+            "origin": [
+              200.0,
+              200.0
+            ]
+          },
+          "layers": [
+            {
+              "id": "photo",
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "viewBox": [
+                0,
+                0,
+                1200,
+                1500
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1200,
+                  "height": 1500,
+                  "fit": "cover"
+                }
+              ]
+            },
+            {
+              "id": "sheet",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "fill": "{sheet}",
+              "opacity": 0.9,
+              "knockout": [
+                {
+                  "type": "text",
+                  "content": "{words.0}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 168,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 150,
+                  "width": 372
+                },
+                {
+                  "type": "text",
+                  "content": "{words.1}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 168,
+                  "letterSpacing": 0,
+                  "x": 14,
+                  "y": 306,
+                  "width": 372
+                },
+                {
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 14,
+                  "y": 352,
+                  "size": 124,
+                  "when": "mark"
+                },
+                {
+                  "type": "text",
+                  "content": "{artist}",
+                  "font": "Bebas Neue",
+                  "weight": 400,
+                  "size": 150,
+                  "letterSpacing": 0,
+                  "x": 146,
+                  "y": 472,
+                  "width": 240
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "shape",
+          "kind": "polygon",
+          "points": [
+            [
+              284.0,
+              55.0
+            ],
+            [
+              320.8,
+              59.6
+            ],
+            [
+              316.2,
+              97.55
+            ]
+          ],
+          "fill": "#2b2826",
+          "opacity": 0.35
+        },
+        {
+          "type": "shape",
+          "kind": "polygon",
+          "points": [
+            [
+              284.0,
+              55.0
+            ],
+            [
+              318.5,
+              58.45
+            ],
+            [
+              297.8,
+              88.35
+            ]
+          ],
+          "fill": "#f4ede7"
+        },
+        {
+          "type": "shape",
+          "kind": "polygon",
+          "points": [
+            [
+              284.0,
+              55.0
+            ],
+            [
+              297.8,
+              88.35
+            ],
+            [
+              289.75,
+              90.65
+            ]
+          ],
+          "fill": "#d8cfc8"
+        }
+      ]
+    },
+    {
+      "id": "creases",
+      "type": "texture",
+      "kind": "creases"
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.06,
+      "blend": "multiply"
+    }
+  ]
+}

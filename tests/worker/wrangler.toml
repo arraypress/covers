@@ -1,0 +1,4 @@
+# Cloudflare Worker smoke test: npm run test:worker (runs `wrangler dev` locally; no account needed).
+name = "covers-worker-smoke"
+main = "worker.js"
+compatibility_date = "2025-09-01"

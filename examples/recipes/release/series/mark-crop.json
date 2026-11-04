@@ -1,0 +1,135 @@
+{
+  "$schema": "../../../../schema/recipe.schema.json",
+  "name": "mark-crop",
+  "description": "Series (v2): the label's mark as a pattern. The mark tiles a 3\u00d73 grid that runs off the bottom-right corner, solid and outline in a checkerboard (a repeat with odd overrides); the label's name and the catalogue number run horizontally across the top as one big line (name heavy, number light), over a full-width rule; the artist and title sit under the rule; the credits fill the free bottom-left corner. One flat field and one accent per release. Slots: {mark}, {label}, {catalog}, {artist}, {title}, {credits}, the palette (bg = the field, accent = marks and header, text = small type). Fonts: Inter Tight.",
+  "requires": [
+    "mark"
+  ],
+  "params": {
+    "artist": "Artist",
+    "catalog": "",
+    "credits": "",
+    "small": 30
+  },
+  "layers": [
+    {
+      "id": "field",
+      "type": "solid",
+      "color": "@bg"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "pattern",
+          "type": "repeat",
+          "rows": 3,
+          "cols": 3,
+          "x": 372,
+          "y": 372,
+          "step": [
+            318,
+            318
+          ],
+          "layer": {
+            "type": "icon",
+            "markup": "{mark}",
+            "x": 0,
+            "y": 0,
+            "size": 292,
+            "color": "@accent"
+          },
+          "odd": {
+            "markup": "<svg viewBox='0 0 512 512' fill='none' stroke='currentColor' stroke-width='7'>{mark}</svg>"
+          }
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{label}",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 120,
+          "letterSpacing": -0.045,
+          "x": 44,
+          "y": 150,
+          "maxWidth": 600,
+          "fit": "shrink",
+          "maxLines": 1,
+          "color": "@accent"
+        },
+        {
+          "id": "number",
+          "type": "text",
+          "when": "catalog",
+          "content": "{catalog}",
+          "font": "Inter Tight",
+          "weight": 200,
+          "size": 120,
+          "letterSpacing": -0.04,
+          "x": 956,
+          "y": 150,
+          "align": "right",
+          "maxWidth": 320,
+          "fit": "shrink",
+          "maxLines": 1,
+          "color": "@accent"
+        },
+        {
+          "id": "rule",
+          "type": "shape",
+          "kind": "line",
+          "x1": 44,
+          "y1": 196,
+          "x2": 956,
+          "y2": 196,
+          "stroke": "@text",
+          "strokeWidth": 1.6
+        },
+        {
+          "id": "names",
+          "type": "text",
+          "content": "{artist}\n{title}",
+          "font": "Inter Tight",
+          "weight": 500,
+          "size": "{small}",
+          "lineHeight": 1.2,
+          "letterSpacing": -0.02,
+          "x": 44,
+          "y": 250,
+          "maxWidth": 600,
+          "color": "@text"
+        },
+        {
+          "id": "credits",
+          "type": "text",
+          "when": "credits",
+          "content": "{credits}",
+          "font": "Inter Tight",
+          "weight": 500,
+          "size": 15,
+          "lineHeight": 1.35,
+          "x": 44,
+          "y": 880,
+          "maxWidth": 300,
+          "maxLines": 4,
+          "color": "@text",
+          "opacity": 0.85
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.03
+    }
+  ]
+}

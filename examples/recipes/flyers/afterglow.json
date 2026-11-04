@@ -1,0 +1,70 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "afterglow",
+  "description": "Aura, neon on black: magenta, cobalt, ember and a little acid as soft orbs under a heavy blur on near-black, film grain, one big light lowercase word and three small lines. Each orb is its own one-blob mesh (so renderImage pads it and colour reaches the edges). With format 'release' it re-composes for a 3000×3000 cover: the orbs re-laid for the square, the artist and a release title only. Re-expressed from the Logomarks scenes lab (FlyerCards, 'Aura · neon on black').",
+  "params": {
+    "ground": "#06060a",
+    "ink": "#ffffff",
+    "magenta": "#ff2bd6",
+    "cobalt": "#2f4dff",
+    "ember": "#ff7a2b",
+    "acid": "#c8ff3b",
+    "brand": "noctua",
+    "issue": "vol. 04\nnov 26",
+    "word": "afterglow",
+    "meta": [["fri 21.11", "10pm — late", "noctua.fm"]],
+    "artist": "noctua",
+    "release": "slow halo"
+  },
+  "layers": [
+    { "id": "ground", "type": "solid", "color": "{ground}" },
+    { "id": "orb1", "type": "mesh", "when": { "not": { "format": "release" } }, "arrangement": "ring", "base": null, "blur": "15.59vw", "blobs": [{ "x": 0.22, "y": 0.66, "r": 0.222, "squash": 1, "rotate": 0, "color": "{magenta}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{magenta}", "opacity": 0.001 }] },
+    { "id": "orb2", "type": "mesh", "when": { "not": { "format": "release" } }, "arrangement": "ring", "base": null, "blur": "14.41vw", "blobs": [{ "x": 0.84, "y": 0.3, "r": 0.202, "squash": 1, "rotate": 0, "color": "{cobalt}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{cobalt}", "opacity": 0.001 }] },
+    { "id": "orb3", "type": "mesh", "when": { "not": { "format": "release" } }, "arrangement": "ring", "base": null, "blur": "8.42vw", "blobs": [{ "x": 0.62, "y": 0.62, "r": 0.1, "squash": 1, "rotate": 0, "color": "{ember}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{ember}", "opacity": 0.001 }] },
+    { "id": "orb4", "type": "mesh", "when": { "not": { "format": "release" } }, "arrangement": "ring", "base": null, "blur": "6.78vw", "blobs": [{ "x": 0.4, "y": 0.4, "r": 0.072, "squash": 1, "rotate": 0, "color": "{acid}", "opacity": 0.62 }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{acid}", "opacity": 0.001 }] },
+    { "id": "corb1", "type": "mesh", "when": { "format": "release" }, "arrangement": "ring", "base": null, "blur": "15.88vw", "blobs": [{ "x": 0.2, "y": 0.75, "r": 0.2838, "squash": 1, "rotate": 0, "color": "{magenta}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{magenta}", "opacity": 0.001 }] },
+    { "id": "corb2", "type": "mesh", "when": { "format": "release" }, "arrangement": "ring", "base": null, "blur": "14.71vw", "blobs": [{ "x": 0.8625, "y": 0.2375, "r": 0.2587, "squash": 1, "rotate": 0, "color": "{cobalt}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{cobalt}", "opacity": 0.001 }] },
+    { "id": "corb3", "type": "mesh", "when": { "format": "release" }, "arrangement": "ring", "base": null, "blur": "8.54vw", "blobs": [{ "x": 0.655, "y": 0.625, "r": 0.1275, "squash": 1, "rotate": 0, "color": "{ember}" }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{ember}", "opacity": 0.001 }] },
+    { "id": "corb4", "type": "mesh", "when": { "format": "release" }, "arrangement": "ring", "base": null, "blur": "6.89vw", "blobs": [{ "x": 0.375, "y": 0.4, "r": 0.0925, "squash": 1, "rotate": 0, "color": "{acid}", "opacity": 0.62 }, { "x": 0.5, "y": 0.5, "r": 0.75, "color": "{acid}", "opacity": 0.001 }] },
+    {
+      "id": "poster",
+      "type": "group",
+      "when": { "not": { "format": "release" } },
+      "viewBox": [0, 0, 400, 500],
+      "fit": "contain",
+      "layers": [
+        { "id": "brand", "type": "text", "content": "{brand}", "font": "Geist", "weight": 600, "size": 16, "letterSpacing": -0.03, "x": 24, "y": 43.2, "color": "{ink}" },
+        { "id": "issue", "type": "table", "font": "Geist", "weight": 400, "size": 12, "letterSpacing": 0, "lineHeight": 15, "y": 39.3, "color": "{ink}", "opacity": 0.75, "columns": [{ "x": 376, "align": "right" }], "rows": [["{issue}"]] },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 178, "y": 178, "size": 44, "color": "{ink}", "when": "mark" },
+        { "id": "word", "type": "text", "content": "{word}", "font": "Geist", "weight": 300, "size": 78, "letterSpacing": -0.065, "x": 20, "y": 428.7, "color": "{ink}" },
+        {
+          "id": "meta",
+          "type": "table",
+          "font": "Geist",
+          "weight": 400,
+          "size": 11.2,
+          "color": "{ink}",
+          "opacity": 0.85,
+          "y": 468,
+          "columns": [{ "x": 24 }, { "x": 200, "align": "center" }, { "x": 376, "align": "right" }],
+          "rows": "{meta}"
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "when": { "format": "release" },
+      "viewBox": [0, 0, 400, 400],
+      "fit": "contain",
+      "layers": [
+        { "id": "artist", "type": "text", "content": "{artist}", "font": "Geist", "weight": 600, "size": 44, "letterSpacing": -0.04, "x": 22, "y": 58, "color": "{ink}" },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 328, "y": 24, "size": 48, "color": "{ink}", "when": "mark" },
+        { "id": "title", "type": "text", "content": "{release}", "font": "Geist", "weight": 300, "size": 96, "letterSpacing": -0.065, "x": 17, "y": 372, "color": "{ink}" }
+      ]
+    },
+    { "id": "grain", "type": "grain", "amount": 0.13, "size": 1.5, "blend": "overlay" },
+    { "id": "speck", "type": "grain", "amount": 0.03, "size": 1.5, "blend": "screen" },
+    { "id": "print", "type": "grain", "amount": 0.04, "size": 1.5, "blend": "multiply" }
+  ]
+}

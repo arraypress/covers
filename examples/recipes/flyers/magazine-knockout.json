@@ -1,0 +1,40 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "magazine-knockout",
+  "description": "Pop-zine magazine cover, knockout: the same cover with the mark cut out of the pink masthead box, so the photo shows through it; mono credits, the cover line at the foot. Square (release): the box and its cut-out mark, the artist and title as the cover line. Re-expressed from the Logomarks scenes lab (ZineCards, 'Magazine cover · knockout').",
+  "params": {
+    "artist": "Lumio",
+    "release": "Unfiltered",
+    "credits": ["LUMIO", "LOGOMARKS.AI/LUMIO"],
+    "line": ["Lumio,", "unfiltered"],
+    "box": "#f2a2d6",
+    "ink": "#ffffff"
+  },
+  "layers": [
+    { "id": "photo", "type": "image", "src": "{photo}", "fit": "cover", "when": "photo" },
+    {
+      "id": "poster", "type": "group", "viewBox": [0, 0, 400, 500], "fit": "contain",
+      "when": { "not": { "aspect": "square" } },
+      "layers": [
+        {
+          "id": "mast", "type": "shape", "kind": "rect", "x": 0, "y": 0, "width": 144, "height": 180, "fill": "{box}",
+          "knockout": [{ "type": "icon", "markup": "{mark}", "x": 16, "y": 34, "size": 112, "when": "mark" }]
+        },
+        { "id": "credit", "type": "text", "content": "{credits}", "font": "Space Mono", "weight": 400, "size": 10.4, "lineHeight": 1.35, "letterSpacing": 0.02, "x": 110, "y": 198, "align": "center", "color": "{ink}" },
+        { "id": "line", "type": "text", "content": "{line}", "transform": "uppercase", "font": "Geist", "weight": 800, "size": 42, "lineHeight": 0.92, "letterSpacing": -0.04, "x": 200, "y": 422, "align": "center", "color": "{ink}" }
+      ]
+    },
+    {
+      "id": "cover", "type": "group", "viewBox": [0, 0, 400, 400], "fit": "contain",
+      "when": { "aspect": "square" },
+      "layers": [
+        {
+          "id": "mast", "type": "shape", "kind": "rect", "x": 0, "y": 0, "width": 136, "height": 170, "fill": "{box}",
+          "knockout": [{ "type": "icon", "markup": "{mark}", "x": 15, "y": 32, "size": 106, "when": "mark" }]
+        },
+        { "id": "line", "type": "text", "content": "{line}", "transform": "uppercase", "font": "Geist", "weight": 800, "size": 54, "lineHeight": 0.92, "letterSpacing": -0.04, "x": 200, "y": 332, "align": "center", "color": "{ink}" }
+      ]
+    },
+    { "id": "grain", "type": "grain", "amount": 0.05, "blend": "multiply" }
+  ]
+}

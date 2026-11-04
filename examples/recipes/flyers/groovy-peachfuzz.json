@@ -1,0 +1,974 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "groovy-peachfuzz",
+  "description": "70s sunburst badge: a scalloped badge on a sunburst, the name round the ring, the mark in the middle; rainbow stripes behind, bulging type below (each letter sized by where it sits, a rust shadow under it). Square (release): a bigger badge with the name round it, the bulging title in the brown band. Re-expressed from the Logomarks scenes lab (FlyerCards3, '70s · sunburst badge').",
+  "params": {
+    "artist": "Peachfuzz",
+    "release": "Stay Golden",
+    "ring": [
+      "PEACHFUZZ SODA CO.",
+      "GOOD VIBES DEPT.",
+      "SINCE ’74"
+    ],
+    "ringCover": "PEACHFUZZ · PEACHFUZZ · ",
+    "flavours": "PEACH · APRICOT · CREAM SODA",
+    "cream": "#f6e6c4",
+    "brown": "#4a2312",
+    "rust": "#b5401b",
+    "orange": "#e8661d",
+    "mustard": "#efa823",
+    "pink": "#f09aa3"
+  },
+  "layers": [
+    {
+      "id": "paper",
+      "type": "solid",
+      "color": "{orange}"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "aspect": "square"
+        }
+      },
+      "layers": [
+        {
+          "id": "rays",
+          "type": "shape",
+          "kind": "rays",
+          "cx": 200,
+          "cy": 220,
+          "r": 600,
+          "count": 40,
+          "rotate": 90,
+          "fill": "{mustard}"
+        },
+        {
+          "id": "stripes",
+          "type": "shape",
+          "items": [
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 296,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 314,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{pink}"
+            },
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 332,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{mustard}"
+            },
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 350,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{rust}"
+            },
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 368,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{brown}"
+            }
+          ]
+        },
+        {
+          "id": "badge",
+          "type": "shape",
+          "kind": "scallop",
+          "cx": 200,
+          "cy": 220,
+          "r": 134,
+          "points": 18,
+          "depth": 6,
+          "rotate": 90,
+          "fill": "{brown}"
+        },
+        {
+          "type": "shape",
+          "kind": "circle",
+          "cx": 200,
+          "cy": 220,
+          "r": 112,
+          "fill": "{cream}"
+        },
+        {
+          "type": "shape",
+          "kind": "circle",
+          "cx": 200,
+          "cy": 220,
+          "r": 72,
+          "fill": "{orange}"
+        },
+        {
+          "id": "ring0",
+          "type": "text",
+          "content": "{ring.0}",
+          "font": "Fraunces",
+          "letterSpacing": 0.0645,
+          "weight": 800,
+          "size": 15.5,
+          "axes": {
+            "SOFT": 100,
+            "opsz": 72
+          },
+          "path": {
+            "kind": "arc",
+            "cx": 200,
+            "cy": 220,
+            "r": 92,
+            "start": 181,
+            "end": 315
+          },
+          "fitPath": true,
+          "color": "{brown}"
+        },
+        {
+          "id": "ring1",
+          "type": "text",
+          "content": "{ring.1}",
+          "font": "Fraunces",
+          "letterSpacing": 0.0645,
+          "weight": 800,
+          "size": 15.5,
+          "axes": {
+            "SOFT": 100,
+            "opsz": 72
+          },
+          "path": {
+            "kind": "arc",
+            "cx": 200,
+            "cy": 220,
+            "r": 92,
+            "start": 331,
+            "end": 448
+          },
+          "fitPath": true,
+          "color": "{brown}"
+        },
+        {
+          "id": "ring2",
+          "type": "text",
+          "content": "{ring.2}",
+          "font": "Fraunces",
+          "letterSpacing": 0.0645,
+          "weight": 800,
+          "size": 15.5,
+          "axes": {
+            "SOFT": 100,
+            "opsz": 72
+          },
+          "path": {
+            "kind": "arc",
+            "cx": 200,
+            "cy": 220,
+            "r": 92,
+            "start": 105,
+            "end": 163
+          },
+          "fitPath": true,
+          "color": "{brown}"
+        },
+        {
+          "type": "shape",
+          "fill": "{brown}",
+          "items": [
+            {
+              "kind": "burst",
+              "cx": 141.32,
+              "cy": 142.13,
+              "r": 5.6,
+              "inner": 0.42,
+              "points": 12
+            },
+            {
+              "kind": "burst",
+              "cx": 296.97,
+              "cy": 230.19,
+              "r": 5.6,
+              "inner": 0.42,
+              "points": 12
+            },
+            {
+              "kind": "burst",
+              "cx": 213.57,
+              "cy": 316.55,
+              "r": 5.6,
+              "inner": 0.42,
+              "points": 12
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 156,
+          "y": 176,
+          "size": 88,
+          "color": "{cream}",
+          "when": "mark"
+        },
+        {
+          "id": "band",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 386,
+          "width": 400,
+          "height": 114,
+          "fill": "{brown}"
+        },
+        {
+          "id": "shadow",
+          "type": "group",
+          "transform": {
+            "translate": [
+              2.5,
+              3
+            ]
+          },
+          "layers": [
+            {
+              "type": "text",
+              "content": "S",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 32.31,
+              "letterSpacing": 0,
+              "x": 28.66,
+              "y": 448.09,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            },
+            {
+              "type": "text",
+              "content": "T",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 45.06,
+              "letterSpacing": 0,
+              "x": 54.19,
+              "y": 453.64,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            },
+            {
+              "type": "text",
+              "content": "A",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 56.23,
+              "letterSpacing": 0,
+              "x": 87.62,
+              "y": 458.52,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            },
+            {
+              "type": "text",
+              "content": "Y",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 64.93,
+              "letterSpacing": 0,
+              "x": 127.6,
+              "y": 462.31,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            },
+            {
+              "type": "text",
+              "content": "G",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 72.34,
+              "letterSpacing": 0,
+              "x": 180.6,
+              "y": 465.54,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            },
+            {
+              "type": "text",
+              "content": "O",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 70.45,
+              "letterSpacing": 0,
+              "x": 227.72,
+              "y": 464.72,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            },
+            {
+              "type": "text",
+              "content": "L",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 64.93,
+              "letterSpacing": 0,
+              "x": 272.4,
+              "y": 462.31,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            },
+            {
+              "type": "text",
+              "content": "D",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 56.23,
+              "letterSpacing": 0,
+              "x": 312.38,
+              "y": 458.52,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            },
+            {
+              "type": "text",
+              "content": "E",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 45.06,
+              "letterSpacing": 0,
+              "x": 345.81,
+              "y": 453.64,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            },
+            {
+              "type": "text",
+              "content": "N",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 32.31,
+              "letterSpacing": 0,
+              "x": 371.34,
+              "y": 448.09,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 7
+            }
+          ]
+        },
+        {
+          "id": "title",
+          "type": "group",
+          "layers": [
+            {
+              "type": "text",
+              "content": "S",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 32.31,
+              "letterSpacing": 0,
+              "x": 28.66,
+              "y": 448.09,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "T",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 45.06,
+              "letterSpacing": 0,
+              "x": 54.19,
+              "y": 453.64,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "A",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 56.23,
+              "letterSpacing": 0,
+              "x": 87.62,
+              "y": 458.52,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "Y",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 64.93,
+              "letterSpacing": 0,
+              "x": 127.6,
+              "y": 462.31,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "G",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 72.34,
+              "letterSpacing": 0,
+              "x": 180.6,
+              "y": 465.54,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "O",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 70.45,
+              "letterSpacing": 0,
+              "x": 227.72,
+              "y": 464.72,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "L",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 64.93,
+              "letterSpacing": 0,
+              "x": 272.4,
+              "y": 462.31,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "D",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 56.23,
+              "letterSpacing": 0,
+              "x": 312.38,
+              "y": 458.52,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "E",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 45.06,
+              "letterSpacing": 0,
+              "x": 345.81,
+              "y": 453.64,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "N",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 32.31,
+              "letterSpacing": 0,
+              "x": 371.34,
+              "y": 448.09,
+              "align": "center",
+              "color": "{mustard}"
+            }
+          ]
+        },
+        {
+          "id": "flavours",
+          "type": "text",
+          "content": "{flavours}",
+          "font": "Fraunces",
+          "letterSpacing": 0.2476,
+          "weight": 700,
+          "size": 10.5,
+          "x": 200,
+          "y": 488,
+          "align": "center",
+          "color": "{pink}"
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "aspect": "square"
+      },
+      "layers": [
+        {
+          "id": "rays",
+          "type": "shape",
+          "kind": "rays",
+          "cx": 200,
+          "cy": 160,
+          "r": 600,
+          "count": 40,
+          "rotate": 90,
+          "fill": "{mustard}"
+        },
+        {
+          "id": "stripes",
+          "type": "shape",
+          "items": [
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 214,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{cream}"
+            },
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 232,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{pink}"
+            },
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 250,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{mustard}"
+            },
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 268,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{rust}"
+            },
+            {
+              "kind": "rect",
+              "x": 0,
+              "y": 286,
+              "width": 400,
+              "height": 18.4,
+              "fill": "{brown}"
+            }
+          ]
+        },
+        {
+          "id": "band",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 304,
+          "width": 400,
+          "height": 96,
+          "fill": "{brown}"
+        },
+        {
+          "id": "badge",
+          "type": "shape",
+          "kind": "scallop",
+          "cx": 200,
+          "cy": 160,
+          "r": 154.1,
+          "points": 18,
+          "depth": 6.9,
+          "rotate": 90,
+          "fill": "{brown}"
+        },
+        {
+          "type": "shape",
+          "kind": "circle",
+          "cx": 200,
+          "cy": 160,
+          "r": 128.8,
+          "fill": "{cream}"
+        },
+        {
+          "type": "shape",
+          "kind": "circle",
+          "cx": 200,
+          "cy": 160,
+          "r": 82.8,
+          "fill": "{orange}"
+        },
+        {
+          "id": "ring",
+          "type": "text",
+          "content": "{ringCover}",
+          "font": "Fraunces",
+          "letterSpacing": 0.0645,
+          "weight": 800,
+          "size": 36,
+          "axes": {
+            "SOFT": 100,
+            "opsz": 72
+          },
+          "path": {
+            "kind": "circle",
+            "cx": 200,
+            "cy": 160,
+            "r": 96,
+            "start": 180
+          },
+          "fitPath": true,
+          "color": "{brown}"
+        },
+        {
+          "type": "shape",
+          "fill": "{brown}",
+          "items": []
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 149.4,
+          "y": 109.4,
+          "size": 101.2,
+          "color": "{cream}",
+          "when": "mark"
+        },
+        {
+          "id": "shadow",
+          "type": "group",
+          "transform": {
+            "translate": [
+              3,
+              3.5
+            ]
+          },
+          "layers": [
+            {
+              "type": "text",
+              "content": "S",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 41.19,
+              "letterSpacing": 0,
+              "x": 27.59,
+              "y": 371.96,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            },
+            {
+              "type": "text",
+              "content": "T",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 49.12,
+              "letterSpacing": 0,
+              "x": 57.4,
+              "y": 375.42,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            },
+            {
+              "type": "text",
+              "content": "A",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 56.08,
+              "letterSpacing": 0,
+              "x": 92.11,
+              "y": 378.45,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            },
+            {
+              "type": "text",
+              "content": "Y",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 61.49,
+              "letterSpacing": 0,
+              "x": 130.91,
+              "y": 380.81,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            },
+            {
+              "type": "text",
+              "content": "G",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 66.1,
+              "letterSpacing": 0,
+              "x": 184.13,
+              "y": 382.82,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            },
+            {
+              "type": "text",
+              "content": "O",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 64.93,
+              "letterSpacing": 0,
+              "x": 227.37,
+              "y": 382.31,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            },
+            {
+              "type": "text",
+              "content": "L",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 61.49,
+              "letterSpacing": 0,
+              "x": 269.09,
+              "y": 380.81,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            },
+            {
+              "type": "text",
+              "content": "D",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 56.08,
+              "letterSpacing": 0,
+              "x": 307.89,
+              "y": 378.45,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            },
+            {
+              "type": "text",
+              "content": "E",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 49.12,
+              "letterSpacing": 0,
+              "x": 342.6,
+              "y": 375.42,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            },
+            {
+              "type": "text",
+              "content": "N",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 41.19,
+              "letterSpacing": 0,
+              "x": 372.41,
+              "y": 371.96,
+              "align": "center",
+              "color": "{rust}",
+              "stroke": "{rust}",
+              "strokeWidth": 8
+            }
+          ]
+        },
+        {
+          "id": "title",
+          "type": "group",
+          "layers": [
+            {
+              "type": "text",
+              "content": "S",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 41.19,
+              "letterSpacing": 0,
+              "x": 27.59,
+              "y": 371.96,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "T",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 49.12,
+              "letterSpacing": 0,
+              "x": 57.4,
+              "y": 375.42,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "A",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 56.08,
+              "letterSpacing": 0,
+              "x": 92.11,
+              "y": 378.45,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "Y",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 61.49,
+              "letterSpacing": 0,
+              "x": 130.91,
+              "y": 380.81,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "G",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 66.1,
+              "letterSpacing": 0,
+              "x": 184.13,
+              "y": 382.82,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "O",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 64.93,
+              "letterSpacing": 0,
+              "x": 227.37,
+              "y": 382.31,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "L",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 61.49,
+              "letterSpacing": 0,
+              "x": 269.09,
+              "y": 380.81,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "D",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 56.08,
+              "letterSpacing": 0,
+              "x": 307.89,
+              "y": 378.45,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "E",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 49.12,
+              "letterSpacing": 0,
+              "x": 342.6,
+              "y": 375.42,
+              "align": "center",
+              "color": "{mustard}"
+            },
+            {
+              "type": "text",
+              "content": "N",
+              "font": "Bagel Fat One",
+              "weight": 400,
+              "size": 41.19,
+              "letterSpacing": 0,
+              "x": 372.41,
+              "y": 371.96,
+              "align": "center",
+              "color": "{mustard}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05,
+      "blend": "multiply"
+    }
+  ]
+}

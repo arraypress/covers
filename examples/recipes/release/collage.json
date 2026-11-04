@@ -1,0 +1,372 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "collage",
+  "description": "Collage: a strip of the photo torn out (fibres at both rips) and taped across cream paper, the mark cut huge in the accent behind it, the artist on a black label strip and the title on a paper one. Slots: {name} (artist), {title} (release), {photo}, {mark}, the palette (bg = the paper, accent = the mark), `focus`. Fonts: Space Mono Bold, Archivo (variable) (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "requires": [
+    "photo",
+    "mark"
+  ],
+  "params": {
+    "focus": "center"
+  },
+  "layers": [
+    {
+      "id": "paper",
+      "type": "solid",
+      "color": "@bg"
+    },
+    {
+      "id": "fibres",
+      "type": "texture",
+      "kind": "paper"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 380,
+          "y": 300,
+          "size": 820,
+          "color": "@accent",
+          "transform": {
+            "rotate": -9,
+            "origin": [
+              790,
+              710
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "strip",
+      "type": "group",
+      "transform": {
+        "rotate": 2.5,
+        "origin": [
+          "50vmin",
+          "42vmin"
+        ]
+      },
+      "layers": [
+        {
+          "id": "shadow",
+          "type": "shape",
+          "kind": "rect",
+          "x": "-6%",
+          "y": "10%",
+          "width": "112%",
+          "height": "64%",
+          "fill": "#000000",
+          "opacity": 0.22,
+          "effects": [
+            {
+              "kind": "blur",
+              "radius": "1vmin"
+            }
+          ],
+          "mask": [
+            {
+              "type": "tear",
+              "seed": "top",
+              "from": [
+                "-4%",
+                "19.6%"
+              ],
+              "to": [
+                "104%",
+                "15%"
+              ],
+              "step": "0.9vmin",
+              "jitter": "1.6vmin",
+              "side": "below",
+              "color": "#ffffff",
+              "rip": false,
+              "fibres": false
+            },
+            {
+              "type": "tear",
+              "seed": "bottom",
+              "from": [
+                "-4%",
+                "64%"
+              ],
+              "to": [
+                "104%",
+                "69%"
+              ],
+              "step": "0.9vmin",
+              "jitter": "1.6vmin",
+              "side": "below",
+              "color": "#000000",
+              "rip": false,
+              "fibres": false
+            }
+          ],
+          "transform": {
+            "translate": [
+              "0.4vmin",
+              "0.8vmin"
+            ]
+          }
+        },
+        {
+          "id": "photo",
+          "type": "image",
+          "src": "{photo}",
+          "x": "-4%",
+          "y": "10%",
+          "width": "108%",
+          "height": "64%",
+          "fit": "cover",
+          "focus": "{focus}",
+          "mask": [
+            {
+              "type": "tear",
+              "seed": "top",
+              "from": [
+                "-4%",
+                "19.6%"
+              ],
+              "to": [
+                "104%",
+                "15%"
+              ],
+              "step": "0.9vmin",
+              "jitter": "1.6vmin",
+              "side": "below",
+              "color": "#ffffff",
+              "rip": false,
+              "fibres": false
+            },
+            {
+              "type": "tear",
+              "seed": "bottom",
+              "from": [
+                "-4%",
+                "64%"
+              ],
+              "to": [
+                "104%",
+                "69%"
+              ],
+              "step": "0.9vmin",
+              "jitter": "1.6vmin",
+              "side": "below",
+              "color": "#000000",
+              "rip": false,
+              "fibres": false
+            }
+          ]
+        },
+        {
+          "id": "ripTop",
+          "type": "tear",
+          "seed": "top",
+          "from": [
+            "-4%",
+            "19.6%"
+          ],
+          "to": [
+            "104%",
+            "15%"
+          ],
+          "step": "0.9vmin",
+          "jitter": "1.6vmin",
+          "side": "above",
+          "color": "none",
+          "rip": {
+            "color": "#f6f1e6",
+            "width": "0.6vmin",
+            "opacity": 0.95
+          },
+          "fibres": {
+            "color": "#f6f1e6",
+            "width": "0.2vmin",
+            "opacity": 0.9,
+            "length": [
+              "0.5vmin",
+              "1.2vmin"
+            ],
+            "spread": "0.4vmin"
+          }
+        },
+        {
+          "id": "ripBottom",
+          "type": "tear",
+          "seed": "bottom",
+          "from": [
+            "-4%",
+            "64%"
+          ],
+          "to": [
+            "104%",
+            "69%"
+          ],
+          "step": "0.9vmin",
+          "jitter": "1.6vmin",
+          "side": "below",
+          "color": "none",
+          "rip": {
+            "color": "#f6f1e6",
+            "width": "0.6vmin",
+            "opacity": 0.95
+          },
+          "fibres": {
+            "color": "#f6f1e6",
+            "width": "0.2vmin",
+            "opacity": 0.9,
+            "length": [
+              "0.5vmin",
+              "1.2vmin"
+            ],
+            "spread": "0.4vmin"
+          }
+        }
+      ]
+    },
+    {
+      "id": "labels",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "tape",
+          "type": "shape",
+          "fill": "#efe6c8",
+          "opacity": 0.72,
+          "items": [
+            {
+              "kind": "rect",
+              "x": 70,
+              "y": 120,
+              "width": 170,
+              "height": 60,
+              "rotate": -14
+            },
+            {
+              "kind": "rect",
+              "x": 770,
+              "y": 640,
+              "width": 170,
+              "height": 60,
+              "rotate": -8
+            }
+          ]
+        },
+        {
+          "id": "nameStrip",
+          "type": "group",
+          "transform": {
+            "rotate": -2,
+            "origin": [
+              60,
+              800
+            ]
+          },
+          "layers": [
+            {
+              "id": "nameTape",
+              "type": "shape",
+              "kind": "rect",
+              "x": 40,
+              "y": 740,
+              "width": 700,
+              "height": 118,
+              "fill": "#111111"
+            },
+            {
+              "id": "name",
+              "type": "text",
+              "content": {
+                "upper": "{name}"
+              },
+              "font": "Space Mono",
+              "weight": 700,
+              "size": 92,
+              "letterSpacing": -0.03,
+              "x": 62,
+              "y": 830,
+              "maxWidth": 660,
+              "maxLines": 1,
+              "fit": "shrink",
+              "color": "#f6f1e6"
+            }
+          ]
+        },
+        {
+          "id": "titleStrip",
+          "type": "group",
+          "transform": {
+            "rotate": 1.5,
+            "origin": [
+              80,
+              920
+            ]
+          },
+          "layers": [
+            {
+              "id": "titleTape",
+              "type": "shape",
+              "kind": "rect",
+              "x": 70,
+              "y": 872,
+              "width": 860,
+              "height": 104,
+              "fill": "#fbf8f0",
+              "edge": {
+                "kind": "deckle",
+                "size": 3,
+                "sides": [
+                  "left",
+                  "right"
+                ]
+              }
+            },
+            {
+              "id": "title",
+              "type": "text",
+              "content": "{title}",
+              "font": "Archivo",
+              "weight": 700,
+              "axes": {
+                "wdth": 72
+              },
+              "size": 94,
+              "letterSpacing": -0.02,
+              "x": 92,
+              "y": 956,
+              "maxWidth": 820,
+              "maxLines": 1,
+              "fit": "shrink",
+              "color": "#111111"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.06,
+      "blend": "multiply"
+    }
+  ]
+}

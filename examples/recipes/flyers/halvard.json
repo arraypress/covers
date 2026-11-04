@@ -1,0 +1,120 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "halvard",
+  "description": "Neo-Swiss, photo in a cell: a warm grey field, the name huge across the top and justified to the width, the photo set in three of four columns and a numbered programme in the fourth, rules between rows, the mark and the meta in the foot. The photo is drawn at the top level (in % of the canvas) so it's resampled at the output size. With format 'release' it re-composes for a 3000×3000 cover: the name across the top, the release title in the band under it, the photo in its three columns and the mark in the fourth. Re-expressed from the Logomarks scenes lab (FlyerCards, 'Neo-Swiss · photo in a cell').",
+  "params": {
+    "field": "#ebe8e1",
+    "ink": "#0b0b0b",
+    "name": "Halvard",
+    "head": [[{ "content": "Spring Lectures", "weight": 700 }, "Six evenings on making things that last", "2027"]],
+    "numbers": [["01", "04.03"], ["02", "11.03"], ["03", "18.03"], ["04", "25.03"], ["05", "01.04"], ["06", "08.04"]],
+    "topics": [["Material"], ["Repair"], ["Patina"], ["Weather"], ["Use"], ["Care"]],
+    "foot": [
+      [{ "content": "Halvard Studio", "weight": 700 }, { "content": "Thursdays 19:00", "weight": 700 }, "halvard.studio"],
+      ["Ostkai 11, Lindmark", "Free, no booking", "Nº 01 — 06"]
+    ],
+    "credit": "Photograph: studio archive",
+    "artist": "Halvard",
+    "release": "Material Weather"
+  },
+  "layers": [
+    { "id": "field", "type": "solid", "color": "{field}" },
+    { "id": "photo", "type": "image", "when": { "all": ["photo", { "not": { "format": "release" } }] }, "src": "{photo}", "x": "27%", "y": "30%", "width": "69%", "height": "52.8%", "fit": "cover" },
+    { "id": "coverPhoto", "type": "image", "when": { "all": ["photo", { "format": "release" }] }, "src": "{photo}", "x": "27%", "y": "47.5%", "width": "69%", "height": "48.5%", "fit": "cover" },
+    {
+      "id": "poster",
+      "type": "group",
+      "when": { "not": { "format": "release" } },
+      "viewBox": [0, 0, 400, 500],
+      "fit": "contain",
+      "layers": [
+        { "id": "name", "type": "text", "content": "{name}", "font": "Inter Tight", "weight": 800, "size": 122, "letterSpacing": -0.0574, "x": 13, "y": 104, "width": 374, "color": "{ink}" },
+        { "id": "rules", "type": "shape", "stroke": "{ink}", "strokeWidth": 0.8, "items": [{ "kind": "line", "x1": 16, "y1": 122, "x2": 384, "y2": 122 }, { "kind": "line", "x1": 16, "y1": 426, "x2": 384, "y2": 426 }] },
+        { "id": "ticks", "type": "shape", "stroke": "{ink}", "strokeWidth": 0.5, "opacity": 0.35, "items": [{ "kind": "line", "x1": 108, "y1": 122, "x2": 108, "y2": 140 }, { "kind": "line", "x1": 292, "y1": 122, "x2": 292, "y2": 140 }] },
+        {
+          "id": "head",
+          "type": "table",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 9,
+          "letterSpacing": -0.011,
+          "color": "{ink}",
+          "y": 137,
+          "columns": [{ "x": 16 }, { "x": 116 }, { "x": 384, "align": "right" }],
+          "rows": "{head}"
+        },
+        {
+          "id": "programmeRules",
+          "type": "shape",
+          "stroke": "{ink}",
+          "strokeWidth": 0.5,
+          "opacity": 0.5,
+          "items": [
+            { "kind": "line", "x1": 16, "y1": 150, "x2": 100, "y2": 150 },
+            { "kind": "line", "x1": 16, "y1": 193, "x2": 100, "y2": 193 },
+            { "kind": "line", "x1": 16, "y1": 236, "x2": 100, "y2": 236 },
+            { "kind": "line", "x1": 16, "y1": 279, "x2": 100, "y2": 279 },
+            { "kind": "line", "x1": 16, "y1": 322, "x2": 100, "y2": 322 },
+            { "kind": "line", "x1": 16, "y1": 365, "x2": 100, "y2": 365 }
+          ]
+        },
+        {
+          "id": "numbers",
+          "type": "table",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 9,
+          "letterSpacing": -0.011,
+          "color": "{ink}",
+          "y": 162,
+          "rowHeight": 43,
+          "columns": [{ "x": 16, "weight": 700 }, { "x": 100, "align": "right" }],
+          "rows": "{numbers}"
+        },
+        {
+          "id": "topics",
+          "type": "table",
+          "font": "Inter Tight",
+          "weight": 600,
+          "size": 12.5,
+          "letterSpacing": -0.032,
+          "color": "{ink}",
+          "y": 175,
+          "rowHeight": 43,
+          "columns": [{ "x": 16 }],
+          "rows": "{topics}"
+        },
+        {
+          "id": "foot",
+          "type": "table",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 9,
+          "letterSpacing": -0.011,
+          "color": "{ink}",
+          "y": 446,
+          "rowHeight": 11,
+          "columns": [{ "x": 112 }, { "x": 204 }, { "x": 384, "align": "right" }],
+          "rows": "{foot}"
+        },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 16, "y": 436, "size": 48, "color": "{ink}", "when": "mark" },
+        { "id": "credit", "type": "table", "font": "Inter Tight", "weight": 400, "size": 6.5, "letterSpacing": 0, "y": 488, "color": "{ink}", "opacity": 0.6, "columns": [{ "x": 16 }], "rows": [["{credit}"]] }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "when": { "format": "release" },
+      "viewBox": [0, 0, 400, 400],
+      "fit": "contain",
+      "layers": [
+        { "id": "artist", "type": "text", "content": "{artist}", "font": "Inter Tight", "weight": 800, "size": 122, "letterSpacing": -0.0574, "x": 13, "y": 104, "width": 374, "color": "{ink}" },
+        { "id": "rules", "type": "shape", "stroke": "{ink}", "strokeWidth": 0.8, "items": [{ "kind": "line", "x1": 16, "y1": 122, "x2": 384, "y2": 122 }, { "kind": "line", "x1": 16, "y1": 178, "x2": 384, "y2": 178 }] },
+        { "id": "ticks", "type": "shape", "stroke": "{ink}", "strokeWidth": 0.5, "opacity": 0.35, "items": [{ "kind": "line", "x1": 108, "y1": 178, "x2": 108, "y2": 186 }, { "kind": "line", "x1": 292, "y1": 178, "x2": 292, "y2": 186 }] },
+        { "id": "title", "type": "text", "content": "{release}", "font": "Inter Tight", "weight": 700, "size": 40, "letterSpacing": -0.035, "x": 15, "y": 163, "color": "{ink}" },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 16, "y": 320, "size": 64, "color": "{ink}", "when": "mark" }
+      ]
+    },
+    { "id": "print", "type": "grain", "amount": 0.04, "size": 1.5, "blend": "multiply" }
+  ]
+}

@@ -1,0 +1,426 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "drag-solenne",
+  "description": "Drag blur: the photo in one pink (a three-stop duotone), a second copy smeared sideways and masked in from the left so the eye stays sharp; a tracklist scattered in small white type; an outlined, slanted Y2K wordmark with a chrome-pink gradient and a hard shadow. Square (release): the same photo and smear, the wordmark across the foot and the title in the smear. Re-expressed from the Logomarks scenes lab (ZineCards, 'Drag blur').",
+  "params": {
+    "artist": "solenne",
+    "release": "Pink Noise",
+    "tracklist": [
+      "she runs on static",
+      "glass heart, pink noise",
+      "soft launch",
+      "Velvet alarm",
+      "Second best"
+    ],
+    "shadow": "#4d0a29",
+    "mid": "#db619e",
+    "light": "#fff2fa",
+    "ink": "#ffffff",
+    "page": "#fff3f8"
+  },
+  "layers": [
+    {
+      "id": "page",
+      "type": "solid",
+      "color": "{page}"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "aspect": "square"
+        }
+      },
+      "layers": [
+        {
+          "id": "photos",
+          "type": "group",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 500,
+          "viewBox": [
+            0,
+            0,
+            800,
+            1000
+          ],
+          "layers": [
+            {
+              "type": "image",
+              "src": "{photo}",
+              "x": 0,
+              "y": 0,
+              "width": 800,
+              "height": 1000,
+              "fit": "cover",
+              "when": "photo",
+              "id": "photo",
+              "effects": [
+                {
+                  "kind": "duotone",
+                  "colors": [
+                    "{shadow}",
+                    "{mid}",
+                    "{light}"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "image",
+              "src": "{photo}",
+              "x": 0,
+              "y": 0,
+              "width": 800,
+              "height": 1000,
+              "fit": "cover",
+              "when": "photo",
+              "id": "smear",
+              "effects": [
+                {
+                  "kind": "duotone",
+                  "colors": [
+                    "{shadow}",
+                    "{mid}",
+                    "{light}"
+                  ]
+                },
+                {
+                  "kind": "blur",
+                  "x": 52,
+                  "y": 3.0
+                }
+              ],
+              "mask": [
+                {
+                  "type": "shape",
+                  "kind": "rect",
+                  "x": 0,
+                  "y": 0,
+                  "width": 800,
+                  "height": 1000,
+                  "fill": {
+                    "type": "linear",
+                    "angle": 100,
+                    "colors": [
+                      "#ffffff",
+                      "#ffffff",
+                      "#000000",
+                      "#000000"
+                    ],
+                    "stops": [
+                      0,
+                      0.34,
+                      0.58,
+                      1
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "track0",
+          "type": "text",
+          "content": "{tracklist.0}",
+          "font": "Geist",
+          "weight": 500,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "size": 10.4,
+          "x": 56,
+          "y": 271.3
+        },
+        {
+          "id": "track1",
+          "type": "text",
+          "content": "{tracklist.1}",
+          "font": "Geist",
+          "weight": 500,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "size": 10.4,
+          "x": 160,
+          "y": 316.3
+        },
+        {
+          "id": "track2",
+          "type": "text",
+          "content": "{tracklist.2}",
+          "font": "Geist",
+          "weight": 500,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "size": 10.4,
+          "x": 248,
+          "y": 361.3
+        },
+        {
+          "id": "track3",
+          "type": "text",
+          "content": "{tracklist.3}",
+          "font": "Geist",
+          "weight": 500,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "size": 10.4,
+          "x": 32,
+          "y": 381.3
+        },
+        {
+          "id": "track4",
+          "type": "text",
+          "content": "{tracklist.4}",
+          "font": "Geist",
+          "weight": 500,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "size": 10.4,
+          "x": 168,
+          "y": 391.3
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{artist}",
+          "font": "Unbounded",
+          "weight": 800,
+          "size": 76,
+          "letterSpacing": -0.04,
+          "x": 200,
+          "y": 470,
+          "align": "center",
+          "fill": {
+            "type": "linear",
+            "angle": 180,
+            "colors": [
+              "#ffffff",
+              "#ffd2ea",
+              "#e05aa0",
+              "#ffe3f1"
+            ],
+            "stops": [
+              0,
+              0.45,
+              0.55,
+              1
+            ]
+          },
+          "stroke": "#ffffff",
+          "strokeWidth": 2.432,
+          "transform": {
+            "skewX": -14,
+            "origin": [
+              200,
+              447.2
+            ]
+          },
+          "effects": [
+            {
+              "kind": "glow",
+              "color": "#9a2361",
+              "blur": 0.988,
+              "opacity": 1
+            },
+            {
+              "kind": "shadow",
+              "x": 2.432,
+              "y": 3.192,
+              "blur": 0.01,
+              "color": "#9a2361",
+              "opacity": 0.55
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "aspect": "square"
+      },
+      "layers": [
+        {
+          "id": "photos",
+          "type": "group",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 400,
+          "viewBox": [
+            0,
+            0,
+            800,
+            800
+          ],
+          "layers": [
+            {
+              "type": "image",
+              "src": "{photo}",
+              "x": 0,
+              "y": 0,
+              "width": 800,
+              "height": 800,
+              "fit": "cover",
+              "when": "photo",
+              "id": "photo",
+              "effects": [
+                {
+                  "kind": "duotone",
+                  "colors": [
+                    "{shadow}",
+                    "{mid}",
+                    "{light}"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "image",
+              "src": "{photo}",
+              "x": 0,
+              "y": 0,
+              "width": 800,
+              "height": 800,
+              "fit": "cover",
+              "when": "photo",
+              "id": "smear",
+              "effects": [
+                {
+                  "kind": "duotone",
+                  "colors": [
+                    "{shadow}",
+                    "{mid}",
+                    "{light}"
+                  ]
+                },
+                {
+                  "kind": "blur",
+                  "x": 52,
+                  "y": 3.0
+                }
+              ],
+              "mask": [
+                {
+                  "type": "shape",
+                  "kind": "rect",
+                  "x": 0,
+                  "y": 0,
+                  "width": 800,
+                  "height": 800,
+                  "fill": {
+                    "type": "linear",
+                    "angle": 100,
+                    "colors": [
+                      "#ffffff",
+                      "#ffffff",
+                      "#000000",
+                      "#000000"
+                    ],
+                    "stops": [
+                      0,
+                      0.3,
+                      0.56,
+                      1
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": {
+            "lower": "{release}"
+          },
+          "font": "Geist",
+          "weight": 500,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "size": 38,
+          "x": 34,
+          "y": 262
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{artist}",
+          "font": "Unbounded",
+          "weight": 800,
+          "size": 80,
+          "letterSpacing": -0.04,
+          "x": 200,
+          "y": 376,
+          "align": "center",
+          "fill": {
+            "type": "linear",
+            "angle": 180,
+            "colors": [
+              "#ffffff",
+              "#ffd2ea",
+              "#e05aa0",
+              "#ffe3f1"
+            ],
+            "stops": [
+              0,
+              0.45,
+              0.55,
+              1
+            ]
+          },
+          "stroke": "#ffffff",
+          "strokeWidth": 2.56,
+          "transform": {
+            "skewX": -14,
+            "origin": [
+              200,
+              352.0
+            ]
+          },
+          "effects": [
+            {
+              "kind": "glow",
+              "color": "#9a2361",
+              "blur": 1.04,
+              "opacity": 1
+            },
+            {
+              "kind": "shadow",
+              "x": 2.56,
+              "y": 3.3600000000000003,
+              "blur": 0.01,
+              "color": "#9a2361",
+              "opacity": 0.55
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05,
+      "blend": "multiply"
+    }
+  ]
+}

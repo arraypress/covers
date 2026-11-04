@@ -1,0 +1,398 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "ferro-pass",
+  "description": "Festival pass, flat artwork for the lanyard-pass format (A6): an acid band with ALL ACCESS, the holder's photo, name and role tab, days, stages and ID, AAA huge with the mark, a Code 128 strip, a faint holographic wash, the lanyard slot punched. Re-expressed from the Logomarks scenes lab (FlyerCards2, 'Ephemera · pass and wristbands'); the lanyard, sleeve and wristbands on wood there are a mockup, this is the print. The release cover keeps the band, the photo and the mark (AAA would read as a stray word), with the festival's name and the title set large.",
+  "params": {
+    "access": "ALL ACCESS",
+    "event": "FERRO FEST · 2027",
+    "holder": "R. OKAFOR",
+    "role": "ARTIST",
+    "lines": [
+      "FRI · SAT · SUN",
+      "STAGES A—D",
+      "ID 2207-AX"
+    ],
+    "tier": "AAA",
+    "artist": "Ferro Fest",
+    "release": "All Access",
+    "card": "#f7f6f2",
+    "acid": "#d4ff3a",
+    "ink": "#111111",
+    "soft": "#555555"
+  },
+  "layers": [
+    {
+      "id": "pass",
+      "type": "group",
+      "x": "@bleed",
+      "y": "@bleed",
+      "width": "@trimWidth",
+      "height": "@trimHeight",
+      "viewBox": [
+        0,
+        0,
+        156,
+        220
+      ],
+      "fit": "stretch",
+      "when": {
+        "not": {
+          "format": "release"
+        }
+      },
+      "layers": [
+        {
+          "id": "die",
+          "type": "group",
+          "knockout": [
+            {
+              "type": "shape",
+              "kind": "rect",
+              "x": 61,
+              "y": 7,
+              "width": 34,
+              "height": 6,
+              "radius": 3
+            }
+          ],
+          "layers": [
+            {
+              "id": "card",
+              "type": "shape",
+              "kind": "rect",
+              "x": -8,
+              "y": -8,
+              "width": 172,
+              "height": 236,
+              "fill": "{card}"
+            },
+            {
+              "id": "band",
+              "type": "shape",
+              "kind": "rect",
+              "x": -8,
+              "y": -8,
+              "width": 172,
+              "height": 70,
+              "fill": "{acid}"
+            },
+            {
+              "id": "access",
+              "type": "text",
+              "content": "{access}",
+              "font": "Unbounded",
+              "weight": 900,
+              "size": 17,
+              "letterSpacing": 0,
+              "x": 78,
+              "y": 35,
+              "align": "center",
+              "width": 130,
+              "color": "{ink}"
+            },
+            {
+              "id": "event",
+              "type": "text",
+              "content": "{event}",
+              "font": "Space Mono",
+              "weight": 700,
+              "size": 6.4,
+              "letterSpacing": 0.1875,
+              "x": 78,
+              "y": 50,
+              "color": "{ink}",
+              "align": "center"
+            },
+            {
+              "type": "group",
+              "x": 0,
+              "y": 0,
+              "width": 156,
+              "height": 220,
+              "viewBox": [
+                0,
+                0,
+                1248,
+                1760
+              ],
+              "fit": "stretch",
+              "layers": [
+                {
+                  "id": "photo",
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 104,
+                  "y": 576,
+                  "width": 512,
+                  "height": 608,
+                  "fit": "cover",
+                  "focus": "top"
+                }
+              ],
+              "id": "photoBox",
+              "when": "photo"
+            },
+            {
+              "id": "holder",
+              "type": "text",
+              "content": "{holder}",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "size": 17,
+              "letterSpacing": 0,
+              "x": 85,
+              "y": 86,
+              "color": "{ink}"
+            },
+            {
+              "id": "roleTab",
+              "type": "shape",
+              "kind": "rect",
+              "x": 85,
+              "y": 92,
+              "width": 44,
+              "height": 12,
+              "fill": "{ink}"
+            },
+            {
+              "id": "role",
+              "type": "text",
+              "content": "{role}",
+              "font": "Space Mono",
+              "weight": 700,
+              "size": 6.6,
+              "letterSpacing": 0,
+              "x": 107,
+              "y": 100.4,
+              "color": "{acid}",
+              "align": "center"
+            },
+            {
+              "id": "line0",
+              "type": "text",
+              "content": "{lines.0}",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 5.8,
+              "letterSpacing": 0,
+              "x": 85,
+              "y": 118,
+              "color": "{soft}"
+            },
+            {
+              "id": "line1",
+              "type": "text",
+              "content": "{lines.1}",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 5.8,
+              "letterSpacing": 0,
+              "x": 85,
+              "y": 128,
+              "color": "{soft}"
+            },
+            {
+              "id": "line2",
+              "type": "text",
+              "content": "{lines.2}",
+              "font": "Space Mono",
+              "weight": 400,
+              "size": 5.8,
+              "letterSpacing": 0,
+              "x": 85,
+              "y": 138,
+              "color": "{soft}"
+            },
+            {
+              "id": "tier",
+              "type": "text",
+              "content": "{tier}",
+              "font": "Big Shoulders Display",
+              "weight": 900,
+              "size": 54,
+              "letterSpacing": 0,
+              "x": 11,
+              "y": 196,
+              "color": "{ink}"
+            },
+            {
+              "id": "mark",
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 103,
+              "y": 152,
+              "size": 44,
+              "color": "{ink}",
+              "when": "mark"
+            },
+            {
+              "id": "barcode",
+              "type": "barcode",
+              "kind": "seeded",
+              "x": 13,
+              "y": 202,
+              "width": 130,
+              "height": 10,
+              "color": "{ink}"
+            },
+            {
+              "id": "holo",
+              "type": "shape",
+              "kind": "rect",
+              "x": -8,
+              "y": -8,
+              "width": 172,
+              "height": 236,
+              "fill": {
+                "type": "linear",
+                "colors": [
+                  "#ff9fd8",
+                  "#ffe28a",
+                  "#a6ffd6",
+                  "#8fd6ff",
+                  "#c7a6ff",
+                  "#ffb8e8"
+                ],
+                "angle": 135,
+                "spread": "reflect",
+                "length": 85
+              },
+              "opacity": 0.18
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "format": "release"
+      },
+      "layers": [
+        {
+          "id": "card",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 400,
+          "fill": "{card}"
+        },
+        {
+          "id": "band",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 168,
+          "fill": "{acid}"
+        },
+        {
+          "id": "access",
+          "type": "text",
+          "content": {
+            "upper": "{release}"
+          },
+          "font": "Unbounded",
+          "weight": 900,
+          "size": 54,
+          "letterSpacing": 0,
+          "x": 200,
+          "y": 96,
+          "align": "center",
+          "width": 364,
+          "color": "{ink}"
+        },
+        {
+          "id": "event",
+          "type": "text",
+          "content": {
+            "upper": "{artist}"
+          },
+          "font": "Space Mono",
+          "weight": 700,
+          "size": 38,
+          "letterSpacing": 0.06,
+          "x": 200,
+          "y": 144,
+          "align": "center",
+          "width": 364,
+          "color": "{ink}"
+        },
+        {
+          "type": "group",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 400,
+          "viewBox": [
+            0,
+            0,
+            3200,
+            3200
+          ],
+          "fit": "stretch",
+          "layers": [
+            {
+              "id": "photo",
+              "type": "image",
+              "src": "{photo}",
+              "x": 144,
+              "y": 1488,
+              "width": 1200,
+              "height": 1568,
+              "fit": "cover",
+              "focus": "top"
+            }
+          ],
+          "id": "photoBox",
+          "when": "photo"
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 186,
+          "y": 196,
+          "size": 196,
+          "color": "{ink}",
+          "when": "mark"
+        },
+        {
+          "id": "holo",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 400,
+          "fill": {
+            "type": "linear",
+            "colors": [
+              "#ff9fd8",
+              "#ffe28a",
+              "#a6ffd6",
+              "#8fd6ff",
+              "#c7a6ff",
+              "#ffb8e8"
+            ],
+            "angle": 135,
+            "spread": "reflect",
+            "length": 85
+          },
+          "opacity": 0.18
+        }
+      ]
+    }
+  ]
+}

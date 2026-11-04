@@ -27,7 +27,7 @@ import { num } from './svg.js';
  * A shaped run of text.
  *
  * @typedef {object} Shaped
- * @property {{ gid: number, x: number, y: number }[]} glyphs - Glyph ids and pen positions in px (y is the baseline offset).
+ * @property {{ gid: number, x: number, y: number, cluster?: number }[]} glyphs - Glyph ids and pen positions in px (y is the baseline offset), and the character each starts at.
  * @property {number} width - Advance width in px (no trailing letter-spacing).
  */
 
@@ -38,25 +38,20 @@ import { num } from './svg.js';
  * @param {string} text - One line of text.
  * @param {number} size - Font size in px.
  * @param {number} tracking - Letter-spacing in px, added between clusters (0 for none).
- * @param {typeof import('harfbuzzjs')} hb - harfbuzzjs.
+ * @param {any} [hb] - Unused (kept for the 1.0 signature).
  * @returns {Shaped} Positioned glyphs.
  */
 export function shape(face, text, size, tracking, hb) {
-  const buffer = new hb.Buffer();
-  buffer.addText(text);
-  buffer.guessSegmentProperties();
-  hb.shape(face.font, buffer);
-  const infos = buffer.getGlyphInfos();
-  const positions = buffer.getGlyphPositions();
+  const glyphsIn = face.shapeRun(text);
   const scale = size / face.upem;
   const glyphs = [];
   let pen = 0;
-  for (let i = 0; i < infos.length; i++) {
-    const p = positions[i];
-    glyphs.push({ gid: infos[i].codepoint, x: pen + p.xOffset * scale, y: -p.yOffset * scale });
+  for (let i = 0; i < glyphsIn.length; i++) {
+    const p = glyphsIn[i];
+    glyphs.push({ gid: p.gid, x: pen + p.xOffset * scale, y: -p.yOffset * scale, cluster: p.cluster });
     pen += p.xAdvance * scale;
-    const nextCluster = infos[i + 1]?.cluster;
-    if (tracking && nextCluster !== undefined && nextCluster !== infos[i].cluster) pen += tracking;
+    const nextCluster = glyphsIn[i + 1]?.cluster;
+    if (tracking && nextCluster !== undefined && nextCluster !== p.cluster) pen += tracking;
   }
   return { glyphs, width: pen };
 }
@@ -69,11 +64,11 @@ export function shape(face, text, size, tracking, hb) {
  * @param {number} gid
  * @returns {(string | number)[]} Flat list: command letter followed by its numbers.
  */
-function outline(face, gid) {
+export function outline(face, gid) {
   let cmds = face.paths.get(gid);
   if (!cmds) {
     cmds = [];
-    const d = face.font.glyphToPath(gid);
+    const d = face.glyphToPath(gid);
     for (const m of d.matchAll(/([MLQCZ])([^MLQCZ]*)/gi)) {
       cmds.push(m[1].toUpperCase());
       for (const n of m[2].split(/[\s,]+/).filter(Boolean)) cmds.push(parseFloat(n));
@@ -227,4 +222,16 @@ function breakLines(o) {
 
   const shaped = lines.map((text) => ({ text, run: measure(text) }));
   return { lines: shaped, size: o.size, truncated, forced, width: Math.max(0, ...shaped.map((l) => l.run.width)) };
+}
+
+/**
+ * Collapse spaces, trim each line, and apply a case.
+ *
+ * @param {string} s - The text.
+ * @param {string | undefined} t - `'uppercase'`, `'lowercase'`, anything else for none.
+ * @returns {string}
+ */
+export function caseText(s, t) {
+  const clean = s.replace(/[\t\r ]+/g, ' ').replace(/ *\n */g, '\n').trim();
+  return t === 'uppercase' ? clean.toUpperCase() : t === 'lowercase' ? clean.toLowerCase() : clean;
 }
