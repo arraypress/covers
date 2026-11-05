@@ -12,8 +12,8 @@
  * @module type/glyphs
  */
 
-import { len } from '@arraypress/image-effects/length';
-import { toHex } from '@arraypress/image-effects/color';
+import { len } from '@logomarks/image-effects/length';
+import { toHex } from '@logomarks/image-effects/color';
 
 /** @param {any} list @param {number} i @param {any} fallback @returns {any} The i-th of a cycled list (or a single value). */
 const at = (list, i, fallback) => (list == null ? fallback : Array.isArray(list) ? (list.length ? list[i % list.length] : fallback) : list);

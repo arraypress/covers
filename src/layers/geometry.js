@@ -6,8 +6,8 @@
  * @module layers/geometry
  */
 
-import { attrs, num } from '@arraypress/image-effects/svg';
-import { len } from '@arraypress/image-effects/length';
+import { attrs, num } from '@logomarks/image-effects/svg';
+import { len } from '@logomarks/image-effects/length';
 import { pos } from './util.js';
 import { cutPath } from '../formats/cut.js';
 import { invert, apply } from '../render/transform.js';
@@ -18,7 +18,7 @@ import { invert, apply } from '../render/transform.js';
  *
  * @param {[number, number]} a @param {[number, number]} b
  * @param {{ kind: string, size: number, step: number }} e
- * @param {import('@arraypress/image-effects/rng').Rng} rng
+ * @param {import('@logomarks/image-effects/rng').Rng} rng
  * @returns {[number, number][]} Points from a (exclusive) to b (inclusive).
  */
 function edgePoints(a, b, e, rng) {

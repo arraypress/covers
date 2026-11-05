@@ -4,7 +4,7 @@
  * WebP / PNG / AVIF / JPEG.
  */
 
-import type { Effect as AnyEffect, EffectKind, EffectMask as AnyEffectMask, Color, Length, Rng } from '@arraypress/image-effects';
+import type { Effect as AnyEffect, EffectKind, EffectMask as AnyEffectMask, Color, Length, Rng } from '@logomarks/image-effects';
 import type { LayerTransform } from './render/transform.js';
 import type { Paint } from './paint/index.js';
 import type { TextPath } from './type/path.js';
@@ -26,17 +26,17 @@ export type { LintIssue } from './lint/index.js';
 export type { Settings } from './platform/index.js';
 
 export { safeBox } from './formats/index.js';
-export { rasterize } from '@arraypress/image-effects/raster';
-import type { RasterizeOptions } from '@arraypress/image-effects/raster';
+export { rasterize } from '@logomarks/image-effects/raster';
+import type { RasterizeOptions } from '@logomarks/image-effects/raster';
 export type { RasterizeOptions };
 export { lint } from './lint/index.js';
 export { kit, KIT_FORMATS } from './kit/index.js';
 export { FORMATS } from './formats/index.js';
 export { configure } from './platform/index.js';
-export { EFFECTS, EFFECT_OPTIONS } from '@arraypress/image-effects';
+export { EFFECTS, EFFECT_OPTIONS } from '@logomarks/image-effects';
 export { valueAt, MOTION_PRESETS } from './animate/index.js';
-export { toHex, toOklch, fromOklch, mixOklab, mixOklch, onBackground, gradientAt } from '@arraypress/image-effects/color';
-export { createRng, hashString } from '@arraypress/image-effects/rng';
+export { toHex, toOklch, fromOklch, mixOklab, mixOklch, onBackground, gradientAt } from '@logomarks/image-effects/color';
+export { createRng, hashString } from '@logomarks/image-effects/rng';
 
 /** An effect on a layer (image-effects' effects, with masks and maps given as layers). */
 export type Effect = AnyEffect<Layer>;

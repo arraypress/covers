@@ -6,7 +6,7 @@ import {
   cover, renderSvg, renderImage, renderPages, defineRecipe, loadRecipe, configure, registerFont, FORMATS, lint, kit, KIT_FORMATS, safeBox, EFFECTS, valueAt,
 } from '../src/index.js';
 import { code128 } from '../src/layers/code128.js';
-import { RASTER_EFFECTS } from '@arraypress/image-effects';
+import { RASTER_EFFECTS } from '@logomarks/image-effects';
 import { parseSfnt } from '../src/type/sfnt.js';
 import { decodeFont, bundledFonts, loadFont } from '../src/fonts.js';
 import { generated } from '../scripts/generate.mjs';

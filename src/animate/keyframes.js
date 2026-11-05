@@ -19,7 +19,7 @@
  * @module animate/keyframes
  */
 
-import { mixOklab, toHex } from '@arraypress/image-effects/color';
+import { mixOklab, toHex } from '@logomarks/image-effects/color';
 
 /** @param {unknown} v @returns {v is { keyframes: any[] }} */
 const isKeyed = (v) => Boolean(v) && typeof v === 'object' && !Array.isArray(v) && Array.isArray(/** @type {any} */ (v).keyframes);

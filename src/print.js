@@ -5,13 +5,13 @@
  * @module print
  */
 
-import { attrs, num, esc } from '@arraypress/image-effects/svg';
+import { attrs, num, esc } from '@logomarks/image-effects/svg';
 import { layerAttrs } from './layers/util.js';
-import { len } from '@arraypress/image-effects/length';
+import { len } from '@logomarks/image-effects/length';
 import { regionPx } from './geometry.js';
-import { toHex } from '@arraypress/image-effects/color';
-import { createRng } from '@arraypress/image-effects/rng';
-import { encodePngAsync, pngUri } from '@arraypress/image-effects/png';
+import { toHex } from '@logomarks/image-effects/color';
+import { createRng } from '@logomarks/image-effects/rng';
+import { encodePngAsync, pngUri } from '@logomarks/image-effects/png';
 import { text as textLayer } from './layers.js';
 
 /** Classic risograph inks, by name (`'riso:pink'`). Approximations, not trademarks. */
@@ -183,7 +183,7 @@ export async function ink(layer, ctx) {
 /**
  * Seeded value noise in 2D, smooth, in [0, 1], with octaves.
  *
- * @param {import('@arraypress/image-effects/rng').Rng} rng
+ * @param {import('@logomarks/image-effects/rng').Rng} rng
  * @param {number} octaves
  * @returns {(x: number, y: number) => number}
  */
@@ -459,7 +459,7 @@ function smoothPath(pts) {
  * Seeded demo peaks: a smooth loudness envelope with transients. Not audio:
  * pass `peaks` or `audio` for a real episode.
  *
- * @param {import('@arraypress/image-effects/rng').Rng} rng
+ * @param {import('@logomarks/image-effects/rng').Rng} rng
  * @param {number} n
  * @returns {number[]}
  */

@@ -4,7 +4,7 @@
  * @module grid
  */
 
-import { num } from '@arraypress/image-effects/svg';
+import { num } from '@logomarks/image-effects/svg';
 
 /**
  * Path data for full-length grid lines at `xs` (columns) and `ys` (rows),

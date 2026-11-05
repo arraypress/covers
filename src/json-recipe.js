@@ -55,13 +55,13 @@
 
 import { readTextSync, node } from './platform/index.js';
 import { readableText } from '@arraypress/color-utils';
-import { createRng } from '@arraypress/image-effects/rng';
-import { len } from '@arraypress/image-effects/length';
+import { createRng } from '@logomarks/image-effects/rng';
+import { len } from '@logomarks/image-effects/length';
 import { ANCHORS } from './geometry.js';
-import { toHex, mixOklab, mixOklch, onBackground, gradientAt } from '@arraypress/image-effects/color';
+import { toHex, mixOklab, mixOklch, onBackground, gradientAt } from '@logomarks/image-effects/color';
 import { LAYERS, toneColor } from './layers.js';
 import { LAYER_OPTIONS, COMMON, MOTION_OPTIONS } from './layer-options.js';
-import { EFFECT_OPTIONS, EFFECT_COMMON, MASK_GRADIENTS } from '@arraypress/image-effects';
+import { EFFECT_OPTIONS, EFFECT_COMMON, MASK_GRADIENTS } from '@logomarks/image-effects';
 import { shapesOnly } from './layers/svg.js';
 import { LAYOUT_FIELDS } from './type/layout-ref.js';
 import { MOTION_PRESETS } from './animate/timing.js';
@@ -182,7 +182,7 @@ export function loadRecipe(path) {
  * @property {Record<string, unknown>} params
  * @property {Record<string, unknown>} vars
  * @property {any} c - The recipe context.
- * @property {() => import('@arraypress/image-effects/rng').Rng} rng - The current stream.
+ * @property {() => import('@logomarks/image-effects/rng').Rng} rng - The current stream.
  */
 
 /**

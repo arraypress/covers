@@ -17,7 +17,7 @@
  * @module animate/tracks
  */
 
-import { num } from '@arraypress/image-effects/svg';
+import { num } from '@logomarks/image-effects/svg';
 import { textPathD, pathSampler } from '../type/path.js';
 import { pos } from '../layers/util.js';
 import { originOf } from '../render/transform.js';

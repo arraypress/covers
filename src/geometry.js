@@ -5,7 +5,7 @@
  * @module geometry
  */
 
-import { len } from '@arraypress/image-effects/length';
+import { len } from '@logomarks/image-effects/length';
 
 /** Named aspect ratios, as `width / height`. */
 export const ASPECTS = Object.freeze({

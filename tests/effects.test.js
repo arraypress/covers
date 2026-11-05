@@ -1,6 +1,6 @@
 // covers applying image-effects: masks drawn from layers, and effects
 // validated in JSON recipes. The effects themselves are tested in
-// @arraypress/image-effects.
+// @logomarks/image-effects.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';

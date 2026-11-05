@@ -5,8 +5,8 @@
  */
 
 import { loadBytes } from './platform/index.js';
-import { toOklch, fromOklch, toHex } from '@arraypress/image-effects/color';
-import { createRng } from '@arraypress/image-effects/rng';
+import { toOklch, fromOklch, toHex } from '@logomarks/image-effects/color';
+import { createRng } from '@logomarks/image-effects/rng';
 
 /** @type {Map<string, Promise<string[]>>} */
 const cache = new Map();

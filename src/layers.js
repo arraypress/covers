@@ -15,11 +15,11 @@
  */
 
 import { loadBytes, toBase64 } from './platform/index.js';
-import { attrs, esc, num } from '@arraypress/image-effects/svg';
-import { imageMime } from '@arraypress/image-effects';
-import { len } from '@arraypress/image-effects/length';
+import { attrs, esc, num } from '@logomarks/image-effects/svg';
+import { imageMime } from '@logomarks/image-effects';
+import { len } from '@logomarks/image-effects/length';
 import { place, anchorAlign, unit, regionPx } from './geometry.js';
-import { toHex, mixOklab, toOklch, fromOklch } from '@arraypress/image-effects/color';
+import { toHex, mixOklab, toOklch, fromOklch } from '@logomarks/image-effects/color';
 import { harfbuzz, loadFont, pickFont } from './fonts.js';
 import { layout, runPath, caseText } from './text.js';
 import { resolveIcon, parseSvgIcon } from './icons.js';
@@ -42,7 +42,7 @@ import { imageSize } from './lint/image-size.js';
  * @property {number} height - Canvas height in px.
  * @property {{ width: number, height: number }} canvas - The same, as an object.
  * @property {import('./index.js').Palette} palette - The resolved palette.
- * @property {import('@arraypress/image-effects/rng').Rng} rng - This layer's own random stream.
+ * @property {import('@logomarks/image-effects/rng').Rng} rng - This layer's own random stream.
  * @property {string} id - A unique id prefix for this layer's defs.
  * @property {import('./index.js').FontSource[]} fonts - Available fonts (Inter last).
  * @property {any} [sharp] - The `sharp` module, when available.

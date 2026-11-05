@@ -6,7 +6,7 @@
  * @module animate/timing
  */
 
-import { num } from '@arraypress/image-effects/svg';
+import { num } from '@logomarks/image-effects/svg';
 
 /** Named motions: each is a motion's defaults, under whatever else you set. */
 export const MOTION_PRESETS = Object.freeze({

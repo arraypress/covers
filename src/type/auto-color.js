@@ -11,7 +11,7 @@
  * @module type/auto-color
  */
 
-import { toHex } from '@arraypress/image-effects/color';
+import { toHex } from '@logomarks/image-effects/color';
 
 /** Backdrop luma (0–1) above which `color: 'auto'` picks the dark colour. */
 export const AUTO_THRESHOLD = 0.72;

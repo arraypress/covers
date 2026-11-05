@@ -5,8 +5,8 @@
  * @module render/backdrop
  */
 
-import { toHex } from '@arraypress/image-effects/color';
-import { pixelsOf } from '@arraypress/image-effects/raster';
+import { toHex } from '@logomarks/image-effects/color';
+import { pixelsOf } from '@logomarks/image-effects/raster';
 
 /**
  * The average colour under a box, from the layers drawn so far: rendered

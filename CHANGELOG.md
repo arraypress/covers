@@ -5,6 +5,12 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] — 2026-11-06
+
+### Changed
+
+- Depends on `@logomarks/image-effects` `^0.1.1` (renamed from `@arraypress/image-effects`); the imports, `.d.ts` files and docs use the new name. No code changes.
+
 ## [1.3.0] — 2026-11-05
 
 Animation, built to the 1.1 design: covers that move in the SVG itself. Every published recipe renders as before (all 76, SVG at 4:5 and as release covers, and `renderImage` PNGs: 228 renders byte-identical to 1.2.0).

@@ -62,4 +62,4 @@ Notes:
 - Entries with nested ids (`blog/2026/post`) need a rest route: `[...slug].webp.ts`.
 - In `output: 'server'`, add `export const prerender = true;` to keep the covers static. On-demand routes also work (the entry is looked up by slug).
 - `coverUrl(slug, { base, format })` encodes each path segment.
-- **Keep covers external to Vite's SSR bundle**: `vite: { ssr: { external: ['@arraypress/covers'] } }` in `astro.config.mjs` (any Vite SSR build). Bundled, Vite resolves covers' `#harfbuzz` import against the project's own harfbuzzjs (satori ships an older one), and text fails with "hb.Blob is not a constructor". `@arraypress/image-effects` needs nothing (no `#` imports).
+- **Keep covers external to Vite's SSR bundle**: `vite: { ssr: { external: ['@arraypress/covers'] } }` in `astro.config.mjs` (any Vite SSR build). Bundled, Vite resolves covers' `#harfbuzz` import against the project's own harfbuzzjs (satori ships an older one), and text fails with "hb.Blob is not a constructor". `@logomarks/image-effects` needs nothing (no `#` imports).

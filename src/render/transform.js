@@ -4,7 +4,7 @@
  * @module render/transform
  */
 
-import { num } from '@arraypress/image-effects/svg';
+import { num } from '@logomarks/image-effects/svg';
 import { pos } from '../layers/util.js';
 
 /**

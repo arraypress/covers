@@ -36,15 +36,15 @@
  * @module type/typeset
  */
 
-import { attrs, esc, num } from '@arraypress/image-effects/svg';
-import { len } from '@arraypress/image-effects/length';
+import { attrs, esc, num } from '@logomarks/image-effects/svg';
+import { len } from '@logomarks/image-effects/length';
 import { place, anchorAlign, unit } from '../geometry.js';
-import { toHex } from '@arraypress/image-effects/color';
+import { toHex } from '@logomarks/image-effects/color';
 import { layout, caseText } from '../text.js';
 import { paint } from '../paint/index.js';
 import { pos, wrap } from '../layers/util.js';
 import { presetStrokes } from '../paint/presets.js';
-import { extrude } from '@arraypress/image-effects/effects/extrude';
+import { extrude } from '@logomarks/image-effects/effects/extrude';
 import { dashArray } from '../layers/shape.js';
 import { faceFor, mappedPath, setLine } from './line.js';
 import { textPathD, pathSampler } from './path.js';

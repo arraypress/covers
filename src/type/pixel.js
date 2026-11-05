@@ -12,7 +12,7 @@
  * @module type/pixel
  */
 
-import { PIXEL_GLYPHS as BITMAPS } from '@arraypress/image-effects/pixel-font';
+import { PIXEL_GLYPHS as BITMAPS } from '@logomarks/image-effects/pixel-font';
 
 /** Cell size, font units. */
 const CELL = 100;

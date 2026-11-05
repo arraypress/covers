@@ -19,8 +19,8 @@
  * @module layers/repeat
  */
 
-import { num } from '@arraypress/image-effects/svg';
-import { len } from '@arraypress/image-effects/length';
+import { num } from '@logomarks/image-effects/svg';
+import { len } from '@logomarks/image-effects/length';
 import { pos } from './util.js';
 import { fill, evaluate } from './expr.js';
 

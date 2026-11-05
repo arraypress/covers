@@ -19,10 +19,10 @@
  * @module diagram
  */
 
-import { attrs, num } from '@arraypress/image-effects/svg';
+import { attrs, num } from '@logomarks/image-effects/svg';
 import { layerAttrs } from './layers/util.js';
-import { len } from '@arraypress/image-effects/length';
-import { toHex } from '@arraypress/image-effects/color';
+import { len } from '@logomarks/image-effects/length';
+import { toHex } from '@logomarks/image-effects/color';
 import { resolveIcon, parseSvgIcon } from './icons.js';
 import { gridPath } from './grid.js';
 

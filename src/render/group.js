@@ -4,7 +4,7 @@
  * @module render/group
  */
 
-import { attrs, esc, num } from '@arraypress/image-effects/svg';
+import { attrs, esc, num } from '@logomarks/image-effects/svg';
 import { pos } from '../layers/util.js';
 import { scaledReport } from './report.js';
 import { IDENTITY, compose } from './transform.js';

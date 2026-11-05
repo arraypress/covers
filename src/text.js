@@ -21,7 +21,7 @@
  * @module text
  */
 
-import { num } from '@arraypress/image-effects/svg';
+import { num } from '@logomarks/image-effects/svg';
 
 /**
  * A shaped run of text.

@@ -4,9 +4,9 @@
  * @module layers/barcode
  */
 
-import { attrs, num } from '@arraypress/image-effects/svg';
-import { len } from '@arraypress/image-effects/length';
-import { toHex } from '@arraypress/image-effects/color';
+import { attrs, num } from '@logomarks/image-effects/svg';
+import { len } from '@logomarks/image-effects/length';
+import { toHex } from '@logomarks/image-effects/color';
 import { faceFor, setLine } from '../type/line.js';
 import { pos, wrap, contentOf } from './util.js';
 import { code128 } from './code128.js';

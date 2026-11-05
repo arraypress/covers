@@ -1,6 +1,6 @@
 # Effects
 
-`effects: [{ kind, … }]` on any layer or group, applied in order: 71 kinds of blur, distortion, colour grading, light, texture and print, and digital effects, from [`@arraypress/image-effects`](https://github.com/Logomarks/image-effects/blob/main/docs/effects.md) (a dependency; its docs list every kind with its options, and it works on its own for photos outside covers). Most are SVG filters (vector, sized in the layer's units); the ones filters can't do are computed on pixels: the layer is drawn once at the pixels it's shown at (sharp in Node, a canvas in the browser), processed and embedded as one image. `extrude` and `mirror` redraw the layer's own markup.
+`effects: [{ kind, … }]` on any layer or group, applied in order: 71 kinds of blur, distortion, colour grading, light, texture and print, and digital effects, from [`@logomarks/image-effects`](https://github.com/Logomarks/image-effects/blob/main/docs/effects.md) (a dependency; its docs list every kind with its options, and it works on its own for photos outside covers). Most are SVG filters (vector, sized in the layer's units); the ones filters can't do are computed on pixels: the layer is drawn once at the pixels it's shown at (sharp in Node, a canvas in the browser), processed and embedded as one image. `extrude` and `mirror` redraw the layer's own markup.
 
 ```js
 { type: 'image', src: photo, effects: [{ kind: 'look', name: 'warmFilm' }, { kind: 'tilt', center: [0.5, 0.6] }, 'grain'] }

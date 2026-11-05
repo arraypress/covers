@@ -15,7 +15,7 @@
  * @module animate/marquee
  */
 
-import { num } from '@arraypress/image-effects/svg';
+import { num } from '@logomarks/image-effects/svg';
 import { NS } from './sheet.js';
 
 /** Most px between two keyframes along the track. */

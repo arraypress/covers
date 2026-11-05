@@ -16,7 +16,7 @@ import { VARY_FLOOR, VARY_PEAK } from '../layers.js';
  * @param {any} sharp - The sharp module.
  * @param {number} width @param {number} height
  * @param {import('../index.js').GrainLayer} layer
- * @param {import('@arraypress/image-effects/rng').Rng} rng - The layer's stream.
+ * @param {import('@logomarks/image-effects/rng').Rng} rng - The layer's stream.
  * @returns {Promise<{ data: Buffer, channels: 1 | 3 }>} Full-size noise.
  */
 export async function noise(sharp, width, height, layer, rng) {

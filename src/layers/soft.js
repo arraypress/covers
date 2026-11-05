@@ -6,7 +6,7 @@
  * @module layers/soft
  */
 
-import { attrs, num } from '@arraypress/image-effects/svg';
+import { attrs, num } from '@logomarks/image-effects/svg';
 import { toBase64 } from '../platform/index.js';
 
 /**

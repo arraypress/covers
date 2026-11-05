@@ -8,7 +8,7 @@
  * @module render/use
  */
 
-import { attrs, num } from '@arraypress/image-effects/svg';
+import { attrs, num } from '@logomarks/image-effects/svg';
 import { pos, wrap } from '../layers/util.js';
 import { transformAttr } from './transform.js';
 

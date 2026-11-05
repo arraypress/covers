@@ -13,7 +13,7 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { LAYER_OPTIONS, COMMON, MOTION_OPTIONS } from '../src/layer-options.js';
 import { MOTION_PRESETS } from '../src/animate/timing.js';
-import { EFFECT_OPTIONS, EFFECT_COMMON } from '@arraypress/image-effects';
+import { EFFECT_OPTIONS, EFFECT_COMMON } from '@logomarks/image-effects';
 
 /** Operators: name → [description, argument schema]. */
 const OPS = {

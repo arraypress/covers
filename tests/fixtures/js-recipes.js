@@ -4,8 +4,8 @@
  * input (see tests/json-recipes.test.js).
  */
 
-import { mixOklab } from '@arraypress/image-effects/color';
-import { createRng } from '@arraypress/image-effects/rng';
+import { mixOklab } from '@logomarks/image-effects/color';
+import { createRng } from '@logomarks/image-effects/rng';
 
 /**
  * The text content of a string-or-object option.

@@ -7,7 +7,7 @@
  * @module platform/files
  */
 
-import { node } from '@arraypress/image-effects/platform';
+import { node } from '@logomarks/image-effects/platform';
 
 /** This module was loaded from disk (Node, Deno, Bun), not a bundle or a page. */
 const FROM_DISK = String(import.meta.url).startsWith('file:');

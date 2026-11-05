@@ -5,8 +5,8 @@
  * @module layers/util
  */
 
-import { attrs, esc } from '@arraypress/image-effects/svg';
-import { len } from '@arraypress/image-effects/length';
+import { attrs, esc } from '@logomarks/image-effects/svg';
+import { len } from '@logomarks/image-effects/length';
 
 /**
  * A coordinate: px as a number, `'50%'` of the canvas along `axis`, or a

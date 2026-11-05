@@ -4,9 +4,9 @@
  * @module layers/perforation
  */
 
-import { attrs, num } from '@arraypress/image-effects/svg';
-import { len } from '@arraypress/image-effects/length';
-import { toHex } from '@arraypress/image-effects/color';
+import { attrs, num } from '@logomarks/image-effects/svg';
+import { len } from '@logomarks/image-effects/length';
+import { toHex } from '@logomarks/image-effects/color';
 import { pos, wrap } from './util.js';
 
 

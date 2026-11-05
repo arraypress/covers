@@ -5,8 +5,8 @@
  * @module render/wrap
  */
 
-import { attrs, esc, num } from '@arraypress/image-effects/svg';
-import { drawEffects, contentBox } from '@arraypress/image-effects';
+import { attrs, esc, num } from '@logomarks/image-effects/svg';
+import { drawEffects, contentBox } from '@logomarks/image-effects';
 import { transformAttr, transformMatrix, stretchOf, compose, IDENTITY } from './transform.js';
 import { renderGroup } from './group.js';
 import { scaledReport } from './report.js';

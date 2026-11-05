@@ -21,7 +21,7 @@
  * @module animate/motion
  */
 
-import { attrs, esc } from '@arraypress/image-effects/svg';
+import { attrs, esc } from '@logomarks/image-effects/svg';
 import { motionList, progress, cssTiming, easing } from './timing.js';
 import { tracks, atStops } from './tracks.js';
 import { morph } from './morph.js';

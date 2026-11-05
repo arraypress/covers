@@ -11,8 +11,8 @@
  * @module animate/sheet
  */
 
-import { num } from '@arraypress/image-effects/svg';
-import { hashString } from '@arraypress/image-effects/rng';
+import { num } from '@logomarks/image-effects/svg';
+import { hashString } from '@logomarks/image-effects/rng';
 
 /** The placeholder for the document's prefix (outside base64's alphabet). */
 export const NS = '__cv__';

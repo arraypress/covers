@@ -5,9 +5,9 @@
  */
 
 import { node } from './platform/index.js';
-import { createRng } from '@arraypress/image-effects/rng';
+import { createRng } from '@logomarks/image-effects/rng';
 import { resolveSize, unit } from './geometry.js';
-import { len } from '@arraypress/image-effects/length';
+import { len } from '@logomarks/image-effects/length';
 import { resolveFormat, printMarks, zonesOverlay, safeBox } from './formats/index.js';
 import { animate, isAnimated, renderMotion, createSheet, nameSheet } from './animate/index.js';
 import { preloadIcons } from './icons.js';
@@ -20,15 +20,15 @@ import { registerDefs, renderUse } from './render/use.js';
 import { expandRepeat } from './layers/repeat.js';
 import { scaledReport } from './render/report.js';
 import { hasLayoutRef, resolveLayoutRefs } from './type/layout-ref.js';
-import { rasterize, svgPixels, webpImages } from '@arraypress/image-effects/raster';
+import { rasterize, svgPixels, webpImages } from '@logomarks/image-effects/raster';
 import { IDENTITY, compose } from './render/transform.js';
-import { needsPixels } from '@arraypress/image-effects';
+import { needsPixels } from '@logomarks/image-effects';
 import { backdropSampler } from './render/backdrop.js';
 import { noise, applyGrain } from './render/grain.js';
 import { extractPalette } from './extract.js';
 import { recipes, applyOverrides } from './recipes.js';
 import { defineRecipe } from './json-recipe.js';
-import { attrs, esc, num } from '@arraypress/image-effects/svg';
+import { attrs, esc, num } from '@logomarks/image-effects/svg';
 
 export { VERSION } from './version.js';
 export { coverKey } from './render/key.js';

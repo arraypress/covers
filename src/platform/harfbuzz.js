@@ -7,7 +7,7 @@
  * @module platform/harfbuzz
  */
 
-import { isBytes } from '@arraypress/image-effects/platform';
+import { isBytes } from '@logomarks/image-effects/platform';
 import { settings } from './settings.js';
 import { loadBytes, asBytes } from './load.js';
 
