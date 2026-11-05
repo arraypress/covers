@@ -55,13 +55,13 @@
 
 import { readTextSync, node } from './platform/index.js';
 import { readableText } from '@arraypress/color-utils';
-import { createRng } from './rng.js';
-import { len, ANCHORS } from './geometry.js';
-import { toHex, mixOklab, mixOklch, onBackground, gradientAt } from './color.js';
+import { createRng } from '@arraypress/image-effects/rng';
+import { len } from '@arraypress/image-effects/length';
+import { ANCHORS } from './geometry.js';
+import { toHex, mixOklab, mixOklch, onBackground, gradientAt } from '@arraypress/image-effects/color';
 import { LAYERS, toneColor } from './layers.js';
 import { LAYER_OPTIONS, COMMON } from './layer-options.js';
-import { EFFECT_OPTIONS, EFFECT_COMMON } from './effects/options.js';
-import { MASK_GRADIENTS } from './effects/mask.js';
+import { EFFECT_OPTIONS, EFFECT_COMMON, MASK_GRADIENTS } from '@arraypress/image-effects';
 import { shapesOnly } from './layers/svg.js';
 import { LAYOUT_FIELDS } from './type/layout-ref.js';
 
@@ -181,7 +181,7 @@ export function loadRecipe(path) {
  * @property {Record<string, unknown>} params
  * @property {Record<string, unknown>} vars
  * @property {any} c - The recipe context.
- * @property {() => import('./rng.js').Rng} rng - The current stream.
+ * @property {() => import('@arraypress/image-effects/rng').Rng} rng - The current stream.
  */
 
 /**

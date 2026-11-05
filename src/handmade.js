@@ -11,9 +11,11 @@
  * @module handmade
  */
 
-import { attrs, num, layerAttrs } from './svg.js';
-import { len, regionPx } from './geometry.js';
-import { toHex } from './color.js';
+import { attrs, num } from '@arraypress/image-effects/svg';
+import { layerAttrs } from './layers/util.js';
+import { len } from '@arraypress/image-effects/length';
+import { regionPx } from './geometry.js';
+import { toHex } from '@arraypress/image-effects/color';
 import { resolveIcon, parseSvgIcon } from './icons.js';
 import { flattenBody, densify } from './flatten.js';
 
@@ -25,7 +27,7 @@ export const INK = '#141413';
 /**
  * Smooth 1D value noise from a seeded stream: `noise(t)` in [-1, 1].
  *
- * @param {import('./rng.js').Rng} rng
+ * @param {import('@arraypress/image-effects/rng').Rng} rng
  * @returns {(t: number) => number}
  */
 function noise1(rng) {
@@ -47,7 +49,7 @@ function noise1(rng) {
  * @param {[number, number][]} outline - A closed polyline (first point not repeated).
  * @param {number} cut - Cut length in px.
  * @param {number} wobble - Max nudge in px.
- * @param {import('./rng.js').Rng} rng
+ * @param {import('@arraypress/image-effects/rng').Rng} rng
  * @returns {string} Path data.
  */
 function scissor(outline, cut, wobble, rng) {
@@ -74,7 +76,7 @@ function scissor(outline, cut, wobble, rng) {
  *
  * @param {string} kind - rect | square | circle | blob | arch | pill
  * @param {number} w @param {number} h
- * @param {import('./rng.js').Rng} rng
+ * @param {import('@arraypress/image-effects/rng').Rng} rng
  * @returns {[number, number][]}
  */
 function outlineOf(kind, w, h, rng) {
@@ -176,7 +178,7 @@ export function paper(layer, ctx) {
  * @param {number} o.amp - Wobble amplitude in px.
  * @param {number} o.period - Wobble period in px.
  * @param {string} o.color
- * @param {import('./rng.js').Rng} o.rng
+ * @param {import('@arraypress/image-effects/rng').Rng} o.rng
  * @returns {string} Markup.
  */
 function handLine(pts, { width, amp, period, color, rng }) {

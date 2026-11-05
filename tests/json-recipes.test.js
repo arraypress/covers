@@ -187,10 +187,14 @@ test('the JSON Schema matches its generator and validates every bundled recipe',
   const validate = new Ajv({ allErrors: true, strict: false }).compile(JSON.parse(text));
   const files = (await readdir(new URL('recipes/', root))).filter((f) => f.endsWith('.json'));
   assert.deepEqual(files.map((f) => f.replace('.json', '')).sort(), Object.keys(recipes).sort());
-  for (const f of files) {
+  // The built-ins, and the published examples in subfolders (flyers/, release/, release/series/).
+  const all = (await readdir(new URL('recipes/', root), { recursive: true })).filter((f) => f.endsWith('.json'));
+  assert.ok(all.length > files.length + 70, `${all.length} published recipes`);
+  for (const f of all) {
     const doc = JSON.parse(await readFile(new URL(`recipes/${f}`, root), 'utf8'));
     assert.ok(validate(doc), `${f}: ${JSON.stringify(validate.errors)}`);
-    assert.equal(doc.$schema, '../schema/recipe.schema.json');
+    assert.equal(new URL(doc.$schema, new URL(`recipes/${f}`, root)).href, new URL('schema/recipe.schema.json', root).href, `${f}: $schema resolves inside the package`);
+    assert.doesNotThrow(() => defineRecipe(doc), f);
   }
   assert.equal(validate({ layers: [{ type: 'mesh', blurr: 3 }] }), false, 'unknown options are flagged in editors too');
   assert.equal(validate({ layers: [{ type: 'blob' }] }), false);

@@ -4,9 +4,9 @@
  * @module layers/table
  */
 
-import { attrs, num } from '../svg.js';
-import { len } from '../geometry.js';
-import { toHex } from '../color.js';
+import { attrs, num } from '@arraypress/image-effects/svg';
+import { len } from '@arraypress/image-effects/length';
+import { toHex } from '@arraypress/image-effects/color';
 import { faceFor, setLine } from '../type/line.js';
 import { pos, wrap, contentOf } from './util.js';
 

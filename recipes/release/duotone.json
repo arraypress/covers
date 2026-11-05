@@ -1,0 +1,113 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "duotone",
+  "description": "Duotone portrait: the photo mapped to two inks (a deep shadow and the accent), the artist huge and condensed across the foot in whichever of the two reads, the title small at the top. Slots: {name} (artist), {title} (release), {photo}, the palette (accent = highlight, colors.1 = shadow), `focus`. Fonts: Big Shoulders Display, Inter Tight (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "requires": [
+    "photo"
+  ],
+  "params": {
+    "focus": "center"
+  },
+  "vars": {
+    "shadow": {
+      "mix": [
+        "@colors.1",
+        "#000000",
+        0.15
+      ]
+    },
+    "light": {
+      "mix": [
+        "@accent",
+        "#ffffff",
+        0.12
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "photo",
+      "type": "image",
+      "src": "{photo}",
+      "fit": "cover",
+      "focus": "{focus}",
+      "duotone": [
+        "$shadow",
+        "$light"
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "name",
+          "type": "text",
+          "content": {
+            "upper": "{name}"
+          },
+          "font": "Big Shoulders Display",
+          "weight": 900,
+          "size": 300,
+          "lineHeight": 0.86,
+          "letterSpacing": -0.01,
+          "anchor": "bottom-left",
+          "margin": 36,
+          "maxWidth": 928,
+          "maxLines": 2,
+          "fit": "width",
+          "color": "auto",
+          "autoColors": [
+            {
+              "mix": [
+                "@accent",
+                "#ffffff",
+                0.78
+              ]
+            },
+            "$shadow"
+          ]
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": {
+            "upper": "{title}"
+          },
+          "font": "Inter Tight",
+          "weight": 600,
+          "size": 88,
+          "letterSpacing": 0.02,
+          "x": 40,
+          "y": 104,
+          "maxWidth": 920,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "auto",
+          "autoColors": [
+            {
+              "mix": [
+                "@accent",
+                "#ffffff",
+                0.78
+              ]
+            },
+            "$shadow"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.08
+    }
+  ]
+}

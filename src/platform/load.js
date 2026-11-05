@@ -6,8 +6,7 @@
  * @module platform/load
  */
 
-import { isBytes, u8, fromDataUri } from './bytes.js';
-import { node, isNode } from './node.js';
+import { isBytes, u8, fromDataUri, node, isNode } from '@arraypress/image-effects/platform';
 import { settings } from './settings.js';
 
 /** @returns {boolean} */

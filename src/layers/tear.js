@@ -4,10 +4,10 @@
  * @module layers/tear
  */
 
-import { attrs, num } from '../svg.js';
-import { len } from '../geometry.js';
-import { toHex } from '../color.js';
-import { paint } from '../effects/paint.js';
+import { attrs, num } from '@arraypress/image-effects/svg';
+import { len } from '@arraypress/image-effects/length';
+import { toHex } from '@arraypress/image-effects/color';
+import { paint } from '../paint/index.js';
 import { pos, wrap } from './util.js';
 
 

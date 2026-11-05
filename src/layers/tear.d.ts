@@ -1,7 +1,7 @@
 // The `tear` layer.
 import type { Color, Length, BaseLayer, Anchor } from '../index.js';
 import type { RenderContext, Markup } from '../render/context.js';
-import type { Paint } from '../effects/paint.js';
+import type { Paint } from '../paint/index.js';
 
 export interface TearLayer extends BaseLayer {
   type: 'tear';

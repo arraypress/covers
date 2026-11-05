@@ -6,11 +6,11 @@
  * @module layers/geometry
  */
 
-import { attrs, num } from '../svg.js';
-import { len } from '../geometry.js';
+import { attrs, num } from '@arraypress/image-effects/svg';
+import { len } from '@arraypress/image-effects/length';
 import { pos } from './util.js';
 import { cutPath } from '../formats/cut.js';
-import { invert, apply } from '../effects/transform.js';
+import { invert, apply } from '../render/transform.js';
 
 
 /**
@@ -18,7 +18,7 @@ import { invert, apply } from '../effects/transform.js';
  *
  * @param {[number, number]} a @param {[number, number]} b
  * @param {{ kind: string, size: number, step: number }} e
- * @param {import('../rng.js').Rng} rng
+ * @param {import('@arraypress/image-effects/rng').Rng} rng
  * @returns {[number, number][]} Points from a (exclusive) to b (inclusive).
  */
 function edgePoints(a, b, e, rng) {
@@ -211,7 +211,7 @@ export function geometry(s, ctx) {
  *
  * @param {{ x: number, y: number, width: number, height: number, cut?: any, mm?: number } | undefined} cut - Trim box and cut, canvas px.
  * @param {number} outset - Grow (or, negative, shrink) the outline, in the layer's units.
- * @param {import('../effects/transform.js').Affine | undefined} matrix - Layer units to canvas px.
+ * @param {import('../render/transform.js').Affine | undefined} matrix - Layer units to canvas px.
  * @param {{ width: number, height: number }} canvas
  * @returns {{ d: string, box: { x: number, y: number, width: number, height: number } }}
  */

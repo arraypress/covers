@@ -5,11 +5,13 @@
  * @module print
  */
 
-import { attrs, num, layerAttrs, esc } from './svg.js';
-import { len, regionPx } from './geometry.js';
-import { toHex } from './color.js';
-import { createRng } from './rng.js';
-import { encodePngAsync, pngUri } from './png.js';
+import { attrs, num, esc } from '@arraypress/image-effects/svg';
+import { layerAttrs } from './layers/util.js';
+import { len } from '@arraypress/image-effects/length';
+import { regionPx } from './geometry.js';
+import { toHex } from '@arraypress/image-effects/color';
+import { createRng } from '@arraypress/image-effects/rng';
+import { encodePngAsync, pngUri } from '@arraypress/image-effects/png';
 import { text as textLayer } from './layers.js';
 
 /** Classic risograph inks, by name (`'riso:pink'`). Approximations, not trademarks. */
@@ -181,7 +183,7 @@ export async function ink(layer, ctx) {
 /**
  * Seeded value noise in 2D, smooth, in [0, 1], with octaves.
  *
- * @param {import('./rng.js').Rng} rng
+ * @param {import('@arraypress/image-effects/rng').Rng} rng
  * @param {number} octaves
  * @returns {(x: number, y: number) => number}
  */
@@ -457,7 +459,7 @@ function smoothPath(pts) {
  * Seeded demo peaks: a smooth loudness envelope with transients. Not audio:
  * pass `peaks` or `audio` for a real episode.
  *
- * @param {import('./rng.js').Rng} rng
+ * @param {import('@arraypress/image-effects/rng').Rng} rng
  * @param {number} n
  * @returns {number[]}
  */

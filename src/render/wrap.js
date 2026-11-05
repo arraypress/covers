@@ -5,12 +5,11 @@
  * @module render/wrap
  */
 
-import { attrs, esc, num } from '../svg.js';
-import { applyEffects, transformAttr, rasterEffect, isRaster, RESOLVED, maskImage } from '../effects/index.js';
-import { transformMatrix, stretchOf, compose, IDENTITY } from '../effects/transform.js';
+import { attrs, esc, num } from '@arraypress/image-effects/svg';
+import { drawEffects, contentBox } from '@arraypress/image-effects';
+import { transformAttr, transformMatrix, stretchOf, compose, IDENTITY } from './transform.js';
 import { renderGroup } from './group.js';
 import { scaledReport } from './report.js';
-import { contentBox } from './content.js';
 
 /** Layer options handled here, for every layer type. */
 export const WRAP_KEYS = ['effects', 'mask', 'knockout', 'clip', 'area'];
@@ -64,7 +63,7 @@ export async function renderWrapped(layer, ctx, scope, renderOne) {
 
   let { defs, body } = grid
     ? await renderGroup(inner, lctx, (/** @type {any} */ part, /** @type {any} */ gctx) => decorate(part, layer, gctx))
-    : await decorateEffects(await renderOne(inner, lctx), layer.effects, lctx);
+    : await drawEffects(await renderOne(inner, lctx), layer.effects, lctx);
   if (geometric) {
     const t = transformAttr(layer.transform, lctx.canvas);
     if (t) body = `<g transform="${t}">${body}</g>`;
@@ -104,61 +103,7 @@ function areaBox(a, ctx, scope) {
  * @returns {Promise<{ defs: string, body: string }>}
  */
 export async function decorate(m, layer, ctx) {
-  return decorateMasks(await decorateEffects(m, layer.effects, ctx), layer, ctx);
-}
-
-/**
- * Effects, in order. Pixel effects are computed on pixels where something
- * can draw them (sharp, a canvas) and copy effects drawn as copies; the
- * rest are SVG filters. An effect's layer `mask` is drawn first (as
- * markup, and as an image for a filter to mix through).
- *
- * @param {{ defs: string, body: string }} m
- * @param {any} list
- * @param {any} ctx
- * @returns {Promise<{ defs: string, body: string }>}
- */
-async function decorateEffects(m, list, ctx) {
-  if (!list) return m;
-  const effects = await Promise.all((Array.isArray(list) ? list : [list]).map((e, i) => withMask(typeof e === 'string' ? { kind: e } : e, ctx, i)));
-  let { defs, body } = m;
-  const filters = async (/** @type {number} */ from, /** @type {number} */ to) => {
-    if (to <= from) return;
-    // In renderImage, filters work over what the layer paints, not the whole canvas.
-    const out = applyEffects(body, effects.slice(from, to), ctx, from, await contentBox({ defs, body }, ctx), defs);
-    defs += out.defs;
-    body = out.body;
-  };
-  let from = 0;
-  for (let i = 0; i < effects.length; i++) {
-    const fx = effects[i];
-    if (!isRaster(fx, ctx)) continue;
-    await filters(from, i);
-    from = i + 1;
-    const raster = await rasterEffect(fx, { defs, body }, ctx, i);
-    if (raster) ({ defs, body } = raster);
-    else await filters(i, i + 1);
-  }
-  await filters(from, effects.length);
-  return { defs, body };
-}
-
-/**
- * An effect with a layer `mask`: the mask's layers drawn (kept on the
- * mask), and for a filter effect drawn as an image too, where something
- * can draw pixels. Other effects come back as they are.
- *
- * @param {any} fx
- * @param {any} ctx
- * @param {number} i
- * @returns {Promise<any>}
- */
-async function withMask(fx, ctx, i) {
-  if (!fx?.mask?.layers || !ctx.stack) return fx;
-  const parts = await ctx.stack(fx.mask.layers, { tag: `fm${i}` });
-  const mask = { ...fx.mask, [RESOLVED]: { defs: parts.map((/** @type {any} */ p) => p.defs).join(''), body: parts.map((/** @type {any} */ p) => p.body).join('') } };
-  if (!isRaster(fx, ctx)) mask[RESOLVED].image = await maskImage(mask, ctx, fx.pad ?? 0.3, fx.kind === 'motion' ? fx.angle ?? 0 : 0);
-  return { ...fx, mask };
+  return decorateMasks(await drawEffects(m, layer.effects, ctx), layer, ctx);
 }
 
 /**

@@ -1,13 +1,11 @@
 /**
- * Canvas size, lengths and anchoring.
- *
- * Lengths are pixels when given as numbers, or CSS-style viewport units as
- * strings: `'6vmin'` (6% of the shorter side), `'4vw'`, `'4vh'`, `'5vmax'`.
- * Defaults are written in these units, so a cover keeps its proportions at
- * any output size.
+ * Canvas size and anchoring. Lengths (`'6vmin'`, `'4vw'`…) resolve with
+ * image-effects' `len`, so layers and effects read them the same way.
  *
  * @module geometry
  */
+
+import { len } from '@arraypress/image-effects/length';
 
 /** Named aspect ratios, as `width / height`. */
 export const ASPECTS = Object.freeze({
@@ -75,34 +73,6 @@ function checkSize(w, h) {
     throw new RangeError(`Cover size must be 1–8192px per side, got ${width}×${height}`);
   }
   return { width, height };
-}
-
-/**
- * Resolve a length to pixels.
- *
- * @param {number | string | undefined | null} value - Pixels, or `'Nvmin'` / `'Nvw'` / `'Nvh'` / `'Nvmax'`.
- * @param {{ width: number, height: number }} canvas - The canvas size.
- * @param {number | string} [fallback=0] - Used when `value` is undefined or null.
- * @returns {number} Pixels.
- * @throws {TypeError} On a string with an unknown unit.
- *
- * @example
- * len('5vmin', { width: 1200, height: 630 });  // 31.5
- * len(undefined, canvas, '6vmin');             // the default
- */
-export function len(value, canvas, fallback = 0) {
-  const v = value ?? fallback;
-  if (typeof v === 'number') return v;
-  const m = String(v).match(/^\s*(-?\d*\.?\d+)\s*(vmin|vmax|vw|vh|px)?\s*$/);
-  if (!m) throw new TypeError(`Invalid length "${v}" (use px numbers or vmin/vmax/vw/vh)`);
-  const n = parseFloat(m[1]);
-  switch (m[2]) {
-    case 'vmin': return (n / 100) * Math.min(canvas.width, canvas.height);
-    case 'vmax': return (n / 100) * Math.max(canvas.width, canvas.height);
-    case 'vw': return (n / 100) * canvas.width;
-    case 'vh': return (n / 100) * canvas.height;
-    default: return n;
-  }
 }
 
 /** The nine anchors, as fractions of the free space along x and y. */

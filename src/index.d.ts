@@ -4,9 +4,9 @@
  * WebP / PNG / AVIF / JPEG.
  */
 
-/** A CSS colour: hex (3/4/6/8 digits), `rgb()`/`rgba()` or `hsl()`/`hsla()`. Alpha is ignored. */
-import type { LayerTransform, Effect, EffectKind, EffectMask } from './effects/index.js';
-import type { Paint } from './effects/paint.js';
+import type { Effect as AnyEffect, EffectKind, EffectMask as AnyEffectMask, Color, Length, Rng } from '@arraypress/image-effects';
+import type { LayerTransform } from './render/transform.js';
+import type { Paint } from './paint/index.js';
 import type { TextPath } from './type/path.js';
 import type { GroupLayer } from './render/group.js';
 import type { DefsLayer, UseLayer } from './render/use.js';
@@ -18,27 +18,29 @@ import type { ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, 
 import type { Zones, PrintInfo, FormatName } from './formats/index.js';
 
 export type { RepeatLayer, DefsLayer, UseLayer, TextSpan, GlyphControl, Cut };
-export type { LayerTransform, Effect, EffectKind, EffectMask, Paint, TextPath, GroupLayer, ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, Zones, PrintInfo, FormatName };
+export type { Color, Length, Rng, LayerTransform, EffectKind, Paint, TextPath, GroupLayer, ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, Zones, PrintInfo, FormatName };
 export type { ShapeSpec, TableCell } from './layers/index.js';
 export type { Format } from './formats/index.js';
 export type { LintIssue } from './lint/index.js';
 export type { Settings } from './platform/index.js';
 
 export { safeBox } from './formats/index.js';
-export { rasterize } from './raster/index.js';
-import type { RasterizeOptions } from './raster/index.js';
+export { rasterize } from '@arraypress/image-effects/raster';
+import type { RasterizeOptions } from '@arraypress/image-effects/raster';
 export type { RasterizeOptions };
 export { lint } from './lint/index.js';
 export { kit, KIT_FORMATS } from './kit/index.js';
 export { FORMATS } from './formats/index.js';
 export { configure } from './platform/index.js';
-export { EFFECTS, EFFECT_OPTIONS } from './effects/index.js';
+export { EFFECTS, EFFECT_OPTIONS } from '@arraypress/image-effects';
 export { valueAt } from './animate/index.js';
+export { toHex, toOklch, fromOklch, mixOklab, mixOklch, onBackground, gradientAt } from '@arraypress/image-effects/color';
+export { createRng, hashString } from '@arraypress/image-effects/rng';
 
-export type Color = string;
-
-/** Pixels, or a viewport unit of the canvas: `'6vmin'`, `'4vw'`, `'4vh'`, `'5vmax'`. */
-export type Length = number | `${number}vmin` | `${number}vmax` | `${number}vw` | `${number}vh` | `${number}px`;
+/** An effect on a layer (image-effects' effects, with masks and maps given as layers). */
+export type Effect = AnyEffect<Layer>;
+/** Where an effect applies: a gradient, or layers. */
+export type EffectMask = AnyEffectMask<Layer>;
 
 /** Where a box sits inside the safe area. */
 export type Anchor =
@@ -974,16 +976,6 @@ export interface RenderImageOptions {
   cache?: boolean | string;
 }
 
-/** Seeded random stream. */
-export interface Rng {
-  next(): number;
-  range(min: number, max: number): number;
-  int(min: number, max: number): number;
-  pick<T>(items: readonly T[]): T;
-  shuffle<T>(items: readonly T[]): T[];
-  chance(p?: number): boolean;
-}
-
 /** An Iconify JSON set (`@iconify-json/<prefix>/icons.json`). */
 export interface IconSet {
   prefix: string;
@@ -998,8 +990,18 @@ export interface IconSet {
 /** Resolve a cover's size and palette and expand its recipe. Pure and synchronous. */
 export function cover(options: CoverOptions | Cover): Cover;
 
-/** Render to an SVG string (text and icons as outlines; byte-identical for the same input). `t`: the time to draw, in seconds, for keyframed layers. */
-export function renderSvg(input: CoverOptions | Cover, options?: { t?: number }): Promise<string>;
+/** How `renderSvg` draws. */
+export interface RenderSvgOptions {
+  /** The time to draw, in seconds, for keyframed layers. */
+  t?: number;
+  /** `'webp'`: embedded photos and pixel effects re-encoded as WebP where smaller (needs sharp). For SVGs shown in browsers; librsvg (sharp) can't draw WebP. */
+  images?: 'webp';
+  /** WebP quality for photos (JPEG sources), 1–100. Default 82. PNG sources go lossless. */
+  quality?: number;
+}
+
+/** Render to an SVG string (text and icons as outlines; byte-identical for the same input). */
+export function renderSvg(input: CoverOptions | Cover, options?: RenderSvgOptions): Promise<string>;
 
 /** Render each page of a two-sided piece: `{ front, back }`. */
 export function renderPages(input: CoverOptions, options?: { pages?: string[] }): Promise<Record<string, string>>;
@@ -1043,21 +1045,6 @@ export function resolvePalette(input?: PaletteInput | Palette): Palette;
 /** Derive a palette from a theme's tokens (or just an accent). */
 export function derivePalette(tokens: { accent: Color; bg?: Color; text?: Color; colors?: Color[]; mode?: 'light' | 'dark' }): Palette;
 
-/** Parse a CSS colour to `#rrggbb`. */
-export function toHex(color: Color): string;
-/** A colour in OKLCH (lightness 0–1, chroma, hue in degrees). */
-export function toOklch(color: Color): { l: number; c: number; h: number };
-/** OKLCH to `#rrggbb` (chroma reduced to fit sRGB). */
-export function fromOklch(lch: { l: number; c: number; h: number }): string;
-/** Mix two colours in OKLab. */
-export function mixOklab(a: Color, b: Color, t: number): string;
-/** `prefer` if it clears `ratio` on every background, else the better of white and near-black (3:1 suits icons, WCAG 1.4.11). */
-export function onBackground(backgrounds: Color | Color[], ratio?: number, prefer?: 'white' | 'black' | Color): string;
-/** The colour of an eased multi-stop gradient at t (0–1), as the gradient layers draw it. */
-export function gradientAt(colors: Color[], t: number, ease?: boolean): string;
-/** Mix two colours in OKLCH (hue the short way; stays vivid). */
-export function mixOklch(a: Color, b: Color, t: number): string;
-
 /** Register an Iconify icon set (no `@iconify-json/*` install needed). */
 export function registerIcons(set: IconSet): void;
 
@@ -1067,17 +1054,11 @@ export function resolveSize(options?: { width?: number; height?: number; aspect?
 /** Named aspect ratios (width / height). */
 export const ASPECTS: Readonly<{ '1:1': number; '16:9': number; '4:5': number; '3:2': number; '4:3': number; '2:1': number; '9:16': number; og: number }>;
 
-/** A seeded random stream (for custom recipes). */
-export function createRng(seed: string | number): Rng;
-
 /** Dominant colours of a photo, most common first (needs sharp). */
 export function extractPalette(src: string | Uint8Array, options?: { count?: number }): Promise<string[]>;
 
 /** Classic risograph inks, by name (approximations). */
 export const RISO_INKS: Readonly<Record<'pink' | 'blue' | 'yellow' | 'teal' | 'red' | 'green' | 'orange' | 'purple' | 'navy' | 'black', string>>;
-
-/** Hash a string to a 32-bit unsigned integer. */
-export function hashString(str: string, salt?: number): number;
 
 /** The layer renderers, by type (for introspection). */
 export const layers: Readonly<Record<Layer['type'], (layer: any, context: any) => unknown>>;

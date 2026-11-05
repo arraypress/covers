@@ -6,8 +6,8 @@
  * @module layers/soft
  */
 
-import { attrs, num } from '../svg.js';
-import { toBase64 } from '../platform/bytes.js';
+import { attrs, num } from '@arraypress/image-effects/svg';
+import { toBase64 } from '../platform/index.js';
 
 /**
  * Blur markup by `sigma` (px in the layer's units). In `renderImage`, the markup

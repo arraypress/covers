@@ -5,7 +5,7 @@
  * @module type/line
  */
 
-import { num } from '../svg.js';
+import { num } from '@arraypress/image-effects/svg';
 import { loadFont, pickFont, variationsFor } from '../fonts.js';
 import { shape, outline } from '../text.js';
 import { pixelFace } from './pixel.js';

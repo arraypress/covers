@@ -6,7 +6,7 @@ import {
   cover, renderSvg, renderImage, renderPages, defineRecipe, loadRecipe, configure, registerFont, FORMATS, lint, kit, KIT_FORMATS, safeBox, EFFECTS, valueAt,
 } from '../src/index.js';
 import { code128 } from '../src/layers/code128.js';
-import { RASTER_EFFECTS } from '../src/effects/index.js';
+import { RASTER_EFFECTS } from '@arraypress/image-effects';
 import { parseSfnt } from '../src/type/sfnt.js';
 import { decodeFont, bundledFonts, loadFont } from '../src/fonts.js';
 import { generated } from '../scripts/generate.mjs';
@@ -362,9 +362,9 @@ test('JSON: nested layers validated, {{slots}} in raw svg, list operators, paths
   assert.match(await renderSvg(c), new RegExp(`fill="${c.palette.accent}"`));
 });
 
-test('the three flyer ports (examples/recipes) validate and render at 4:5 and 3000×3000', async () => {
+test('the published flyers (recipes/flyers) validate and render at 4:5 and 3000×3000', async () => {
   for (const f of ['bloomfall', 'grid-rest-rhythm', 'wheatpaste-torn']) {
-    const recipe = loadRecipe(new URL(`examples/recipes/${f}.json`, root));
+    const recipe = loadRecipe(new URL(`recipes/flyers/${f}.json`, root));
     for (const format of ['flyer', 'release']) {
       const svg = await renderSvg({ recipe, seed: f, format, mark: MARK, photo, cutout: photo });
       assert.match(svg, format === 'flyer' ? /width="1600" height="2000"/ : /width="3000" height="3000"/, `${f} ${format}`);

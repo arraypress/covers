@@ -23,8 +23,7 @@
  * @module fonts
  */
 
-import { shaperModule, loadBytes, inflate, unbrotli, unbrotliSync, packageFileSync, registry, node } from './platform/index.js';
-import { u8 } from './platform/bytes.js';
+import { shaperModule, loadBytes, inflate, unbrotli, unbrotliSync, packageFileSync, registry, node, u8 } from './platform/index.js';
 import { parseSfnt } from './type/sfnt.js';
 import { woff2Directory, woff2ToSfnt } from './type/woff2.js';
 

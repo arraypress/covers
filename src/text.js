@@ -21,7 +21,7 @@
  * @module text
  */
 
-import { num } from './svg.js';
+import { num } from '@arraypress/image-effects/svg';
 
 /**
  * A shaped run of text.

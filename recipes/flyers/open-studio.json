@@ -1,0 +1,69 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "open-studio",
+  "description": "Neo-Swiss, type only: cobalt with the grid's columns drawn through it, tiny meta in the top cells, a two-line headline justified to the width, and the month as a giant black numeral cropped by the edge. With format 'release' it re-composes for a 3000×3000 cover: the name in the top band, the release title as the justified headline, the numeral cropped by the bottom edge. Re-expressed from the Logomarks scenes lab (FlyerCards, 'Neo-Swiss · type only').",
+  "params": {
+    "field": "#2433f0",
+    "ink": "#ffffff",
+    "numeralColor": "#0b0b0b",
+    "numeral": "04",
+    "headline": ["Open studio,", "open doors."],
+    "meta": [
+      ["Bureau", "Open", "Sa 17.04", "11 — 19 h"],
+      ["Ostrand", "Studio Days", "So 18.04", "Free"]
+    ],
+    "floors": "Ground — print\nFirst — type\nRoof — coffee",
+    "address": "Lindqvistweg 8\nHarrow Quay",
+    "artist": "Bureau Ostrand",
+    "release": "Open rooms."
+  },
+  "layers": [
+    { "id": "field", "type": "solid", "color": "{field}" },
+    {
+      "id": "poster",
+      "type": "group",
+      "when": { "not": { "format": "release" } },
+      "viewBox": [0, 0, 400, 500],
+      "fit": "contain",
+      "layers": [
+        { "id": "numeral", "type": "text", "content": "{numeral}", "font": "Inter Tight", "weight": 800, "size": 470, "letterSpacing": -0.0809, "x": -22, "y": 574, "color": "{numeralColor}" },
+        { "id": "columns", "type": "shape", "stroke": "{ink}", "strokeWidth": 0.6, "opacity": 0.4, "items": [{ "kind": "line", "x1": 108, "y1": 0, "x2": 108, "y2": 500 }, { "kind": "line", "x1": 200, "y1": 0, "x2": 200, "y2": 500 }, { "kind": "line", "x1": 292, "y1": 0, "x2": 292, "y2": 500 }] },
+        { "id": "rules", "type": "shape", "stroke": "{ink}", "strokeWidth": 0.8, "items": [{ "kind": "line", "x1": 16, "y1": 48, "x2": 384, "y2": 48 }, { "kind": "line", "x1": 16, "y1": 184, "x2": 384, "y2": 184 }] },
+        {
+          "id": "meta",
+          "type": "table",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 9,
+          "letterSpacing": -0.011,
+          "color": "{ink}",
+          "y": 26,
+          "rowHeight": 11,
+          "columns": [{ "x": 16, "weight": 700 }, { "x": 112 }, { "x": 204 }, { "x": 296 }],
+          "rows": "{meta}"
+        },
+        { "id": "floors", "type": "text", "content": "{floors}", "font": "Inter Tight", "weight": 400, "size": 9, "letterSpacing": -0.011, "lineHeight": 1.2222, "x": 296, "y": 202, "color": "{ink}" },
+        { "id": "address", "type": "text", "content": "{address}", "font": "Inter Tight", "weight": 400, "size": 9, "letterSpacing": -0.011, "lineHeight": 1.2222, "x": 296, "y": 246, "color": "{ink}" },
+        { "id": "line1", "type": "text", "content": "{headline.0}", "font": "Inter Tight", "weight": 700, "size": 60, "letterSpacing": -0.0533, "x": 13, "y": 110, "width": 374, "color": "{ink}" },
+        { "id": "line2", "type": "text", "content": "{headline.1}", "font": "Inter Tight", "weight": 700, "size": 60, "letterSpacing": -0.0533, "x": 13, "y": 168, "width": 374, "color": "{ink}" },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 345, "y": 9, "size": 39, "color": "{ink}", "when": "mark" }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "when": { "format": "release" },
+      "viewBox": [0, 0, 400, 400],
+      "fit": "contain",
+      "layers": [
+        { "id": "numeral", "type": "text", "content": "{numeral}", "font": "Inter Tight", "weight": 800, "size": 470, "letterSpacing": -0.0809, "x": -22, "y": 522, "color": "{numeralColor}" },
+        { "id": "columns", "type": "shape", "stroke": "{ink}", "strokeWidth": 0.6, "opacity": 0.4, "items": [{ "kind": "line", "x1": 108, "y1": 0, "x2": 108, "y2": 400 }, { "kind": "line", "x1": 200, "y1": 0, "x2": 200, "y2": 400 }, { "kind": "line", "x1": 292, "y1": 0, "x2": 292, "y2": 400 }] },
+        { "id": "rules", "type": "shape", "stroke": "{ink}", "strokeWidth": 0.8, "items": [{ "kind": "line", "x1": 16, "y1": 72, "x2": 384, "y2": 72 }, { "kind": "line", "x1": 16, "y1": 178, "x2": 384, "y2": 178 }] },
+        { "id": "artist", "type": "text", "content": "{artist}", "font": "Inter Tight", "weight": 700, "size": 38, "letterSpacing": -0.045, "x": 14, "y": 52, "color": "{ink}" },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 345, "y": 17, "size": 39, "color": "{ink}", "when": "mark" },
+        { "id": "title", "type": "text", "content": "{release}", "font": "Inter Tight", "weight": 700, "size": 96, "fit": "width", "letterSpacing": -0.0533, "x": 13, "y": 152, "width": 374, "color": "{ink}" }
+      ]
+    },
+    { "id": "print", "type": "grain", "amount": 0.04, "size": 1.5, "blend": "multiply" }
+  ]
+}

@@ -1,0 +1,433 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "chrome",
+  "description": "Y2K chrome: the mark on its own in the upper half and the artist in wide chrome lettering under it, both painted with a reflected horizon (pale sky, a hard dark horizon, warm ground) with a dark keyline, an inner bevel and a hard drop shadow; crisp four-point glints round the mark; the title under the name, on a deep gradient of the accent. No lighting filters, no blur on the metal, nothing overlapping. Slots: {name} (artist), {title} (release), {mark}, the palette (accent: the sky). Fonts: Unbounded (variable) (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "requires": [
+    "mark"
+  ],
+  "layers": [
+    {
+      "id": "sky",
+      "type": "radial",
+      "x": 0.5,
+      "y": 0.3,
+      "radius": "80vmax",
+      "colors": [
+        {
+          "mix": [
+            "@accent",
+            "#000000",
+            0.35
+          ]
+        },
+        {
+          "mix": [
+            "@accent",
+            "#000000",
+            0.9
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 310,
+          "y": 88,
+          "size": 380,
+          "id": "markShadow",
+          "color": "#000000",
+          "opacity": 0.45,
+          "transform": {
+            "translate": [
+              7,
+              12
+            ]
+          },
+          "effects": [
+            {
+              "kind": "border",
+              "width": 4,
+              "color": "#000000"
+            }
+          ]
+        },
+        {
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 310,
+          "y": 88,
+          "size": 380,
+          "id": "markKeyline",
+          "color": "#0b0f18",
+          "effects": [
+            {
+              "kind": "border",
+              "width": 4,
+              "color": "#0b0f18"
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "shape",
+          "kind": "rect",
+          "x": 310,
+          "y": 110.8,
+          "width": 380,
+          "height": 334.4,
+          "fill": {
+            "type": "linear",
+            "angle": 180,
+            "colors": [
+              "#eef6ff",
+              "#9ec9ef",
+              "#1b2433",
+              "#7a5a3a",
+              "#d8b47a",
+              "#f3e1b8"
+            ],
+            "stops": [
+              0,
+              0.52,
+              0.52,
+              0.62,
+              0.8200000000000001,
+              1
+            ]
+          },
+          "clip": [
+            {
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 310,
+              "y": 88,
+              "size": 380
+            }
+          ]
+        },
+        {
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 310,
+          "y": 88,
+          "size": 380,
+          "id": "markBevel",
+          "color": "#ffffff",
+          "opacity": 0.85,
+          "knockout": [
+            {
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 310,
+              "y": 88,
+              "size": 380,
+              "transform": {
+                "translate": [
+                  0,
+                  6
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 310,
+          "y": 88,
+          "size": 380,
+          "id": "markShade",
+          "color": "#0b0f18",
+          "opacity": 0.5,
+          "knockout": [
+            {
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 310,
+              "y": 88,
+              "size": 380,
+              "transform": {
+                "translate": [
+                  0,
+                  -5
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "glints",
+          "type": "shape",
+          "fill": "#ffffff",
+          "items": [
+            {
+              "kind": "star",
+              "cx": 724,
+              "cy": 118,
+              "r": 40,
+              "inner": 0.07,
+              "points": 4
+            },
+            {
+              "kind": "star",
+              "cx": 724,
+              "cy": 118,
+              "r": 16.8,
+              "inner": 0.12,
+              "points": 4,
+              "rotate": 45
+            },
+            {
+              "kind": "star",
+              "cx": 270,
+              "cy": 410,
+              "r": 26,
+              "inner": 0.07,
+              "points": 4
+            },
+            {
+              "kind": "star",
+              "cx": 270,
+              "cy": 410,
+              "r": 10.92,
+              "inner": 0.12,
+              "points": 4,
+              "rotate": 45
+            },
+            {
+              "kind": "star",
+              "cx": 762,
+              "cy": 368,
+              "r": 17,
+              "inner": 0.07,
+              "points": 4
+            },
+            {
+              "kind": "star",
+              "cx": 762,
+              "cy": 368,
+              "r": 7.14,
+              "inner": 0.12,
+              "points": 4,
+              "rotate": 45
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": {
+            "upper": "{name}"
+          },
+          "font": "Unbounded",
+          "weight": 900,
+          "size": 200,
+          "letterSpacing": 0,
+          "anchor": "top",
+          "position": {
+            "x": 0.5,
+            "y": 0.555
+          },
+          "align": "center",
+          "maxWidth": 900,
+          "fit": "width",
+          "maxHeight": 170,
+          "transform": {
+            "translate": [
+              5,
+              9
+            ]
+          },
+          "id": "nameShadow",
+          "color": "#000000",
+          "strokes": [
+            {
+              "color": "#0b0f18",
+              "width": 7
+            }
+          ],
+          "opacity": 0.5
+        },
+        {
+          "type": "text",
+          "content": {
+            "upper": "{name}"
+          },
+          "font": "Unbounded",
+          "weight": 900,
+          "size": 200,
+          "letterSpacing": 0,
+          "anchor": "top",
+          "position": {
+            "x": 0.5,
+            "y": 0.555
+          },
+          "align": "center",
+          "maxWidth": 900,
+          "fit": "width",
+          "maxHeight": 170,
+          "id": "name",
+          "fill": {
+            "type": "linear",
+            "angle": 180,
+            "colors": [
+              "#eef6ff",
+              "#9ec9ef",
+              "#1b2433",
+              "#7a5a3a",
+              "#d8b47a",
+              "#f3e1b8"
+            ],
+            "stops": [
+              0,
+              0.55,
+              0.55,
+              0.65,
+              0.8500000000000001,
+              1
+            ]
+          },
+          "strokes": [
+            {
+              "color": "#0b0f18",
+              "width": 7
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": {
+            "upper": "{name}"
+          },
+          "font": "Unbounded",
+          "weight": 900,
+          "size": 200,
+          "letterSpacing": 0,
+          "anchor": "top",
+          "position": {
+            "x": 0.5,
+            "y": 0.555
+          },
+          "align": "center",
+          "maxWidth": 900,
+          "fit": "width",
+          "maxHeight": 170,
+          "id": "nameBevel",
+          "color": "#ffffff",
+          "opacity": 0.9,
+          "knockout": [
+            {
+              "type": "text",
+              "content": {
+                "upper": "{name}"
+              },
+              "font": "Unbounded",
+              "weight": 900,
+              "size": 200,
+              "letterSpacing": 0,
+              "anchor": "top",
+              "position": {
+                "x": 0.5,
+                "y": 0.555
+              },
+              "align": "center",
+              "maxWidth": 900,
+              "fit": "width",
+              "maxHeight": 170,
+              "transform": {
+                "translate": [
+                  0,
+                  3.2
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "content": {
+            "upper": "{name}"
+          },
+          "font": "Unbounded",
+          "weight": 900,
+          "size": 200,
+          "letterSpacing": 0,
+          "anchor": "top",
+          "position": {
+            "x": 0.5,
+            "y": 0.555
+          },
+          "align": "center",
+          "maxWidth": 900,
+          "fit": "width",
+          "maxHeight": 170,
+          "id": "nameShade",
+          "color": "#0b0f18",
+          "opacity": 0.45,
+          "knockout": [
+            {
+              "type": "text",
+              "content": {
+                "upper": "{name}"
+              },
+              "font": "Unbounded",
+              "weight": 900,
+              "size": 200,
+              "letterSpacing": 0,
+              "anchor": "top",
+              "position": {
+                "x": 0.5,
+                "y": 0.555
+              },
+              "align": "center",
+              "maxWidth": 900,
+              "fit": "width",
+              "maxHeight": 170,
+              "transform": {
+                "translate": [
+                  0,
+                  -2.6
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": {
+            "upper": "{title}"
+          },
+          "font": "Unbounded",
+          "weight": 500,
+          "size": 84,
+          "lineHeight": 1.12,
+          "letterSpacing": 0.03,
+          "x": 500,
+          "y": "{layout.name.bottom + 140}",
+          "align": "center",
+          "maxWidth": 920,
+          "maxLines": 2,
+          "balance": true,
+          "color": "#eef6ff"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.04
+    }
+  ]
+}

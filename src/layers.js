@@ -14,11 +14,12 @@
  * @module layers
  */
 
-import { loadBytes } from './platform/index.js';
-import { toBase64, latin1, utf8 } from './platform/bytes.js';
-import { attrs, esc, layerAttrs, num } from './svg.js';
-import { len, place, anchorAlign, unit, regionPx } from './geometry.js';
-import { toHex, mixOklab, toOklch, fromOklch } from './color.js';
+import { loadBytes, toBase64 } from './platform/index.js';
+import { attrs, esc, num } from '@arraypress/image-effects/svg';
+import { imageMime } from '@arraypress/image-effects';
+import { len } from '@arraypress/image-effects/length';
+import { place, anchorAlign, unit, regionPx } from './geometry.js';
+import { toHex, mixOklab, toOklch, fromOklch } from '@arraypress/image-effects/color';
 import { harfbuzz, loadFont, pickFont } from './fonts.js';
 import { layout, runPath, caseText } from './text.js';
 import { resolveIcon, parseSvgIcon } from './icons.js';
@@ -29,8 +30,8 @@ import { ink, dither, contour, waveform, tiles, rule } from './print.js';
 import { typeset, wantsType } from './type/index.js';
 import { recordLayout } from './type/layout-ref.js';
 import { shape, svg, table, barcode, perforation, tear, texture } from './layers/index.js';
-import { pos } from './layers/util.js';
-import { paint } from './effects/paint.js';
+import { pos, layerAttrs } from './layers/util.js';
+import { paint } from './paint/index.js';
 import { imageSize } from './lint/image-size.js';
 
 /**
@@ -41,7 +42,7 @@ import { imageSize } from './lint/image-size.js';
  * @property {number} height - Canvas height in px.
  * @property {{ width: number, height: number }} canvas - The same, as an object.
  * @property {import('./index.js').Palette} palette - The resolved palette.
- * @property {import('./rng.js').Rng} rng - This layer's own random stream.
+ * @property {import('@arraypress/image-effects/rng').Rng} rng - This layer's own random stream.
  * @property {string} id - A unique id prefix for this layer's defs.
  * @property {import('./index.js').FontSource[]} fonts - Available fonts (Inter last).
  * @property {any} [sharp] - The `sharp` module, when available.
@@ -421,7 +422,7 @@ export async function image(layer, ctx) {
   const fit = layer.fit ?? 'cover';
   const focus = layer.focus ?? 'center';
   let bytes = typeof layer.src === 'string' || layer.src instanceof URL ? await readSource(layer.src) : await loadBytes(layer.src, 'image');
-  let mime = sniff(bytes);
+  let mime = imageMime(bytes);
   let preserve = fit === 'stretch' ? 'none' : `${alignFor(focus)} ${fit === 'contain' ? 'meet' : 'slice'}`;
   let sharpBlurred = false;
 
@@ -546,23 +547,6 @@ function defaultDuotone(p) {
 /** @param {string} src @returns {Promise<Uint8Array>} */
 async function readSource(src) {
   return loadBytes(src, 'image');
-}
-
-/**
- * Sniff an image's MIME type from its first bytes.
- *
- * @param {Uint8Array} b - Image bytes.
- * @returns {string | undefined} The MIME type.
- */
-export function sniff(b) {
-  if (b[0] === 0x89 && b[1] === 0x50) return 'image/png';
-  if (b[0] === 0xff && b[1] === 0xd8) return 'image/jpeg';
-  if (b[0] === 0x47 && b[1] === 0x49) return 'image/gif';
-  const head = latin1(b.subarray(0, 32));
-  if (head.startsWith('RIFF') && head.slice(8, 12) === 'WEBP') return 'image/webp';
-  if (head.slice(4, 12) === 'ftypavif' || head.slice(4, 12) === 'ftypavis') return 'image/avif';
-  if (/^\s*(<\?xml|<svg)/i.test(utf8(b.subarray(0, 256)))) return 'image/svg+xml';
-  return undefined;
 }
 
 // ---------------------------------------------------------------------------

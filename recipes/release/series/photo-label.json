@@ -1,0 +1,475 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "photo-label",
+  "description": "Series (v2): the split label turned on its side, from a photo. The left half is the photo dragged into streaks along a seeded angle (covers' motion blur, drawn on pixels in renderImage), washed to the palette; the right half is plain paper with the type as a column: artist bold and title regular near the top, '{label} \u2014 {side}' tracked small, the catalogue number in covers' built-in pixel face low down. The same spindle device as fluid-label (segmented rings and a square, white on the photo, ink on the paper), a half-clock of ticks round the left rim, the credits on one arc round the right rim, the mark white at 9 o'clock. view: 'disc' for the label alone. Slots: {photo}, {artist}, {title}, {label}, {side}, {catalog}, {credits}, {mixes}, {mark}, {paper}, the palette (bg = sleeve and ink, colors = the wash). Fonts: Geist (and the built-in pixel face).",
+  "requires": [
+    "mark",
+    "photo"
+  ],
+  "params": {
+    "view": "sleeve",
+    "artist": "Artist",
+    "side": "Side A",
+    "catalog": "",
+    "credits": "",
+    "mixes": "",
+    "paper": "#efe9df",
+    "wash": 0.5,
+    "drag": 55
+  },
+  "vars": {
+    "a": {
+      "range": [
+        0,
+        360
+      ]
+    },
+    "b1": {
+      "range": [
+        180,
+        420
+      ]
+    },
+    "b2": {
+      "range": [
+        560,
+        820
+      ]
+    },
+    "b3": {
+      "range": [
+        240,
+        760
+      ]
+    },
+    "angle": {
+      "pick": [
+        -38,
+        -32,
+        -46,
+        37,
+        45
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "sleeve",
+      "type": "solid",
+      "color": "@bg",
+      "when": {
+        "view": "sleeve"
+      }
+    },
+    {
+      "id": "record",
+      "type": "group",
+      "viewBox": {
+        "if": {
+          "view": "disc"
+        },
+        "then": [
+          64,
+          64,
+          872,
+          872
+        ],
+        "else": [
+          0,
+          0,
+          1000,
+          1000
+        ]
+      },
+      "fit": "cover",
+      "knockout": [
+        {
+          "id": "hole",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 500,
+          "r": 19,
+          "fill": "#000000"
+        }
+      ],
+      "clip": [
+        {
+          "id": "disc",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 500,
+          "r": 436,
+          "fill": "#000000"
+        }
+      ],
+      "layers": [
+        {
+          "id": "base",
+          "type": "shape",
+          "kind": "rect",
+          "x": -100,
+          "y": -100,
+          "width": 1200,
+          "height": 1200,
+          "fill": {
+            "type": "linear",
+            "colors": [
+              "@colors.0",
+              "@colors.1"
+            ],
+            "angle": "$a"
+          }
+        },
+        {
+          "id": "field",
+          "type": "group",
+          "layers": [
+            {
+              "id": "smear",
+              "type": "image",
+              "src": "{photo}",
+              "x": 0,
+              "y": 0,
+              "width": 1000,
+              "height": 1000,
+              "fit": "cover",
+              "effects": [
+                {
+                  "kind": "motion",
+                  "angle": "$angle",
+                  "length": "{drag}"
+                },
+                {
+                  "kind": "saturate",
+                  "amount": 1.35
+                }
+              ]
+            },
+            {
+              "id": "wash",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 1000,
+              "height": 1000,
+              "blend": "soft-light",
+              "opacity": "{wash}",
+              "fill": {
+                "type": "linear",
+                "colors": [
+                  "@colors.0",
+                  "@colors.1",
+                  "@colors.2"
+                ],
+                "angle": {
+                  "add": [
+                    "$a",
+                    90
+                  ]
+                }
+              }
+            },
+            {
+              "id": "sheen",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b3",
+              "cy": "$b2",
+              "rx": 300,
+              "ry": 50,
+              "rotate": "$a",
+              "fill": "#ffffff",
+              "opacity": 0.28,
+              "soft": 30
+            }
+          ]
+        },
+        {
+          "id": "paper",
+          "type": "shape",
+          "kind": "rect",
+          "x": 500,
+          "y": 0,
+          "width": 500,
+          "height": 1000,
+          "fill": "{paper}"
+        },
+        {
+          "id": "deviceTop",
+          "type": "group",
+          "clip": [
+            {
+              "id": "deviceTopClip",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 500,
+              "height": 1000,
+              "fill": "#000000"
+            }
+          ],
+          "layers": [
+            {
+              "id": "deviceTopRings",
+              "type": "shape",
+              "fill": "none",
+              "stroke": "#ffffff",
+              "strokeWidth": 1.6,
+              "items": [
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 48,
+                  "dash": [
+                    3,
+                    6
+                  ]
+                },
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 66,
+                  "dash": [
+                    22,
+                    8
+                  ]
+                },
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 86,
+                  "dash": [
+                    60,
+                    10,
+                    4,
+                    10
+                  ]
+                },
+                {
+                  "kind": "rect",
+                  "x": 406,
+                  "y": 406,
+                  "width": 188,
+                  "height": 188
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "deviceBottom",
+          "type": "group",
+          "clip": [
+            {
+              "id": "deviceBottomClip",
+              "type": "shape",
+              "kind": "rect",
+              "x": 500,
+              "y": 0,
+              "width": 500,
+              "height": 1000,
+              "fill": "#000000"
+            }
+          ],
+          "layers": [
+            {
+              "id": "deviceBottomRings",
+              "type": "shape",
+              "fill": "none",
+              "stroke": "@bg",
+              "strokeWidth": 1.6,
+              "items": [
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 48,
+                  "dash": [
+                    3,
+                    6
+                  ]
+                },
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 66,
+                  "dash": [
+                    22,
+                    8
+                  ]
+                },
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 86,
+                  "dash": [
+                    60,
+                    10,
+                    4,
+                    10
+                  ]
+                },
+                {
+                  "kind": "rect",
+                  "x": 406,
+                  "y": 406,
+                  "width": 188,
+                  "height": 188
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ticks",
+          "type": "repeat",
+          "count": 31,
+          "cx": 500,
+          "cy": 500,
+          "radius": 422,
+          "start": 180,
+          "sweep": 180,
+          "layer": {
+            "type": "shape",
+            "kind": "line",
+            "x1": 0,
+            "y1": 0,
+            "x2": 0,
+            "y2": "{#i % 5 == 0 ? 30 : 13}",
+            "stroke": "#ffffff",
+            "strokeWidth": "{#i % 5 == 0 ? 2.4 : 1.4}"
+          }
+        },
+        {
+          "id": "stamp",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 118,
+          "y": 475,
+          "size": 50,
+          "color": "#ffffff"
+        },
+        {
+          "id": "credits",
+          "type": "text",
+          "when": "credits",
+          "content": {
+            "upper": "{credits}"
+          },
+          "font": "Geist",
+          "weight": 500,
+          "size": 11.5,
+          "letterSpacing": 0.08,
+          "path": {
+            "kind": "arc",
+            "cx": 500,
+            "cy": 500,
+            "r": 408,
+            "start": 28,
+            "end": 168,
+            "direction": "cw"
+          },
+          "startOffset": 0.5,
+          "align": "center",
+          "color": "@bg",
+          "opacity": 0.85
+        },
+        {
+          "id": "artist",
+          "type": "text",
+          "content": "{artist}",
+          "font": "Geist",
+          "weight": 700,
+          "size": 34,
+          "letterSpacing": -0.02,
+          "x": 540,
+          "y": 236,
+          "maxWidth": 270,
+          "fit": "shrink",
+          "maxLines": 1,
+          "color": "@bg"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Geist",
+          "weight": 400,
+          "size": 34,
+          "letterSpacing": -0.02,
+          "x": 540,
+          "y": 276,
+          "maxWidth": 270,
+          "maxLines": 2,
+          "lineHeight": 1.1,
+          "color": "@bg"
+        },
+        {
+          "id": "mixes",
+          "type": "text",
+          "when": "mixes",
+          "content": "{mixes}",
+          "font": "Geist",
+          "weight": 500,
+          "size": 15,
+          "lineHeight": 1.35,
+          "x": 540,
+          "y": "{layout.title.bottom + 36}",
+          "color": "@bg",
+          "opacity": 0.75
+        },
+        {
+          "id": "catalog",
+          "type": "text",
+          "when": "catalog",
+          "content": {
+            "upper": "{catalog}"
+          },
+          "font": "pixel",
+          "size": 44,
+          "letterSpacing": 0.08,
+          "x": 540,
+          "y": 780,
+          "align": "left",
+          "maxWidth": 330,
+          "fit": "shrink",
+          "color": "@bg",
+          "maxLines": 1
+        },
+        {
+          "id": "footer",
+          "type": "text",
+          "content": {
+            "upper": "{label} \u2014 {side}"
+          },
+          "font": "Geist",
+          "weight": 600,
+          "size": 14,
+          "letterSpacing": 0.28,
+          "x": 540,
+          "y": 650,
+          "align": "left",
+          "color": "@bg",
+          "opacity": 0.8
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.08,
+      "when": {
+        "view": "sleeve"
+      }
+    }
+  ]
+}

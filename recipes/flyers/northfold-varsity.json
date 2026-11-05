@@ -1,0 +1,618 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "northfold-varsity",
+  "description": "Varsity print: the name arched in three colours (red, a cream keyline, a navy outline), the mark in a crest, EST. 2026 either side, a ribbon, worn ink on cream stock. Re-expressed from the Logomarks scenes lab (FlyerCards2, 'Varsity · print'). The release cover keeps the arched name, the crest and a bigger ribbon carrying the title.",
+  "params": {
+    "name": "NORTHFOLD",
+    "kicker": "★ PROPERTY OF ★",
+    "est": [
+      "EST.",
+      "2026"
+    ],
+    "ribbon": "ROWING CLUB",
+    "dept": "ATHLETIC DEPT.",
+    "foot": "HARLOW · SINCE MMXXVI · No. 26",
+    "artist": "Northfold",
+    "release": "Rowing Club",
+    "paper": "#f1e8d3",
+    "navy": "#1c2747",
+    "red": "#b8322a",
+    "darkRed": "#8c231d",
+    "deepRed": "#5e1712"
+  },
+  "layers": [
+    {
+      "id": "paper",
+      "type": "solid",
+      "color": "{paper}"
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.12,
+      "blend": "multiply"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "format": "release"
+        }
+      },
+      "layers": [
+        {
+          "id": "print",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "markup": "<feTurbulence type=\"fractalNoise\" baseFrequency=\"0.9\" numOctaves=\"2\" seed=\"14\" result=\"n\"/><feColorMatrix in=\"n\" type=\"matrix\" values=\"0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -9 6.4\" result=\"keep\"/><feComposite in=\"SourceGraphic\" in2=\"keep\" operator=\"in\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "kicker",
+              "type": "text",
+              "content": "{kicker}",
+              "font": "Big Shoulders Display",
+              "weight": 800,
+              "size": 15,
+              "letterSpacing": 0.4,
+              "x": 197,
+              "y": 56,
+              "align": "center",
+              "color": "{navy}"
+            },
+            {
+              "id": "name",
+              "type": "text",
+              "content": "{name}",
+              "font": "Big Shoulders Display",
+              "weight": 900,
+              "size": 74,
+              "letterSpacing": 0.0135,
+              "color": "{red}",
+              "strokes": [
+                {
+                  "color": "{navy}",
+                  "width": 13
+                },
+                {
+                  "color": "{paper}",
+                  "width": 6.5
+                }
+              ],
+              "path": {
+                "kind": "arc",
+                "cx": 200,
+                "cy": 330,
+                "r": 186,
+                "start": -90,
+                "end": 90
+              }
+            },
+            {
+              "id": "crest",
+              "type": "group",
+              "transform": {
+                "translate": [
+                  0,
+                  0
+                ]
+              },
+              "layers": [
+                {
+                  "id": "shield",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M146 176H254V236C254 280 226 302 200 316C174 302 146 280 146 236Z",
+                  "fill": "{navy}"
+                },
+                {
+                  "id": "keyline",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M153 183H247V236C247 275 222 294 200 307C178 294 153 275 153 236Z",
+                  "fill": "none",
+                  "stroke": "{paper}",
+                  "strokeWidth": 2.2
+                },
+                {
+                  "id": "mark",
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 160,
+                  "y": 190,
+                  "size": 80,
+                  "color": "{paper}",
+                  "when": "mark"
+                }
+              ]
+            },
+            {
+              "id": "est",
+              "type": "text",
+              "content": "{est.0}",
+              "font": "Big Shoulders Display",
+              "weight": 900,
+              "size": 30,
+              "letterSpacing": 0,
+              "x": 104,
+              "y": 252,
+              "align": "center",
+              "color": "{navy}"
+            },
+            {
+              "id": "year",
+              "type": "text",
+              "content": "{est.1}",
+              "font": "Big Shoulders Display",
+              "weight": 900,
+              "size": 30,
+              "letterSpacing": 0,
+              "x": 296,
+              "y": 252,
+              "align": "center",
+              "color": "{navy}"
+            },
+            {
+              "id": "starL",
+              "type": "shape",
+              "kind": "polygon",
+              "points": [
+                [
+                  104,
+                  212
+                ],
+                [
+                  106,
+                  217.2
+                ],
+                [
+                  111.6,
+                  217.5
+                ],
+                [
+                  107.2,
+                  221.1
+                ],
+                [
+                  108.7,
+                  226.5
+                ],
+                [
+                  104,
+                  223.4
+                ],
+                [
+                  99.3,
+                  226.5
+                ],
+                [
+                  100.8,
+                  221.1
+                ],
+                [
+                  96.4,
+                  217.5
+                ],
+                [
+                  102,
+                  217.2
+                ]
+              ],
+              "fill": "{red}"
+            },
+            {
+              "id": "starR",
+              "type": "shape",
+              "kind": "polygon",
+              "points": [
+                [
+                  296,
+                  212
+                ],
+                [
+                  298,
+                  217.2
+                ],
+                [
+                  303.6,
+                  217.5
+                ],
+                [
+                  299.2,
+                  221.1
+                ],
+                [
+                  300.7,
+                  226.5
+                ],
+                [
+                  296,
+                  223.4
+                ],
+                [
+                  291.3,
+                  226.5
+                ],
+                [
+                  292.8,
+                  221.1
+                ],
+                [
+                  288.4,
+                  217.5
+                ],
+                [
+                  294,
+                  217.2
+                ]
+              ],
+              "fill": "{red}"
+            },
+            {
+              "id": "ribbon",
+              "type": "group",
+              "layers": [
+                {
+                  "id": "tailL",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M100 352H52L64 372L52 392H100Z",
+                  "fill": "{darkRed}"
+                },
+                {
+                  "id": "tailR",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M300 352H348L336 372L348 392H300Z",
+                  "fill": "{darkRed}"
+                },
+                {
+                  "id": "foldL",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M86 340L100 352V368L86 356Z",
+                  "fill": "{deepRed}"
+                },
+                {
+                  "id": "foldR",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M314 340L300 352V368L314 356Z",
+                  "fill": "{deepRed}"
+                },
+                {
+                  "id": "band",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M86 330Q200 352 314 330V362Q200 384 86 362Z",
+                  "fill": "{red}"
+                },
+                {
+                  "id": "ribbonText",
+                  "type": "text",
+                  "content": "{ribbon}",
+                  "font": "Big Shoulders Display",
+                  "weight": 800,
+                  "size": 21,
+                  "letterSpacing": 0.143,
+                  "color": "{paper}",
+                  "path": {
+                    "d": "M92 352Q200 374 308 352"
+                  },
+                  "dy": 0.05999999999999961
+                }
+              ]
+            },
+            {
+              "id": "dept",
+              "type": "text",
+              "content": "{dept}",
+              "font": "Big Shoulders Display",
+              "weight": 900,
+              "size": 34,
+              "letterSpacing": 0.0588,
+              "x": 199,
+              "y": 424,
+              "align": "center",
+              "color": "{navy}"
+            },
+            {
+              "id": "deptRule",
+              "type": "shape",
+              "kind": "rect",
+              "x": 76,
+              "y": 436,
+              "width": 248,
+              "height": 2,
+              "fill": "{navy}"
+            },
+            {
+              "id": "foot",
+              "type": "text",
+              "content": "{foot}",
+              "font": "Big Shoulders Display",
+              "weight": 700,
+              "size": 11,
+              "letterSpacing": 0.364,
+              "x": 198,
+              "y": 456,
+              "align": "center",
+              "color": "{red}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "format": "release"
+      },
+      "layers": [
+        {
+          "id": "print",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "markup": "<feTurbulence type=\"fractalNoise\" baseFrequency=\"0.9\" numOctaves=\"2\" seed=\"14\" result=\"n\"/><feColorMatrix in=\"n\" type=\"matrix\" values=\"0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -9 6.4\" result=\"keep\"/><feComposite in=\"SourceGraphic\" in2=\"keep\" operator=\"in\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "name",
+              "type": "text",
+              "content": {
+                "upper": "{artist}"
+              },
+              "font": "Big Shoulders Display",
+              "weight": 900,
+              "size": 80,
+              "letterSpacing": 0.0135,
+              "color": "{red}",
+              "strokes": [
+                {
+                  "color": "{navy}",
+                  "width": 13
+                },
+                {
+                  "color": "{paper}",
+                  "width": 6.5
+                }
+              ],
+              "path": {
+                "kind": "arc",
+                "cx": 200,
+                "cy": 268,
+                "r": 172,
+                "start": -90,
+                "end": 90
+              }
+            },
+            {
+              "id": "crest",
+              "type": "group",
+              "transform": {
+                "translate": [
+                  0,
+                  -24
+                ]
+              },
+              "layers": [
+                {
+                  "id": "shield",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M146 176H254V236C254 280 226 302 200 316C174 302 146 280 146 236Z",
+                  "fill": "{navy}"
+                },
+                {
+                  "id": "keyline",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M153 183H247V236C247 275 222 294 200 307C178 294 153 275 153 236Z",
+                  "fill": "none",
+                  "stroke": "{paper}",
+                  "strokeWidth": 2.2
+                },
+                {
+                  "id": "mark",
+                  "type": "icon",
+                  "markup": "{mark}",
+                  "x": 160,
+                  "y": 190,
+                  "size": 80,
+                  "color": "{paper}",
+                  "when": "mark"
+                }
+              ]
+            },
+            {
+              "id": "starL",
+              "type": "shape",
+              "kind": "polygon",
+              "points": [
+                [
+                  92,
+                  187.2
+                ],
+                [
+                  95.2,
+                  195.6
+                ],
+                [
+                  104.2,
+                  196
+                ],
+                [
+                  97.2,
+                  201.7
+                ],
+                [
+                  99.5,
+                  210.4
+                ],
+                [
+                  92,
+                  205.4
+                ],
+                [
+                  84.5,
+                  210.4
+                ],
+                [
+                  86.8,
+                  201.7
+                ],
+                [
+                  79.8,
+                  196
+                ],
+                [
+                  88.8,
+                  195.6
+                ]
+              ],
+              "fill": "{red}"
+            },
+            {
+              "id": "starR",
+              "type": "shape",
+              "kind": "polygon",
+              "points": [
+                [
+                  308,
+                  187.2
+                ],
+                [
+                  311.2,
+                  195.6
+                ],
+                [
+                  320.2,
+                  196
+                ],
+                [
+                  313.2,
+                  201.7
+                ],
+                [
+                  315.5,
+                  210.4
+                ],
+                [
+                  308,
+                  205.4
+                ],
+                [
+                  300.5,
+                  210.4
+                ],
+                [
+                  302.8,
+                  201.7
+                ],
+                [
+                  295.8,
+                  196
+                ],
+                [
+                  304.8,
+                  195.6
+                ]
+              ],
+              "fill": "{red}"
+            },
+            {
+              "id": "ribbon",
+              "type": "group",
+              "transform": {
+                "scale": 1.28,
+                "origin": [
+                  200,
+                  352
+                ],
+                "translate": [
+                  0,
+                  -12
+                ]
+              },
+              "layers": [
+                {
+                  "id": "tailL",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M100 352H52L64 372L52 392H100Z",
+                  "fill": "{darkRed}"
+                },
+                {
+                  "id": "tailR",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M300 352H348L336 372L348 392H300Z",
+                  "fill": "{darkRed}"
+                },
+                {
+                  "id": "foldL",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M86 340L100 352V368L86 356Z",
+                  "fill": "{deepRed}"
+                },
+                {
+                  "id": "foldR",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M314 340L300 352V368L314 356Z",
+                  "fill": "{deepRed}"
+                },
+                {
+                  "id": "band",
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M86 330Q200 352 314 330V362Q200 384 86 362Z",
+                  "fill": "{red}"
+                },
+                {
+                  "id": "ribbonText",
+                  "type": "text",
+                  "content": {
+                    "upper": "{release}"
+                  },
+                  "font": "Big Shoulders Display",
+                  "weight": 800,
+                  "size": 28,
+                  "letterSpacing": 0.143,
+                  "color": "{paper}",
+                  "path": {
+                    "d": "M92 352Q200 374 308 352"
+                  },
+                  "dy": 2.58
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

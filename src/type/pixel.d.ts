@@ -5,5 +5,3 @@ import type { LoadedFont } from '../fonts.js';
 export function pixelFace(): LoadedFont;
 /** The characters it draws (lowercase is drawn as capitals). */
 export const PIXEL_CHARS: string;
-/** A glyph's 5×7 bitmap (35 cells row by row, `#` inked), or undefined. */
-export function pixelBitmap(ch: string): string | undefined;

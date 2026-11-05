@@ -1,0 +1,561 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "fluid-label",
+  "description": "Series (v2): a split record label. The top half is an iridescent fluid field (the palette's four stops as a gradient base and soft orbs and light folds under a warp); the bottom half is plain paper. Round the spindle, our own device: three segmented rings and a square, white on the fluid and ink on the paper; a half-clock of tick marks (every fifth long) runs round the upper rim; the credits run along the lower rim on one arc. The type is a paper band: artist bold and title regular, left; the catalogue number in covers' built-in pixel face, right (the only pixel element); '{label} \u2014 {side}' tracked small at the foot; the mark white at 12 o'clock. view: 'disc' draws the label alone, circular-clipped and transparent outside, for @arraypress/mockups. Slots: {artist}, {title}, {label}, {side}, {catalog}, {credits}, {mixes}, {mark}, {paper}, the palette (bg = sleeve and ink, colors = the four stops). Fonts: Geist (and the built-in pixel face).",
+  "requires": [
+    "mark"
+  ],
+  "params": {
+    "view": "sleeve",
+    "artist": "Artist",
+    "side": "Side A",
+    "catalog": "",
+    "credits": "",
+    "mixes": "",
+    "paper": "#efe9df"
+  },
+  "vars": {
+    "a": {
+      "range": [
+        0,
+        360
+      ]
+    },
+    "b1": {
+      "range": [
+        180,
+        420
+      ]
+    },
+    "b2": {
+      "range": [
+        560,
+        820
+      ]
+    },
+    "b3": {
+      "range": [
+        240,
+        760
+      ]
+    },
+    "warp": {
+      "range": [
+        190,
+        260
+      ]
+    },
+    "freq": {
+      "range": [
+        0.0016,
+        0.0028
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "sleeve",
+      "type": "solid",
+      "color": "@bg",
+      "when": {
+        "view": "sleeve"
+      }
+    },
+    {
+      "id": "record",
+      "type": "group",
+      "viewBox": {
+        "if": {
+          "view": "disc"
+        },
+        "then": [
+          64,
+          64,
+          872,
+          872
+        ],
+        "else": [
+          0,
+          0,
+          1000,
+          1000
+        ]
+      },
+      "fit": "cover",
+      "knockout": [
+        {
+          "id": "hole",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 500,
+          "r": 19,
+          "fill": "#000000"
+        }
+      ],
+      "clip": [
+        {
+          "id": "disc",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 500,
+          "r": 436,
+          "fill": "#000000"
+        }
+      ],
+      "layers": [
+        {
+          "id": "base",
+          "type": "shape",
+          "kind": "rect",
+          "x": -100,
+          "y": -100,
+          "width": 1200,
+          "height": 1200,
+          "fill": {
+            "type": "linear",
+            "colors": [
+              "@colors.0",
+              "@colors.1",
+              "@colors.2"
+            ],
+            "angle": "$a"
+          }
+        },
+        {
+          "id": "fluid",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "warp",
+              "scale": "$warp",
+              "frequency": "$freq",
+              "octaves": 3
+            }
+          ],
+          "layers": [
+            {
+              "id": "orbA",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b1",
+              "cy": "$b2",
+              "rx": 360,
+              "ry": 170,
+              "rotate": {
+                "add": [
+                  "$a",
+                  30
+                ]
+              },
+              "fill": "@colors.3",
+              "soft": 28
+            },
+            {
+              "id": "orbB",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b2",
+              "cy": "$b1",
+              "rx": 330,
+              "ry": 150,
+              "rotate": {
+                "add": [
+                  "$a",
+                  -40
+                ]
+              },
+              "fill": "@colors.0",
+              "soft": 28,
+              "opacity": 0.9
+            },
+            {
+              "id": "orbC",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b3",
+              "cy": 500,
+              "rx": 300,
+              "ry": 120,
+              "rotate": {
+                "add": [
+                  "$a",
+                  75
+                ]
+              },
+              "fill": "@colors.2",
+              "soft": 28,
+              "opacity": 0.85
+            },
+            {
+              "id": "orbD",
+              "type": "shape",
+              "kind": "circle",
+              "cx": {
+                "sub": [
+                  1000,
+                  "$b3"
+                ]
+              },
+              "cy": "$b1",
+              "r": 170,
+              "fill": "@colors.1",
+              "soft": 40
+            },
+            {
+              "id": "sheen",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b3",
+              "cy": "$b2",
+              "rx": 260,
+              "ry": 60,
+              "rotate": {
+                "add": [
+                  "$a",
+                  10
+                ]
+              },
+              "fill": {
+                "type": "radial",
+                "colors": [
+                  "#ffffff",
+                  "#ffffff"
+                ],
+                "opacities": [
+                  0.55,
+                  0
+                ]
+              },
+              "soft": 30
+            },
+            {
+              "id": "foldA",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b2",
+              "cy": "$b3",
+              "rx": 420,
+              "ry": 26,
+              "rotate": {
+                "add": [
+                  "$a",
+                  -20
+                ]
+              },
+              "fill": "#ffffff",
+              "opacity": 0.5,
+              "soft": 14
+            },
+            {
+              "id": "foldB",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b1",
+              "cy": {
+                "sub": [
+                  1000,
+                  "$b3"
+                ]
+              },
+              "rx": 380,
+              "ry": 40,
+              "rotate": {
+                "add": [
+                  "$a",
+                  50
+                ]
+              },
+              "fill": "@colors.3",
+              "opacity": 0.9,
+              "soft": 16
+            }
+          ]
+        },
+        {
+          "id": "paper",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 500,
+          "width": 1000,
+          "height": 500,
+          "fill": "{paper}"
+        },
+        {
+          "id": "deviceTop",
+          "type": "group",
+          "clip": [
+            {
+              "id": "deviceTopClip",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 1000,
+              "height": 500,
+              "fill": "#000000"
+            }
+          ],
+          "layers": [
+            {
+              "id": "deviceTopRings",
+              "type": "shape",
+              "fill": "none",
+              "stroke": "#ffffff",
+              "strokeWidth": 1.6,
+              "items": [
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 48,
+                  "dash": [
+                    3,
+                    6
+                  ]
+                },
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 66,
+                  "dash": [
+                    22,
+                    8
+                  ]
+                },
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 86,
+                  "dash": [
+                    60,
+                    10,
+                    4,
+                    10
+                  ]
+                },
+                {
+                  "kind": "rect",
+                  "x": 406,
+                  "y": 406,
+                  "width": 188,
+                  "height": 188
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "deviceBottom",
+          "type": "group",
+          "clip": [
+            {
+              "id": "deviceBottomClip",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 500,
+              "width": 1000,
+              "height": 500,
+              "fill": "#000000"
+            }
+          ],
+          "layers": [
+            {
+              "id": "deviceBottomRings",
+              "type": "shape",
+              "fill": "none",
+              "stroke": "@bg",
+              "strokeWidth": 1.6,
+              "items": [
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 48,
+                  "dash": [
+                    3,
+                    6
+                  ]
+                },
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 66,
+                  "dash": [
+                    22,
+                    8
+                  ]
+                },
+                {
+                  "kind": "circle",
+                  "cx": 500,
+                  "cy": 500,
+                  "r": 86,
+                  "dash": [
+                    60,
+                    10,
+                    4,
+                    10
+                  ]
+                },
+                {
+                  "kind": "rect",
+                  "x": 406,
+                  "y": 406,
+                  "width": 188,
+                  "height": 188
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ticks",
+          "type": "repeat",
+          "count": 31,
+          "cx": 500,
+          "cy": 500,
+          "radius": 422,
+          "start": 270,
+          "sweep": 180,
+          "layer": {
+            "type": "shape",
+            "kind": "line",
+            "x1": 0,
+            "y1": 0,
+            "x2": 0,
+            "y2": "{#i % 5 == 0 ? 30 : 13}",
+            "stroke": "#ffffff",
+            "strokeWidth": "{#i % 5 == 0 ? 2.4 : 1.4}"
+          }
+        },
+        {
+          "id": "stamp",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 475,
+          "y": 118,
+          "size": 50,
+          "color": "#ffffff"
+        },
+        {
+          "id": "credits",
+          "type": "text",
+          "when": "credits",
+          "content": {
+            "upper": "{credits}"
+          },
+          "font": "Geist",
+          "weight": 500,
+          "size": 11.5,
+          "letterSpacing": 0.08,
+          "path": {
+            "kind": "arc",
+            "cx": 500,
+            "cy": 500,
+            "r": 408,
+            "start": 248,
+            "end": 112,
+            "direction": "ccw"
+          },
+          "startOffset": 0.5,
+          "align": "center",
+          "color": "@bg",
+          "opacity": 0.85
+        },
+        {
+          "id": "artist",
+          "type": "text",
+          "content": "{artist}",
+          "font": "Geist",
+          "weight": 700,
+          "size": 34,
+          "letterSpacing": -0.02,
+          "x": 208,
+          "y": 662,
+          "maxWidth": 380,
+          "fit": "shrink",
+          "maxLines": 1,
+          "color": "@bg"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Geist",
+          "weight": 400,
+          "size": 34,
+          "letterSpacing": -0.02,
+          "x": 208,
+          "y": 704,
+          "maxWidth": 380,
+          "maxLines": 2,
+          "lineHeight": 1.1,
+          "color": "@bg"
+        },
+        {
+          "id": "mixes",
+          "type": "text",
+          "when": "mixes",
+          "content": "{mixes}",
+          "font": "Geist",
+          "weight": 500,
+          "size": 15,
+          "lineHeight": 1.35,
+          "x": 208,
+          "y": "{layout.title.bottom + 36}",
+          "color": "@bg",
+          "opacity": 0.75
+        },
+        {
+          "id": "catalog",
+          "type": "text",
+          "when": "catalog",
+          "content": {
+            "upper": "{catalog}"
+          },
+          "font": "pixel",
+          "size": 44,
+          "letterSpacing": 0.08,
+          "x": 800,
+          "y": 704,
+          "align": "right",
+          "maxWidth": 300,
+          "fit": "shrink",
+          "color": "@bg",
+          "maxLines": 1
+        },
+        {
+          "id": "footer",
+          "type": "text",
+          "content": {
+            "upper": "{label} \u2014 {side}"
+          },
+          "font": "Geist",
+          "weight": 600,
+          "size": 14,
+          "letterSpacing": 0.28,
+          "x": 500,
+          "y": 846,
+          "align": "center",
+          "color": "@bg",
+          "opacity": 0.8
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.08,
+      "when": {
+        "view": "sleeve"
+      }
+    }
+  ]
+}

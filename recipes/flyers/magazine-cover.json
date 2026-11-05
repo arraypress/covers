@@ -1,0 +1,168 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "magazine-cover",
+  "description": "Pop-zine magazine cover: the photo full-bleed, the mark as the masthead in a pink box (orange on pink: the clash), mono credits under it, the cover line big at the foot in white or black, whichever the photo wants. Square (release): the same box and mark, the artist as the credit, the title as the cover line. Re-expressed from the Logomarks scenes lab (ZineCards, 'Magazine cover').",
+  "params": {
+    "artist": "Lumio",
+    "release": "Can Lumio Do Pop?",
+    "credits": [
+      "LUMIO",
+      "LOGOMARKS.AI/LUMIO"
+    ],
+    "line": [
+      "Can Lumio",
+      "do pop?"
+    ],
+    "box": "#f2a2d6",
+    "markColor": "#ff7a1a",
+    "ink": "#ffffff"
+  },
+  "layers": [
+    {
+      "id": "photo",
+      "type": "image",
+      "src": "{photo}",
+      "fit": "cover",
+      "when": "photo"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "aspect": "square"
+        }
+      },
+      "layers": [
+        {
+          "id": "mast",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 144,
+          "height": 180,
+          "fill": "{box}"
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 15.8,
+          "y": 33.8,
+          "size": 112.3,
+          "color": "{markColor}",
+          "when": "mark"
+        },
+        {
+          "id": "credit",
+          "type": "text",
+          "content": "{credits}",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 10.4,
+          "lineHeight": 1.35,
+          "letterSpacing": 0.02,
+          "x": 110,
+          "y": 198,
+          "align": "center",
+          "color": "{ink}"
+        },
+        {
+          "id": "line",
+          "type": "text",
+          "content": "{line}",
+          "transform": "uppercase",
+          "font": "Geist",
+          "weight": 800,
+          "size": 42,
+          "lineHeight": 0.92,
+          "letterSpacing": -0.04,
+          "x": 200,
+          "y": 422,
+          "align": "center",
+          "color": "{ink}"
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "aspect": "square"
+      },
+      "layers": [
+        {
+          "id": "mast",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 132,
+          "height": 165,
+          "fill": "{box}"
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 14.5,
+          "y": 31,
+          "size": 103,
+          "color": "{markColor}",
+          "when": "mark"
+        },
+        {
+          "id": "credit",
+          "type": "text",
+          "content": {
+            "upper": "{artist}"
+          },
+          "font": "Space Mono",
+          "weight": 700,
+          "size": 40,
+          "letterSpacing": 0,
+          "x": 66,
+          "y": 210,
+          "align": "center",
+          "color": "{ink}"
+        },
+        {
+          "id": "line",
+          "type": "text",
+          "content": "{line}",
+          "transform": "uppercase",
+          "font": "Geist",
+          "weight": 800,
+          "size": 56,
+          "lineHeight": 0.92,
+          "letterSpacing": -0.04,
+          "x": 200,
+          "y": 330,
+          "align": "center",
+          "color": "{ink}"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05,
+      "blend": "multiply"
+    }
+  ]
+}

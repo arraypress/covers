@@ -1,0 +1,70 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "headline",
+  "description": "Pure type: the artist set huge in condensed caps with open tracking (+0.035em, so no two letters touch), wrapped and sized so the widest line fills the width (by size, never by squeezing the letterforms), stacked from the top; the title under it in an italic serif in the accent. Slots: {name} (artist), {title} (release), the palette (bg, text, accent). Fonts: Anybody (variable, wdth 50–150), Instrument Serif Italic (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "layers": [
+    {
+      "id": "page",
+      "type": "solid",
+      "color": "@bg"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "name",
+          "type": "text",
+          "content": {
+            "upper": "{name}"
+          },
+          "font": "Anybody",
+          "weight": 800,
+          "axes": {
+            "wdth": 56
+          },
+          "size": 300,
+          "lineHeight": 0.86,
+          "letterSpacing": 0.035,
+          "anchor": "top-left",
+          "margin": 34,
+          "maxWidth": 932,
+          "fit": "wrap",
+          "maxHeight": 640,
+          "balance": false,
+          "color": "@text"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Instrument Serif",
+          "style": "italic",
+          "weight": 400,
+          "size": 190,
+          "minSize": 110,
+          "lineHeight": 0.92,
+          "letterSpacing": 0,
+          "anchor": "bottom-left",
+          "margin": 34,
+          "maxWidth": 932,
+          "maxLines": 1,
+          "balance": false,
+          "color": "@accent"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.035
+    }
+  ]
+}

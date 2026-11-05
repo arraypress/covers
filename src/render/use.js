@@ -8,9 +8,9 @@
  * @module render/use
  */
 
-import { attrs, num } from '../svg.js';
+import { attrs, num } from '@arraypress/image-effects/svg';
 import { pos, wrap } from '../layers/util.js';
-import { transformAttr } from '../effects/transform.js';
+import { transformAttr } from './transform.js';
 
 /**
  * `defs`: register named layers for `use`.

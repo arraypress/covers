@@ -1,0 +1,794 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "plinth",
+  "description": "A single object on a seamless ground, the product-shot cover: the mark extruded into a solid block in the accent with a soft floor shadow, or (`object: \"cutout\"`) the cut-out subject; the artist and title centred above. Slots: {name} (artist), {title} (release), {mark} or {cutout}, the palette (bg, text, accent), `object`. Fonts: Inter Tight (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "params": {
+    "object": "mark"
+  },
+  "layers": [
+    {
+      "id": "sweep",
+      "type": "linear",
+      "angle": 180,
+      "colors": [
+        {
+          "mix": [
+            "@bg",
+            "#ffffff",
+            0.35
+          ]
+        },
+        "@bg",
+        {
+          "mix": [
+            "@bg",
+            "#000000",
+            0.1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "floor",
+          "type": "shape",
+          "kind": "ellipse",
+          "cx": 500,
+          "cy": 900,
+          "rx": 560,
+          "ry": 220,
+          "fill": "#ffffff",
+          "opacity": 0.45,
+          "effects": [
+            {
+              "kind": "blur",
+              "radius": 90
+            }
+          ]
+        },
+        {
+          "id": "x34",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 301,
+          "y": 423.75,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.54
+            ]
+          },
+          "when": {
+            "object": "mark"
+          },
+          "effects": [
+            {
+              "kind": "shadow",
+              "x": 18,
+              "y": 46,
+              "blur": 38,
+              "color": "#000000",
+              "opacity": 0.42
+            }
+          ]
+        },
+        {
+          "id": "x33",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 299.5,
+          "y": 421.875,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.5335294117647059
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x32",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 298,
+          "y": 420,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.5270588235294118
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x31",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 296.5,
+          "y": 418.125,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.5205882352941177
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x30",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 295,
+          "y": 416.25,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.5141176470588236
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x29",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 293.5,
+          "y": 414.375,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.5076470588235295
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x28",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 292,
+          "y": 412.5,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.5011764705882353
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x27",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 290.5,
+          "y": 410.625,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.49470588235294116
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x26",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 289,
+          "y": 408.75,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.48823529411764705
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x25",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 287.5,
+          "y": 406.875,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.481764705882353
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x24",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 286,
+          "y": 405,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.47529411764705887
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x23",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 284.5,
+          "y": 403.125,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.46882352941176475
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x22",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 283,
+          "y": 401.25,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.46235294117647063
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x21",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 281.5,
+          "y": 399.375,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.4558823529411765
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x20",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 280,
+          "y": 397.5,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.4494117647058824
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x19",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 278.5,
+          "y": 395.625,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.4429411764705882
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x18",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 277,
+          "y": 393.75,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.4364705882352941
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x17",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 275.5,
+          "y": 391.875,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.43
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x16",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 274,
+          "y": 390,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.4235294117647059
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x15",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 272.5,
+          "y": 388.125,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.41705882352941176
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x14",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 271,
+          "y": 386.25,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.41058823529411764
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x13",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 269.5,
+          "y": 384.375,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.4041176470588235
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x12",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 268,
+          "y": 382.5,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.3976470588235294
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x11",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 266.5,
+          "y": 380.625,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.3911764705882353
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x10",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 265,
+          "y": 378.75,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.3847058823529412
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x9",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 263.5,
+          "y": 376.875,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.37823529411764706
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x8",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 262,
+          "y": 375,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.37176470588235294
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x7",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 260.5,
+          "y": 373.125,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.3652941176470588
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x6",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 259,
+          "y": 371.25,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.3588235294117647
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x5",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 257.5,
+          "y": 369.375,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.3523529411764706
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x4",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 256,
+          "y": 367.5,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.3458823529411765
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x3",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 254.5,
+          "y": 365.625,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.33941176470588236
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x2",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 253,
+          "y": 363.75,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.33294117647058824
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "x1",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 251.5,
+          "y": 361.875,
+          "size": 500,
+          "color": {
+            "mix": [
+              "@accent",
+              "#000000",
+              0.3264705882352941
+            ]
+          },
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "face",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 250,
+          "y": 360,
+          "size": 500,
+          "color": "@accent",
+          "when": {
+            "object": "mark"
+          }
+        },
+        {
+          "id": "sheen",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 250,
+          "y": 360,
+          "size": 500,
+          "color": "#ffffff",
+          "opacity": 0.22,
+          "blend": "soft-light",
+          "when": {
+            "object": "mark"
+          },
+          "mask": [
+            {
+              "type": "linear",
+              "angle": 160,
+              "colors": [
+                "#ffffff",
+                "#000000"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "subject",
+      "type": "image",
+      "src": "{cutout}",
+      "x": "6%",
+      "y": "30%",
+      "width": "88%",
+      "height": "70%",
+      "fit": "cover",
+      "focus": "top",
+      "when": {
+        "object": "cutout"
+      },
+      "effects": [
+        {
+          "kind": "shadow",
+          "x": "0vmin",
+          "y": "2.4vmin",
+          "blur": "4vmin",
+          "color": "#000000",
+          "opacity": 0.28
+        }
+      ]
+    },
+    {
+      "id": "type",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 88,
+          "letterSpacing": -0.03,
+          "x": 500,
+          "y": 150,
+          "align": "center",
+          "maxWidth": 900,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "@text"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 88,
+          "letterSpacing": -0.03,
+          "x": 500,
+          "y": 250,
+          "align": "center",
+          "maxWidth": 900,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "@text"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.04
+    }
+  ]
+}

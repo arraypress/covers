@@ -1,0 +1,885 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "velora-stickers",
+  "description": "Sticker sheet, flat artwork (A5): the cut-out photo die-cut with a white border and kiss-cut line, the mark in a pink circle, the wordmark pill, an EST. burst, a holo square, a heart, a long strip with a lifted corner, and one empty kiss-cut where a badge was peeled. Re-expressed from the Logomarks scenes lab (FlyerCards2, 'Ephemera · sticker sheet'); the sheet on a cutting mat with a badge stuck beside it is a mockup, this is the print. The release cover rebuilds it as a sticker-bomb square: the die-cut photo, the mark, the name pill and the title on the burst.",
+  "params": {
+    "name": "VELORA",
+    "est": [
+      "EST.",
+      "2026"
+    ],
+    "strip": "VELORA.WORLD ✦ SS27 ✦ ♡",
+    "foot": "VELORA — STICKER SHEET 01 · PRINTED ON VINYL · KEEP IT WEIRD",
+    "artist": "Velora",
+    "release": "Keep It Weird",
+    "sheet": "#fbfaf7",
+    "pink": "#ff3ea5",
+    "ink": "#111111",
+    "yellow": "#ffe14d",
+    "purple": "#7a5cff",
+    "soft": "#a8a59f"
+  },
+  "layers": [
+    {
+      "id": "sheet",
+      "type": "solid",
+      "color": "{sheet}"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "x": "@bleed",
+      "y": "@bleed",
+      "width": "@trimWidth",
+      "height": "@trimHeight",
+      "viewBox": [
+        0,
+        0,
+        316,
+        448
+      ],
+      "fit": "stretch",
+      "when": {
+        "not": {
+          "format": "release"
+        }
+      },
+      "layers": [
+        {
+          "id": "foot",
+          "type": "text",
+          "content": "{foot}",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 5.6,
+          "letterSpacing": 0,
+          "x": 14,
+          "y": 436,
+          "color": "{soft}"
+        },
+        {
+          "type": "group",
+          "x": 0,
+          "y": 0,
+          "width": 316,
+          "height": 448,
+          "viewBox": [
+            0,
+            0,
+            2528,
+            3584
+          ],
+          "fit": "stretch",
+          "layers": [
+            {
+              "id": "photo",
+              "type": "image",
+              "src": "{cutout}",
+              "x": -168,
+              "y": 32,
+              "width": 2328,
+              "height": 1304,
+              "fit": "contain",
+              "effects": [
+                {
+                  "kind": "border",
+                  "width": 44,
+                  "color": "#ffffff",
+                  "line": "#c9c6c0",
+                  "lineWidth": 8
+                },
+                {
+                  "kind": "filter",
+                  "pad": 0.04,
+                  "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+                }
+              ]
+            }
+          ],
+          "id": "photoBox",
+          "when": "cutout"
+        },
+        {
+          "id": "markSticker",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "markStickerShape",
+              "type": "shape",
+              "kind": "circle",
+              "cx": 256,
+              "cy": 66,
+              "r": 48,
+              "fill": "{pink}",
+              "stroke": "#ffffff",
+              "strokeWidth": 11,
+              "strokes": [
+                {
+                  "color": "#d1cec8",
+                  "width": 12.5
+                }
+              ],
+              "linejoin": "round"
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 225,
+          "y": 35,
+          "size": 62,
+          "color": "#ffffff",
+          "when": "mark"
+        },
+        {
+          "id": "pill",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "pillShape",
+              "type": "shape",
+              "kind": "rect",
+              "x": 174,
+              "y": 180,
+              "width": 128,
+              "height": 42,
+              "radius": 21,
+              "fill": "{ink}",
+              "stroke": "#ffffff",
+              "strokeWidth": 11,
+              "strokes": [
+                {
+                  "color": "#d1cec8",
+                  "width": 12.5
+                }
+              ],
+              "linejoin": "round"
+            }
+          ]
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Unbounded",
+          "weight": 800,
+          "size": 21,
+          "letterSpacing": 0,
+          "x": 238,
+          "y": 209,
+          "align": "center",
+          "width": 98,
+          "color": "#ffffff"
+        },
+        {
+          "id": "burst",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "burstShape",
+              "type": "shape",
+              "kind": "polygon",
+              "points": [
+                [
+                  66,
+                  238
+                ],
+                [
+                  74,
+                  248.9
+                ],
+                [
+                  86,
+                  242.6
+                ],
+                [
+                  88.4,
+                  255.9
+                ],
+                [
+                  102,
+                  255.3
+                ],
+                [
+                  98.4,
+                  268.4
+                ],
+                [
+                  110.8,
+                  273.8
+                ],
+                [
+                  102,
+                  284
+                ],
+                [
+                  110.8,
+                  294.2
+                ],
+                [
+                  98.4,
+                  299.6
+                ],
+                [
+                  102,
+                  312.7
+                ],
+                [
+                  88.4,
+                  312.1
+                ],
+                [
+                  86,
+                  325.4
+                ],
+                [
+                  74,
+                  319.1
+                ],
+                [
+                  66,
+                  330
+                ],
+                [
+                  58,
+                  319.1
+                ],
+                [
+                  46,
+                  325.4
+                ],
+                [
+                  43.6,
+                  312.1
+                ],
+                [
+                  30,
+                  312.7
+                ],
+                [
+                  33.6,
+                  299.6
+                ],
+                [
+                  21.2,
+                  294.2
+                ],
+                [
+                  30,
+                  284
+                ],
+                [
+                  21.2,
+                  273.8
+                ],
+                [
+                  33.6,
+                  268.4
+                ],
+                [
+                  30,
+                  255.3
+                ],
+                [
+                  43.6,
+                  255.9
+                ],
+                [
+                  46,
+                  242.6
+                ],
+                [
+                  58,
+                  248.9
+                ]
+              ],
+              "fill": "{yellow}",
+              "stroke": "#ffffff",
+              "strokeWidth": 11,
+              "strokes": [
+                {
+                  "color": "#d1cec8",
+                  "width": 12.5
+                }
+              ],
+              "linejoin": "round"
+            }
+          ]
+        },
+        {
+          "id": "est",
+          "type": "text",
+          "content": "{est.0}",
+          "font": "Big Shoulders Display",
+          "weight": 900,
+          "size": 15,
+          "letterSpacing": 0,
+          "x": 66,
+          "y": 280,
+          "align": "center",
+          "color": "{ink}"
+        },
+        {
+          "id": "year",
+          "type": "text",
+          "content": "{est.1}",
+          "font": "Big Shoulders Display",
+          "weight": 900,
+          "size": 24,
+          "letterSpacing": 0,
+          "x": 66,
+          "y": 301,
+          "align": "center",
+          "color": "{ink}"
+        },
+        {
+          "id": "holo",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "holoShape",
+              "type": "shape",
+              "kind": "rect",
+              "x": 128,
+              "y": 254,
+              "width": 78,
+              "height": 78,
+              "radius": 13,
+              "fill": {
+                "type": "linear",
+                "colors": [
+                  "#ff9fd8",
+                  "#ffe28a",
+                  "#a6ffd6",
+                  "#8fd6ff",
+                  "#c7a6ff",
+                  "#ffb8e8"
+                ],
+                "angle": 135,
+                "spread": "reflect",
+                "length": 85
+              },
+              "stroke": "#ffffff",
+              "strokeWidth": 11,
+              "strokes": [
+                {
+                  "color": "#d1cec8",
+                  "width": 12.5
+                }
+              ],
+              "linejoin": "round"
+            }
+          ]
+        },
+        {
+          "id": "holoLines",
+          "type": "svg",
+          "opacity": 0.35,
+          "defs": "<pattern id=\"{{id}}p\" width=\"2.2\" height=\"2.2\" patternUnits=\"userSpaceOnUse\" patternTransform=\"rotate(35)\"><rect width=\"1\" height=\"2.2\" fill=\"#fff\"/></pattern>",
+          "markup": "<rect x=\"128\" y=\"254\" width=\"78\" height=\"78\" rx=\"13\" fill=\"url(#{{id}}p)\"/>"
+        },
+        {
+          "id": "holoMark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 141,
+          "y": 267,
+          "size": 52,
+          "color": "{ink}",
+          "when": "mark"
+        },
+        {
+          "id": "peeled",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 264,
+          "cy": 304,
+          "r": 47,
+          "fill": "#f1efea",
+          "stroke": "#cfccc5",
+          "strokeWidth": 0.9
+        },
+        {
+          "id": "heart",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "heartShape",
+              "type": "shape",
+              "kind": "path",
+              "d": "M276 132c-8 -10 -24 -2 -16 12l16 16 16 -16c8 -14 -8 -22 -16 -12z",
+              "fill": "{purple}",
+              "stroke": "#ffffff",
+              "strokeWidth": 9,
+              "strokes": [
+                {
+                  "color": "#d1cec8",
+                  "width": 10.5
+                }
+              ],
+              "linejoin": "round"
+            }
+          ]
+        },
+        {
+          "id": "strip",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "stripShape",
+              "type": "shape",
+              "kind": "rect",
+              "x": 22,
+              "y": 392,
+              "width": 196,
+              "height": 26,
+              "radius": 4,
+              "fill": "{ink}",
+              "stroke": "#ffffff",
+              "strokeWidth": 8
+            },
+            {
+              "id": "stripText",
+              "type": "text",
+              "content": "{strip}",
+              "font": "Space Mono",
+              "weight": 700,
+              "size": 9.5,
+              "letterSpacing": 0,
+              "x": 32,
+              "y": 410,
+              "color": "#ffffff"
+            },
+            {
+              "id": "corner",
+              "type": "shape",
+              "items": [
+                {
+                  "kind": "path",
+                  "d": "M206 388L222 388L222 404Z",
+                  "fill": "#e1ded8"
+                },
+                {
+                  "kind": "path",
+                  "d": "M206 388L222 404L206 402Z",
+                  "fill": "#c9c5be"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "format": "release"
+      },
+      "layers": [
+        {
+          "type": "group",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 400,
+          "viewBox": [
+            0,
+            0,
+            3200,
+            3200
+          ],
+          "fit": "stretch",
+          "layers": [
+            {
+              "id": "photo",
+              "type": "image",
+              "src": "{cutout}",
+              "x": -480,
+              "y": 0,
+              "width": 3200,
+              "height": 1800,
+              "fit": "contain",
+              "effects": [
+                {
+                  "kind": "border",
+                  "width": 56,
+                  "color": "#ffffff",
+                  "line": "#c9c6c0",
+                  "lineWidth": 8
+                },
+                {
+                  "kind": "filter",
+                  "pad": 0.04,
+                  "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+                }
+              ]
+            }
+          ],
+          "id": "photoBox",
+          "when": "cutout"
+        },
+        {
+          "id": "markSticker",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "markStickerShape",
+              "type": "shape",
+              "kind": "circle",
+              "cx": 318,
+              "cy": 92,
+              "r": 62,
+              "fill": "{pink}",
+              "stroke": "#ffffff",
+              "strokeWidth": 13,
+              "strokes": [
+                {
+                  "color": "#d1cec8",
+                  "width": 15
+                }
+              ],
+              "linejoin": "round"
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 278,
+          "y": 52,
+          "size": 80,
+          "color": "#ffffff",
+          "when": "mark"
+        },
+        {
+          "id": "heart",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "heartShape",
+              "type": "shape",
+              "kind": "path",
+              "d": "M352 200c-11.2 -14 -33.599999999999994 -2.8 -22.4 16.799999999999997l22.4 22.4 22.4 -22.4c11.2 -19.599999999999998 -11.2 -30.799999999999997 -22.4 -16.799999999999997z",
+              "fill": "{purple}",
+              "stroke": "#ffffff",
+              "strokeWidth": 11,
+              "strokes": [
+                {
+                  "color": "#d1cec8",
+                  "width": 12.5
+                }
+              ],
+              "linejoin": "round"
+            }
+          ]
+        },
+        {
+          "id": "burst",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "burstShape",
+              "type": "shape",
+              "kind": "polygon",
+              "points": [
+                [
+                  110,
+                  208
+                ],
+                [
+                  124.8,
+                  225.5
+                ],
+                [
+                  145.2,
+                  215
+                ],
+                [
+                  152.2,
+                  236.8
+                ],
+                [
+                  175.1,
+                  234.9
+                ],
+                [
+                  173.2,
+                  257.8
+                ],
+                [
+                  195,
+                  264.8
+                ],
+                [
+                  184.5,
+                  285.2
+                ],
+                [
+                  202,
+                  300
+                ],
+                [
+                  184.5,
+                  314.8
+                ],
+                [
+                  195,
+                  335.2
+                ],
+                [
+                  173.2,
+                  342.2
+                ],
+                [
+                  175.1,
+                  365.1
+                ],
+                [
+                  152.2,
+                  363.2
+                ],
+                [
+                  145.2,
+                  385
+                ],
+                [
+                  124.8,
+                  374.5
+                ],
+                [
+                  110,
+                  392
+                ],
+                [
+                  95.2,
+                  374.5
+                ],
+                [
+                  74.8,
+                  385
+                ],
+                [
+                  67.8,
+                  363.2
+                ],
+                [
+                  44.9,
+                  365.1
+                ],
+                [
+                  46.8,
+                  342.2
+                ],
+                [
+                  25,
+                  335.2
+                ],
+                [
+                  35.5,
+                  314.8
+                ],
+                [
+                  18,
+                  300
+                ],
+                [
+                  35.5,
+                  285.2
+                ],
+                [
+                  25,
+                  264.8
+                ],
+                [
+                  46.8,
+                  257.8
+                ],
+                [
+                  44.9,
+                  234.9
+                ],
+                [
+                  67.8,
+                  236.8
+                ],
+                [
+                  74.8,
+                  215
+                ],
+                [
+                  95.2,
+                  225.5
+                ]
+              ],
+              "fill": "{yellow}",
+              "stroke": "#ffffff",
+              "strokeWidth": 13,
+              "strokes": [
+                {
+                  "color": "#d1cec8",
+                  "width": 15
+                }
+              ],
+              "linejoin": "round"
+            }
+          ]
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": [
+            {
+              "upper": {
+                "slice": [
+                  "{release}",
+                  0,
+                  7
+                ]
+              }
+            },
+            {
+              "upper": {
+                "slice": [
+                  "{release}",
+                  8
+                ]
+              }
+            }
+          ],
+          "font": "Big Shoulders Display",
+          "weight": 900,
+          "size": 46,
+          "lineHeight": 0.92,
+          "letterSpacing": 0,
+          "x": 110,
+          "y": 294,
+          "align": "center",
+          "color": "{ink}"
+        },
+        {
+          "id": "pill",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "filter",
+              "pad": 0.04,
+              "markup": "<feDropShadow dx=\"0.3\" dy=\"0.9\" stdDeviation=\"0.8\" flood-opacity=\"0.32\"/>"
+            }
+          ],
+          "layers": [
+            {
+              "id": "pillShape",
+              "type": "shape",
+              "kind": "rect",
+              "x": 212,
+              "y": 268,
+              "width": 168,
+              "height": 62,
+              "radius": 31,
+              "fill": "{ink}",
+              "stroke": "#ffffff",
+              "strokeWidth": 13,
+              "strokes": [
+                {
+                  "color": "#d1cec8",
+                  "width": 15
+                }
+              ],
+              "linejoin": "round"
+            }
+          ]
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": {
+            "upper": "{artist}"
+          },
+          "font": "Unbounded",
+          "weight": 800,
+          "size": 34,
+          "letterSpacing": 0,
+          "x": 296,
+          "y": 312,
+          "align": "center",
+          "width": 132,
+          "color": "#ffffff"
+        }
+      ]
+    }
+  ]
+}

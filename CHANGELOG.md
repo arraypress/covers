@@ -5,6 +5,23 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2026-11-05
+
+The image filters are now their own library, [`@arraypress/image-effects`](https://github.com/arraypress/image-effects), and covers depends on it. Nothing a covers user sees changes: the same exports, the same effect options, and the same output (every built-in and example recipe, 224 renders, checked before and after the split: SVG byte-identical, rasters pixel-identical).
+
+### Changed
+
+- **Effects come from `@arraypress/image-effects` ^0.1.0**: the 71 effects, masks, the pixel-effect runner, and the utilities they share (SVG writing, lengths, seeded randomness, colour, the PNG encoder, rasterising, the platform adapter). covers re-exports what it exported before (`EFFECTS`, `EFFECT_OPTIONS`, `rasterize`, the colour helpers, `createRng`, `hashString`, and the `Effect`, `EffectKind`, `EffectMask`, `Color`, `Length` and `Rng` types). Layer paints (`src/paint/`) and the layer `transform` (`src/render/transform.js`) stay in covers.
+
+### Added
+
+- **The example recipes are published**: `recipes/flyers/` (44), `recipes/release/` (20) and `recipes/release/series/` (12), importable as `@arraypress/covers/recipes/flyers/bloomfall.json` (the existing `./recipes/*.json` export), with `$schema` pointing at the bundled schema. `wheatpaste-torn` joined `flyers/`; the earlier `bloomfall` and `grid-rest-rhythm` ports were dropped (the `flyers/` versions are them plus print grain and a release layout).
+- **`renderSvg(cover, { images: 'webp', quality })`**: embedded photos and pixel effects re-encoded as WebP where smaller (about a third off a photo-heavy flyer; needs sharp). For SVGs shown in browsers: librsvg can't draw WebP, so `renderImage` never uses it.
+
+### Notes
+
+- **Astro and other Vite SSR builds must keep covers external**: `vite: { ssr: { external: ['@arraypress/covers'] } }`. Bundled, Vite resolves covers' `#harfbuzz` import to the project's own harfbuzzjs (satori's is older) and text fails with "hb.Blob is not a constructor". `@arraypress/image-effects` needs nothing.
+
 ## [1.1.0] — 2026-11-05
 
 Flyers, posters, release art, social formats and print stationery, in Node, browsers and Cloudflare Workers. Every 1.0 cover renders byte-identical SVG (694 covers checked against hashes taken with the 1.0.0 code).

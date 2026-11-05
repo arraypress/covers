@@ -1,0 +1,334 @@
+{
+  "$schema": "../../../schema/recipe.schema.json",
+  "name": "fluid-pixel",
+  "description": "Series (v2): the square digital partner of fluid-label. The same iridescent fluid field (the palette's four stops as a gradient base, soft orbs and light folds under a warp), full bleed, under a full clock of tick marks (the split label's half-clock, completed); the title huge in covers' built-in square-cell pixel face (the label system's pixel element), a word a line, every line justified to the width by opening the tracking; the artist tracked wide in Geist above it; the mark small, and '{label} \u2014 {catalog}' tracked at the foot. Slots: {title}, {artist}, {label}, {catalog}, {mark}, the palette (colors = the four stops). Fonts: Geist (and the built-in pixel face).",
+  "requires": [
+    "mark"
+  ],
+  "params": {
+    "artist": "Artist",
+    "catalog": "",
+    "small": 30
+  },
+  "vars": {
+    "a": {
+      "range": [
+        0,
+        360
+      ]
+    },
+    "b1": {
+      "range": [
+        180,
+        420
+      ]
+    },
+    "b2": {
+      "range": [
+        560,
+        820
+      ]
+    },
+    "b3": {
+      "range": [
+        240,
+        760
+      ]
+    },
+    "warp": {
+      "range": [
+        190,
+        260
+      ]
+    },
+    "freq": {
+      "range": [
+        0.0016,
+        0.0028
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "page",
+      "type": "solid",
+      "color": "@colors.0"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "base",
+          "type": "shape",
+          "kind": "rect",
+          "x": -100,
+          "y": -100,
+          "width": 1200,
+          "height": 1200,
+          "fill": {
+            "type": "linear",
+            "colors": [
+              "@colors.0",
+              "@colors.1",
+              "@colors.2"
+            ],
+            "angle": "$a"
+          }
+        },
+        {
+          "id": "fluid",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "warp",
+              "scale": "$warp",
+              "frequency": "$freq",
+              "octaves": 3
+            }
+          ],
+          "layers": [
+            {
+              "id": "orbA",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b1",
+              "cy": "$b2",
+              "rx": 360,
+              "ry": 170,
+              "rotate": {
+                "add": [
+                  "$a",
+                  30
+                ]
+              },
+              "fill": "@colors.3",
+              "soft": 28
+            },
+            {
+              "id": "orbB",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b2",
+              "cy": "$b1",
+              "rx": 330,
+              "ry": 150,
+              "rotate": {
+                "add": [
+                  "$a",
+                  -40
+                ]
+              },
+              "fill": "@colors.0",
+              "soft": 28,
+              "opacity": 0.9
+            },
+            {
+              "id": "orbC",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b3",
+              "cy": 500,
+              "rx": 300,
+              "ry": 120,
+              "rotate": {
+                "add": [
+                  "$a",
+                  75
+                ]
+              },
+              "fill": "@colors.2",
+              "soft": 28,
+              "opacity": 0.85
+            },
+            {
+              "id": "orbD",
+              "type": "shape",
+              "kind": "circle",
+              "cx": {
+                "sub": [
+                  1000,
+                  "$b3"
+                ]
+              },
+              "cy": "$b1",
+              "r": 170,
+              "fill": "@colors.1",
+              "soft": 40
+            },
+            {
+              "id": "sheen",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b3",
+              "cy": "$b2",
+              "rx": 260,
+              "ry": 60,
+              "rotate": {
+                "add": [
+                  "$a",
+                  10
+                ]
+              },
+              "fill": {
+                "type": "radial",
+                "colors": [
+                  "#ffffff",
+                  "#ffffff"
+                ],
+                "opacities": [
+                  0.55,
+                  0
+                ]
+              },
+              "soft": 30
+            },
+            {
+              "id": "foldA",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b2",
+              "cy": "$b3",
+              "rx": 420,
+              "ry": 26,
+              "rotate": {
+                "add": [
+                  "$a",
+                  -20
+                ]
+              },
+              "fill": "#ffffff",
+              "opacity": 0.5,
+              "soft": 14
+            },
+            {
+              "id": "foldB",
+              "type": "shape",
+              "kind": "ellipse",
+              "cx": "$b1",
+              "cy": {
+                "sub": [
+                  1000,
+                  "$b3"
+                ]
+              },
+              "rx": 380,
+              "ry": 40,
+              "rotate": {
+                "add": [
+                  "$a",
+                  50
+                ]
+              },
+              "fill": "@colors.3",
+              "opacity": 0.9,
+              "soft": 16
+            }
+          ],
+          "transform": {
+            "scale": 0.84,
+            "origin": [
+              500,
+              500
+            ]
+          }
+        },
+        {
+          "id": "ticks",
+          "type": "repeat",
+          "count": 60,
+          "cx": 500,
+          "cy": 500,
+          "radius": 452,
+          "start": 0,
+          "sweep": 360,
+          "layer": {
+            "type": "shape",
+            "kind": "line",
+            "x1": 0,
+            "y1": 0,
+            "x2": 0,
+            "y2": "{#i % 5 == 0 ? 26 : 11}",
+            "stroke": "#ffffff",
+            "strokeWidth": "{#i % 5 == 0 ? 2.2 : 1.2}",
+            "opacity": 0.85
+          }
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": {
+            "upper": "{title}"
+          },
+          "font": "pixel",
+          "size": 120,
+          "letterSpacing": 0.06,
+          "lineHeight": 1.12,
+          "x": 500,
+          "y": 360,
+          "align": "center",
+          "fit": "words",
+          "width": 640,
+          "maxWidth": 640,
+          "maxHeight": 430,
+          "color": "#ffffff",
+          "lengthAdjust": "spacing"
+        },
+        {
+          "id": "artist",
+          "type": "text",
+          "content": {
+            "upper": "{artist}"
+          },
+          "font": "Geist",
+          "weight": 600,
+          "size": 20,
+          "letterSpacing": 0.3,
+          "x": 500,
+          "y": "{layout.title.top - 44}",
+          "align": "center",
+          "maxWidth": 600,
+          "fit": "shrink",
+          "color": "#ffffff"
+        },
+        {
+          "id": "stamp",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 483,
+          "y": 812,
+          "size": 34,
+          "color": "#ffffff"
+        },
+        {
+          "id": "footer",
+          "type": "text",
+          "content": {
+            "upper": "{label} \u2014 {catalog}"
+          },
+          "font": "Geist",
+          "weight": 600,
+          "size": 15,
+          "letterSpacing": 0.28,
+          "x": 500,
+          "y": 902,
+          "align": "center",
+          "color": "#ffffff",
+          "opacity": 0.9
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.07
+    }
+  ]
+}

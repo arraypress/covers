@@ -12,7 +12,7 @@
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { LAYER_OPTIONS, COMMON } from '../src/layer-options.js';
-import { EFFECT_OPTIONS, EFFECT_COMMON } from '../src/effects/options.js';
+import { EFFECT_OPTIONS, EFFECT_COMMON } from '@arraypress/image-effects';
 
 /** Operators: name → [description, argument schema]. */
 const OPS = {

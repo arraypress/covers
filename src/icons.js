@@ -14,8 +14,7 @@
  * @module icons
  */
 
-import { node, settings, loadBytes } from './platform/index.js';
-import { utf8 } from './platform/bytes.js';
+import { node, settings, loadBytes, utf8 } from './platform/index.js';
 
 /** @type {Map<string, IconSet>} */
 const sets = new Map();

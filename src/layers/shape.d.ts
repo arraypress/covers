@@ -1,7 +1,7 @@
 // The `shape` layer.
 import type { Color, Length, BaseLayer, Anchor } from '../index.js';
 import type { RenderContext, Markup } from '../render/context.js';
-import type { Paint } from '../effects/paint.js';
+import type { Paint } from '../paint/index.js';
 
 /** One exact shape (see the README's `shape` table). */
 export interface ShapeSpec {

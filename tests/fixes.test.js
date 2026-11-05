@@ -4,8 +4,6 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { renderSvg, renderImage, defineRecipe, lint } from '../src/index.js';
-import { separableMorphology, bounded } from '../src/effects/region.js';
-import { expandDropShadows } from '../src/effects/drop-shadow.js';
 import { evaluate } from '../src/layers/expr.js';
 import { luma } from '../src/type/auto-color.js';
 import { decodeFont } from '../src/fonts.js';
@@ -49,18 +47,6 @@ test('text keeps its opacity and blend on the poster typesetter', async () => {
   assert.match(svg, /<g opacity="0.5" style="mix-blend-mode:multiply"><path/);
 });
 
-test('filter markup: lighting attributes pass, scripts and handlers do not; feDropShadow honours `in`', async () => {
-  const ok = '<feSpecularLighting specularExponent="20" surfaceScale="3"><fePointLight x="1" y="2" z="3"/></feSpecularLighting><feDiffuseLighting diffuseConstant="1"><feDistantLight/></feDiffuseLighting><feFuncA type="gamma" exponent="2"/>';
-  assert.match(await renderSvg({ width: 100, layers: [{ type: 'solid', effects: [{ kind: 'filter', markup: ok }] }] }), /specularExponent/);
-  for (const bad of ['<feFlood onload="x()"/>', '<script>x</script>', '<feImage href="javascript:x"/>']) {
-    await assert.rejects(renderSvg({ width: 100, layers: [{ type: 'solid', effects: [{ kind: 'filter', markup: bad }] }] }), /scripts or event handlers/);
-  }
-  const ds = expandDropShadows('<feComposite result="felt"/><feDropShadow in="felt" dy="2" stdDeviation="1" flood-opacity="0.5"/>');
-  assert.match(ds, /<feGaussianBlur in="felt"/);
-  assert.match(ds, /<feMergeNode in="ds0s"\/><feMergeNode in="felt"\/>/);
-  assert.doesNotMatch(ds, /feDropShadow/);
-});
-
 test('effects: colorSpace, and a group\'s effects and masks in its own grid', async () => {
   const lin = await renderSvg({ width: 100, layers: [{ type: 'solid', effects: [{ kind: 'blur', colorSpace: 'linearRGB' }] }] });
   assert.match(lin, /color-interpolation-filters="linearRGB"/);
@@ -80,18 +66,6 @@ test('dither: on pixels, nearest-neighbour, and still a dither under a transform
   assert.ok(tones.size >= 2, 'ink and paper both show');
   const { channels } = await sharp(await renderImage({ width: 400, height: 400, layers }, { format: 'png' })).stats();
   assert.ok(channels[0].stdev > 40, `not a solid colour (stdev ${channels[0].stdev.toFixed(1)})`);
-});
-
-test('librsvg: separable morphology is the same max; regions shrink only for bounded chains', async () => {
-  const one = '<feMorphology in="SourceAlpha" operator="dilate" radius="6"/>';
-  const doc = (f) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="f" x="0" y="0" width="200" height="200" filterUnits="userSpaceOnUse">${f}</filter><g filter="url(#f)"><circle cx="90" cy="100" r="40"/><rect x="140" y="30" width="6" height="90"/></g></svg>`);
-  const a = await sharp(doc(one)).raw().toBuffer();
-  const b = await sharp(doc(separableMorphology(one))).raw().toBuffer();
-  assert.ok(a.equals(b));
-  assert.equal(bounded('<feGaussianBlur stdDeviation="3"/><feOffset dy="2"/>'), true);
-  assert.equal(bounded('<feTurbulence result="n"/><feComposite in="n" in2="SourceAlpha" operator="in"/>'), true);
-  assert.equal(bounded('<feFlood flood-color="#000"/>'), false);
-  assert.equal(bounded('<feTurbulence/><feDiffuseLighting><feDistantLight/></feDiffuseLighting>'), false);
 });
 
 test('shape: rotation about a point, path viewBox about its centre, open arches, soft, tiles, presets', async () => {
@@ -259,4 +233,16 @@ test('WOFF2: a rebuilt glyf past 128 KB gets a long loca (digits and "/" drew no
   const dv = new DataView(sfnt.buffer, sfnt.byteOffset);
   const tables = new Map(Array.from({ length: dv.getUint16(4) }, (_, i) => [String.fromCharCode(...sfnt.subarray(12 + i * 16, 16 + i * 16)), dv.getUint32(12 + i * 16 + 8)]));
   assert.equal(dv.getInt16(/** @type {number} */ (tables.get('head')) + 50), 1, 'head says long loca');
+});
+
+test('renderSvg images: "webp" re-encodes embedded photos and pixel effects where smaller; the default is unchanged', async () => {
+  const input = { width: 400, height: 250, layers: [{ type: 'image', src: photo }, { type: 'shape', kind: 'circle', cx: 200, cy: 125, r: 60, fill: '#f60', effects: [{ kind: 'pixelate', size: 12 }] }] };
+  const plain = await renderSvg(input);
+  const webp = await renderSvg(input, { images: 'webp' });
+  assert.match(plain, /data:image\/jpeg/);
+  assert.doesNotMatch(webp, /data:image\/jpeg/);
+  assert.match(webp, /data:image\/webp/);
+  assert.ok(webp.length < plain.length, `${webp.length} < ${plain.length}`);
+  assert.equal(await renderSvg(input), plain);
+  await assert.rejects(renderSvg(input, { images: /** @type {any} */ ('avif') }), /Unknown images "avif"/);
 });

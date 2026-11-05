@@ -10,8 +10,8 @@
  * @module type/spans
  */
 
-import { len } from '../geometry.js';
-import { toHex } from '../color.js';
+import { len } from '@arraypress/image-effects/length';
+import { toHex } from '@arraypress/image-effects/color';
 import { faceFor } from './line.js';
 import { shapeText } from './fallback.js';
 

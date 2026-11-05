@@ -1,0 +1,356 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "halden-orbit",
+  "description": "Kinetic type, orbit: two rings of type round a photo in a circle (the name in heavy wide sans, the date and venue in mono), the name stretched full width below and the second word in outline. Re-expressed from the Logomarks scenes lab (FlyerCards2, 'Kinetic type · orbit'). The release cover keeps the photo and one ring of the name, with the title stretched across the foot.",
+  "params": {
+    "name": "HALDEN",
+    "sub": "SOUND SYSTEM",
+    "vol": "VOL. 04",
+    "date": "21.11.26",
+    "ring1": "HALDEN · SOUND SYSTEM · HALDEN · SOUND SYSTEM · ",
+    "ring2": "LIVE AT WAREHOUSE NINE — FRI 21.11.26 — DOORS 22:00 — ALL NIGHT — LIVE AT WAREHOUSE NINE — FRI 21.11.26 — DOORS 22:00 — ALL NIGHT — ",
+    "word1": "SOUND",
+    "word2": "SYSTEM",
+    "artist": "Halden Sound System",
+    "release": "Low Orbit",
+    "ground": "#0b0b0e",
+    "glow": "#5a3cff",
+    "ink": "#ffffff",
+    "acid": "#d4ff3a",
+    "soft": "#a9a6b8"
+  },
+  "layers": [
+    {
+      "id": "ground",
+      "type": "solid",
+      "color": "{ground}"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "format": "release"
+        }
+      },
+      "layers": [
+        {
+          "id": "glow",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 500,
+          "fill": {
+            "type": "radial",
+            "colors": [
+              "{glow}",
+              "{glow}"
+            ],
+            "opacities": [
+              0.6,
+              0
+            ],
+            "cx": 0.5,
+            "cy": 0.45,
+            "r": 245
+          }
+        },
+        {
+          "type": "group",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 500,
+          "viewBox": [
+            0,
+            0,
+            3200,
+            4000
+          ],
+          "fit": "stretch",
+          "layers": [
+            {
+              "id": "photo",
+              "type": "image",
+              "src": "{photo}",
+              "x": 752,
+              "y": 928,
+              "width": 1696,
+              "height": 1696,
+              "fit": "cover",
+              "focus": "top",
+              "clip": [
+                {
+                  "type": "shape",
+                  "kind": "circle",
+                  "cx": 1600,
+                  "cy": 1776,
+                  "r": 848
+                }
+              ]
+            }
+          ],
+          "id": "photoBox",
+          "when": "photo"
+        },
+        {
+          "id": "ring1",
+          "type": "text",
+          "content": "{ring1}",
+          "font": "Unbounded",
+          "weight": 800,
+          "size": 19,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "path": {
+            "kind": "circle",
+            "cx": 200,
+            "cy": 222,
+            "r": 120,
+            "start": 270
+          },
+          "fitPath": 4
+        },
+        {
+          "id": "ring2",
+          "type": "text",
+          "content": "{ring2}",
+          "font": "Space Mono",
+          "weight": 700,
+          "size": 10,
+          "letterSpacing": 0.1,
+          "color": "{acid}",
+          "path": {
+            "kind": "circle",
+            "cx": 200,
+            "cy": 222,
+            "r": 156,
+            "start": 270
+          },
+          "fitPath": 4
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 16,
+          "y": 14,
+          "size": 30,
+          "color": "{ink}",
+          "when": "mark"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Space Mono",
+          "weight": 700,
+          "size": 9.5,
+          "letterSpacing": 0,
+          "x": 52,
+          "y": 27,
+          "color": "{ink}"
+        },
+        {
+          "id": "sub",
+          "type": "text",
+          "content": "{sub}",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 8.5,
+          "letterSpacing": 0,
+          "x": 52,
+          "y": 38,
+          "color": "{soft}"
+        },
+        {
+          "id": "vol",
+          "type": "text",
+          "content": "{vol}",
+          "font": "Space Mono",
+          "weight": 700,
+          "size": 9.5,
+          "letterSpacing": 0,
+          "x": 384,
+          "y": 27,
+          "align": "right",
+          "color": "{ink}"
+        },
+        {
+          "id": "date",
+          "type": "text",
+          "content": "{date}",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 8.5,
+          "letterSpacing": 0,
+          "x": 384,
+          "y": 38,
+          "align": "right",
+          "color": "{soft}"
+        },
+        {
+          "id": "word1",
+          "type": "text",
+          "content": "{word1}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 62,
+          "letterSpacing": 0,
+          "x": 200,
+          "y": 448,
+          "align": "center",
+          "width": 372,
+          "color": "{ink}"
+        },
+        {
+          "id": "word2",
+          "type": "text",
+          "content": "{word2}",
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 40,
+          "letterSpacing": 0,
+          "x": 200,
+          "y": 487,
+          "align": "center",
+          "width": 372,
+          "fill": "none",
+          "stroke": "{ink}",
+          "strokeWidth": 1.1
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "format": "release"
+      },
+      "layers": [
+        {
+          "id": "glow",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 400,
+          "fill": {
+            "type": "radial",
+            "colors": [
+              "{glow}",
+              "{glow}"
+            ],
+            "opacities": [
+              0.62,
+              0
+            ],
+            "cx": 0.5,
+            "cy": 0.42,
+            "r": 230
+          }
+        },
+        {
+          "type": "group",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 400,
+          "viewBox": [
+            0,
+            0,
+            3200,
+            3200
+          ],
+          "fit": "stretch",
+          "layers": [
+            {
+              "id": "photo",
+              "type": "image",
+              "src": "{photo}",
+              "x": 864,
+              "y": 640,
+              "width": 1472,
+              "height": 1472,
+              "fit": "cover",
+              "focus": "top",
+              "clip": [
+                {
+                  "type": "shape",
+                  "kind": "circle",
+                  "cx": 1600,
+                  "cy": 1376,
+                  "r": 736
+                }
+              ]
+            }
+          ],
+          "id": "photoBox",
+          "when": "photo"
+        },
+        {
+          "id": "ring",
+          "type": "text",
+          "content": {
+            "upper": "{artist} · "
+          },
+          "font": "Unbounded",
+          "weight": 800,
+          "size": 43,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "path": {
+            "kind": "circle",
+            "cx": 200,
+            "cy": 172,
+            "r": 124,
+            "start": 270
+          },
+          "fitPath": 8
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": {
+            "upper": "{release}"
+          },
+          "font": "Anybody",
+          "weight": 900,
+          "axes": {
+            "wdth": 150
+          },
+          "size": 60,
+          "letterSpacing": 0,
+          "x": 200,
+          "y": 381,
+          "align": "center",
+          "width": 368,
+          "color": "{acid}"
+        }
+      ]
+    }
+  ]
+}

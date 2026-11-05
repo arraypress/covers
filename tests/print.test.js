@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import sharp from 'sharp';
 import { cover, renderSvg, renderImage, palettes, resolvePalette, extractPalette, RISO_INKS } from '../src/index.js';
 import { formatDuration } from '../src/print.js';
-import { encodePng } from '../src/png.js';
+import { encodePng } from '@arraypress/image-effects/png';
 import { contrastRatio } from '@arraypress/color-utils';
 
 const hexAt = (d, i) => '#' + [d[i], d[i + 1], d[i + 2]].map((v) => v.toString(16).padStart(2, '0')).join('');

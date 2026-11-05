@@ -1,0 +1,571 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "odd-tile-split",
+  "description": "The odd tile, split: the grid in two blocks, the top two rows on the accent and the bottom two on the ink, with the artist and title in the seam of page colour between them; one tile of the top block (param `odd`, 0–9) carries the bottom block's colours. Slots: {name} (artist), {title} (release), {mark}, the palette (bg, text, accent), `odd`. Fonts: Inter Tight (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "params": {
+    "odd": 7
+  },
+  "requires": [
+    "mark"
+  ],
+  "vars": {
+    "onTop": {
+      "readable": "@accent"
+    }
+  },
+  "layers": [
+    {
+      "id": "page",
+      "type": "solid",
+      "color": "@bg"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "top",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 1000,
+          "height": 400,
+          "fill": "@accent"
+        },
+        {
+          "id": "bottom",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 600,
+          "width": 1000,
+          "height": 400,
+          "fill": "@text"
+        },
+        {
+          "id": "bg0",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 0
+          }
+        },
+        {
+          "id": "odd0",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 38,
+          "y": 38,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 0
+          }
+        },
+        {
+          "id": "m0",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 38,
+          "y": 38,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 0
+            }
+          }
+        },
+        {
+          "id": "bg1",
+          "type": "shape",
+          "kind": "rect",
+          "x": 200,
+          "y": 0,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 1
+          }
+        },
+        {
+          "id": "odd1",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 238,
+          "y": 38,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 1
+          }
+        },
+        {
+          "id": "m1",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 238,
+          "y": 38,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 1
+            }
+          }
+        },
+        {
+          "id": "bg2",
+          "type": "shape",
+          "kind": "rect",
+          "x": 400,
+          "y": 0,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 2
+          }
+        },
+        {
+          "id": "odd2",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 438,
+          "y": 38,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 2
+          }
+        },
+        {
+          "id": "m2",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 438,
+          "y": 38,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 2
+            }
+          }
+        },
+        {
+          "id": "bg3",
+          "type": "shape",
+          "kind": "rect",
+          "x": 600,
+          "y": 0,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 3
+          }
+        },
+        {
+          "id": "odd3",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 638,
+          "y": 38,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 3
+          }
+        },
+        {
+          "id": "m3",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 638,
+          "y": 38,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 3
+            }
+          }
+        },
+        {
+          "id": "bg4",
+          "type": "shape",
+          "kind": "rect",
+          "x": 800,
+          "y": 0,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 4
+          }
+        },
+        {
+          "id": "odd4",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 838,
+          "y": 38,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 4
+          }
+        },
+        {
+          "id": "m4",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 838,
+          "y": 38,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 4
+            }
+          }
+        },
+        {
+          "id": "bg5",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 200,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 5
+          }
+        },
+        {
+          "id": "odd5",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 38,
+          "y": 238,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 5
+          }
+        },
+        {
+          "id": "m5",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 38,
+          "y": 238,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 5
+            }
+          }
+        },
+        {
+          "id": "bg6",
+          "type": "shape",
+          "kind": "rect",
+          "x": 200,
+          "y": 200,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 6
+          }
+        },
+        {
+          "id": "odd6",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 238,
+          "y": 238,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 6
+          }
+        },
+        {
+          "id": "m6",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 238,
+          "y": 238,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 6
+            }
+          }
+        },
+        {
+          "id": "bg7",
+          "type": "shape",
+          "kind": "rect",
+          "x": 400,
+          "y": 200,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 7
+          }
+        },
+        {
+          "id": "odd7",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 438,
+          "y": 238,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 7
+          }
+        },
+        {
+          "id": "m7",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 438,
+          "y": 238,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 7
+            }
+          }
+        },
+        {
+          "id": "bg8",
+          "type": "shape",
+          "kind": "rect",
+          "x": 600,
+          "y": 200,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 8
+          }
+        },
+        {
+          "id": "odd8",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 638,
+          "y": 238,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 8
+          }
+        },
+        {
+          "id": "m8",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 638,
+          "y": 238,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 8
+            }
+          }
+        },
+        {
+          "id": "bg9",
+          "type": "shape",
+          "kind": "rect",
+          "x": 800,
+          "y": 200,
+          "width": 200,
+          "height": 200,
+          "fill": "@text",
+          "when": {
+            "odd": 9
+          }
+        },
+        {
+          "id": "odd9",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 838,
+          "y": 238,
+          "size": 124,
+          "color": "@bg",
+          "when": {
+            "odd": 9
+          }
+        },
+        {
+          "id": "m9",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 838,
+          "y": 238,
+          "size": 124,
+          "color": "$onTop",
+          "when": {
+            "not": {
+              "odd": 9
+            }
+          }
+        },
+        {
+          "id": "bm0",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 38,
+          "y": 638,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "bm1",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 238,
+          "y": 638,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "bm2",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 438,
+          "y": 638,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "bm3",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 638,
+          "y": 638,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "bm4",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 838,
+          "y": 638,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "bm5",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 38,
+          "y": 838,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "bm6",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 238,
+          "y": 838,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "bm7",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 438,
+          "y": 838,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "bm8",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 638,
+          "y": 838,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "bm9",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 838,
+          "y": 838,
+          "size": 124,
+          "color": "@bg"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 86,
+          "letterSpacing": -0.015,
+          "x": 44,
+          "y": 486,
+          "maxWidth": 912,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "@text"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 86,
+          "letterSpacing": -0.01,
+          "x": 44,
+          "y": 576,
+          "maxWidth": 912,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "@text"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.04
+    }
+  ]
+}

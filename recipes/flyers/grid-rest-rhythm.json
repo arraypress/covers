@@ -1,0 +1,125 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "grid-rest-rhythm",
+  "description": "Neo-Swiss, red field: one flat red, a four-column grid with its rules showing, tiny meta in the cells, the mark in black, and the headline in heavy tight grotesk, each line justified to the full width. The flyer carries print grain; with format 'release' it re-composes for a 3000×3000 cover: the name large in the top band over the rule, the mark in black, the same justified headline as the title. Re-expressed from the Logomarks scenes lab (FlyerCards, 'Neo-Swiss · red field').",
+  "params": {
+    "field": "#e5251d",
+    "ink": "#ffffff",
+    "markColor": "#0b0b0b",
+    "headline": ["Grid,", "Rest,", "Rhythm."],
+    "meta": [
+      ["Felden", "Grid, rest", "12.03 —", "Nº 14"],
+      ["Kunsthalle", "and rhythm", "30.05.2027", "Exhibition"]
+    ],
+    "info": [
+      [{ "content": "Halls 1—3", "weight": 700 }, "Forty posters on the"],
+      ["Tue—Sun", "grid as a way of"],
+      ["10 — 18 h", "thinking, 1957 — 2027."]
+    ],
+    "url": "felden-kunsthalle.org",
+    "artist": "Felden",
+    "release": "Grid, Rest, Rhythm."
+  },
+  "layers": [
+    { "id": "field", "type": "solid", "color": "{field}" },
+    {
+      "id": "poster",
+      "type": "group",
+      "when": { "not": { "format": "release" } },
+      "viewBox": [0, 0, 400, 500],
+      "fit": "contain",
+      "layers": [
+        {
+          "id": "columns",
+          "type": "shape",
+          "stroke": "{ink}",
+          "strokeWidth": 0.6,
+          "opacity": 0.4,
+          "items": [
+            { "kind": "line", "x1": 108, "y1": 50, "x2": 108, "y2": 184 },
+            { "kind": "line", "x1": 200, "y1": 50, "x2": 200, "y2": 184 },
+            { "kind": "line", "x1": 292, "y1": 50, "x2": 292, "y2": 184 }
+          ]
+        },
+        {
+          "id": "rules",
+          "type": "shape",
+          "stroke": "{ink}",
+          "strokeWidth": 0.8,
+          "items": [
+            { "kind": "line", "x1": 16, "y1": 48, "x2": 384, "y2": 48 },
+            { "kind": "line", "x1": 16, "y1": 186, "x2": 384, "y2": 186 }
+          ]
+        },
+        {
+          "id": "meta",
+          "type": "table",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 9,
+          "letterSpacing": -0.011,
+          "color": "{ink}",
+          "y": 26,
+          "rowHeight": 11,
+          "columns": [{ "x": 16, "weight": 700 }, { "x": 112 }, { "x": 204 }, { "x": 384, "align": "right" }],
+          "rows": "{meta}"
+        },
+        {
+          "id": "info",
+          "type": "table",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 9,
+          "letterSpacing": -0.011,
+          "color": "{ink}",
+          "y": 68,
+          "rowHeight": 11,
+          "columns": [{ "x": 16 }, { "x": 112 }],
+          "rows": "{info}"
+        },
+        { "id": "url", "type": "table", "font": "Inter Tight", "weight": 400, "size": 8, "letterSpacing": -0.011, "y": 176, "color": "{ink}", "opacity": 0.85, "columns": [{ "x": 16 }], "rows": [["{url}"]] },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 260, "y": 60, "size": 124, "color": "{markColor}", "when": "mark" },
+        { "id": "line1", "type": "text", "content": "{headline.0}", "font": "Inter Tight", "weight": 800, "size": 133, "letterSpacing": -0.045, "x": 13, "y": 294, "width": 373, "color": "{ink}" },
+        { "id": "line2", "type": "text", "content": "{headline.1}", "font": "Inter Tight", "weight": 800, "size": 128, "letterSpacing": -0.047, "x": 13, "y": 387, "width": 373, "color": "{ink}" },
+        { "id": "line3", "type": "text", "content": "{headline.2}", "font": "Inter Tight", "weight": 800, "size": 96, "letterSpacing": -0.0625, "x": 13, "y": 474, "width": 373, "color": "{ink}" }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "when": { "format": "release" },
+      "viewBox": [0, 0, 400, 400],
+      "fit": "contain",
+      "layers": [
+        {
+          "id": "columns",
+          "type": "shape",
+          "stroke": "{ink}",
+          "strokeWidth": 0.6,
+          "opacity": 0.4,
+          "items": [
+            { "kind": "line", "x1": 108, "y1": 14, "x2": 108, "y2": 84 },
+            { "kind": "line", "x1": 200, "y1": 14, "x2": 200, "y2": 84 },
+            { "kind": "line", "x1": 292, "y1": 14, "x2": 292, "y2": 84 }
+          ]
+        },
+        {
+          "id": "rules",
+          "type": "shape",
+          "stroke": "{ink}",
+          "strokeWidth": 0.8,
+          "items": [
+            { "kind": "line", "x1": 16, "y1": 12, "x2": 384, "y2": 12 },
+            { "kind": "line", "x1": 16, "y1": 86, "x2": 384, "y2": 86 }
+          ]
+        },
+        { "id": "artist", "type": "text", "content": "{artist}", "font": "Inter Tight", "weight": 800, "size": 52, "letterSpacing": -0.045, "x": 14, "y": 70, "color": "{ink}" },
+        { "id": "mark", "type": "icon", "markup": "{mark}", "x": 312, "y": 18, "size": 62, "color": "{markColor}", "when": "mark" },
+        { "id": "line1", "type": "text", "content": "{headline.0}", "font": "Inter Tight", "weight": 800, "size": 133, "letterSpacing": -0.045, "x": 13, "y": 192, "width": 373, "color": "{ink}" },
+        { "id": "line2", "type": "text", "content": "{headline.1}", "font": "Inter Tight", "weight": 800, "size": 128, "letterSpacing": -0.047, "x": 13, "y": 285, "width": 373, "color": "{ink}" },
+        { "id": "line3", "type": "text", "content": "{headline.2}", "font": "Inter Tight", "weight": 800, "size": 96, "letterSpacing": -0.0625, "x": 13, "y": 372, "width": 373, "color": "{ink}" }
+      ]
+    },
+    { "id": "print", "type": "grain", "amount": 0.04, "size": 1.5, "blend": "multiply" }
+  ]
+}

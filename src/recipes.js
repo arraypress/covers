@@ -33,7 +33,7 @@ import { BUILTIN_JSON } from './builtins.js';
  * @property {number} width - Canvas width.
  * @property {number} height - Canvas height.
  * @property {import('./index.js').Palette} palette - Resolved palette.
- * @property {import('./rng.js').Rng} rng - The cover's random stream (for recipe-level choices).
+ * @property {import('@arraypress/image-effects/rng').Rng} rng - The cover's random stream (for recipe-level choices).
  * @property {number} u - The design unit: `sqrt(width × height)`.
  * @property {string} seed - The cover's seed (JSON recipes seed each layer's draws from it).
  */

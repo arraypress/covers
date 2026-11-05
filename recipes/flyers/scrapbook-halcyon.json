@@ -1,0 +1,948 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "scrapbook-halcyon",
+  "description": "Scrapbook: a cream page with a torn edge, three photos with torn edges in a muted pink, taped down and overlapping, pink star stickers, a handwritten note, the mark stamped in the corner. Square (release): the same page re-laid on a square, the note grown into the title. Re-expressed from the Logomarks scenes lab (ZineCards, 'Scrapbook').",
+  "params": {
+    "artist": "Halcyon",
+    "release": "Tour Diary",
+    "note": "tour diary · halcyon",
+    "noteTitle": "tour diary",
+    "noteArtist": "halcyon",
+    "paper": "#f3ece2",
+    "desk": "#111111",
+    "tape": "#f0e1c8",
+    "pink": "#e8399a",
+    "ink": "#2a0614",
+    "shadow": "#4d0a29",
+    "mid": "#db619e",
+    "light": "#fff2fa"
+  },
+  "layers": [
+    {
+      "id": "desk",
+      "type": "solid",
+      "color": "{desk}"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "aspect": "square"
+        }
+      },
+      "layers": [
+        {
+          "id": "sheet",
+          "type": "group",
+          "clip": [
+            {
+              "type": "shape",
+              "kind": "rect",
+              "seed": "page",
+              "x": 2,
+              "y": 2,
+              "width": 396,
+              "height": 496,
+              "fill": "#ffffff",
+              "edge": {
+                "kind": "deckle",
+                "size": 4,
+                "step": 10
+              }
+            }
+          ],
+          "layers": [
+            {
+              "id": "cream",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 500,
+              "fill": "{paper}"
+            },
+            {
+              "id": "snap1",
+              "type": "group",
+              "transform": {
+                "rotate": -3,
+                "origin": [
+                  156.0,
+                  115.38461538461539
+                ]
+              },
+              "layers": [
+                {
+                  "type": "group",
+                  "x": 32,
+                  "y": 20,
+                  "width": 248,
+                  "height": 190.76923076923077,
+                  "viewBox": [
+                    0,
+                    0,
+                    992,
+                    763.0769230769231
+                  ],
+                  "layers": [
+                    {
+                      "type": "image",
+                      "src": "{photo}",
+                      "x": 0,
+                      "y": 0,
+                      "width": 992,
+                      "height": 763.0769230769231,
+                      "fit": "cover",
+                      "opacity": 0.92,
+                      "effects": [
+                        {
+                          "kind": "duotone",
+                          "colors": [
+                            "{shadow}",
+                            "{mid}",
+                            "{light}"
+                          ]
+                        },
+                        {
+                          "kind": "saturate",
+                          "amount": 0.7
+                        },
+                        {
+                          "kind": "levels",
+                          "slope": 0.9,
+                          "intercept": 0.05
+                        }
+                      ],
+                      "clip": [
+                        {
+                          "type": "shape",
+                          "kind": "rect",
+                          "seed": "snap1",
+                          "x": 0,
+                          "y": 0,
+                          "width": 992,
+                          "height": 763.0769230769231,
+                          "fill": "#ffffff",
+                          "edge": {
+                            "kind": "deckle",
+                            "size": 8.8,
+                            "step": 20
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "snap2",
+              "type": "group",
+              "transform": {
+                "rotate": 2.5,
+                "origin": [
+                  244.0,
+                  270.38461538461536
+                ]
+              },
+              "layers": [
+                {
+                  "type": "group",
+                  "x": 120,
+                  "y": 175,
+                  "width": 248,
+                  "height": 190.76923076923077,
+                  "viewBox": [
+                    0,
+                    0,
+                    992,
+                    763.0769230769231
+                  ],
+                  "layers": [
+                    {
+                      "type": "image",
+                      "src": "{opt.photo2}",
+                      "x": 0,
+                      "y": 0,
+                      "width": 992,
+                      "height": 763.0769230769231,
+                      "fit": "cover",
+                      "opacity": 0.92,
+                      "effects": [
+                        {
+                          "kind": "duotone",
+                          "colors": [
+                            "{shadow}",
+                            "{mid}",
+                            "{light}"
+                          ]
+                        },
+                        {
+                          "kind": "saturate",
+                          "amount": 0.7
+                        },
+                        {
+                          "kind": "levels",
+                          "slope": 0.9,
+                          "intercept": 0.05
+                        }
+                      ],
+                      "clip": [
+                        {
+                          "type": "shape",
+                          "kind": "rect",
+                          "seed": "snap2",
+                          "x": 0,
+                          "y": 0,
+                          "width": 992,
+                          "height": 763.0769230769231,
+                          "fill": "#ffffff",
+                          "edge": {
+                            "kind": "deckle",
+                            "size": 8.8,
+                            "step": 20
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "snap3",
+              "type": "group",
+              "transform": {
+                "rotate": -1.5,
+                "origin": [
+                  180.0,
+                  425.38461538461536
+                ]
+              },
+              "layers": [
+                {
+                  "type": "group",
+                  "x": 56,
+                  "y": 330,
+                  "width": 248,
+                  "height": 190.76923076923077,
+                  "viewBox": [
+                    0,
+                    0,
+                    992,
+                    763.0769230769231
+                  ],
+                  "layers": [
+                    {
+                      "type": "image",
+                      "src": "{opt.photo3}",
+                      "x": 0,
+                      "y": 0,
+                      "width": 992,
+                      "height": 763.0769230769231,
+                      "fit": "cover",
+                      "opacity": 0.92,
+                      "effects": [
+                        {
+                          "kind": "duotone",
+                          "colors": [
+                            "{shadow}",
+                            "{mid}",
+                            "{light}"
+                          ]
+                        },
+                        {
+                          "kind": "saturate",
+                          "amount": 0.7
+                        },
+                        {
+                          "kind": "levels",
+                          "slope": 0.9,
+                          "intercept": 0.05
+                        }
+                      ],
+                      "clip": [
+                        {
+                          "type": "shape",
+                          "kind": "rect",
+                          "seed": "snap3",
+                          "x": 0,
+                          "y": 0,
+                          "width": 992,
+                          "height": 763.0769230769231,
+                          "fill": "#ffffff",
+                          "edge": {
+                            "kind": "deckle",
+                            "size": 8.8,
+                            "step": 20
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "tape1",
+              "type": "shape",
+              "kind": "rect",
+              "x": 80,
+              "y": 15,
+              "width": 88,
+              "height": 25,
+              "rotate": -8,
+              "fill": "{tape}",
+              "opacity": 0.75,
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 1,
+                  "opacity": 0.15
+                }
+              ]
+            },
+            {
+              "id": "tape2",
+              "type": "shape",
+              "kind": "rect",
+              "x": 224,
+              "y": 165,
+              "width": 88,
+              "height": 25,
+              "rotate": 6,
+              "fill": "{tape}",
+              "opacity": 0.75,
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 1,
+                  "opacity": 0.15
+                }
+              ]
+            },
+            {
+              "id": "tape3",
+              "type": "shape",
+              "kind": "rect",
+              "x": 104,
+              "y": 325,
+              "width": 88,
+              "height": 25,
+              "rotate": -4,
+              "fill": "{tape}",
+              "opacity": 0.75,
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 1,
+                  "opacity": 0.15
+                }
+              ]
+            },
+            {
+              "id": "star1",
+              "type": "shape",
+              "kind": "star",
+              "cx": 348.0,
+              "cy": 97.8,
+              "r": 31.799999999999997,
+              "inner": 0.45,
+              "rotate": -12,
+              "fill": "{pink}",
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 0.5,
+                  "opacity": 0.3
+                }
+              ]
+            },
+            {
+              "id": "star2",
+              "type": "shape",
+              "kind": "star",
+              "cx": 304.0,
+              "cy": 315.2,
+              "r": 21.2,
+              "inner": 0.45,
+              "rotate": 20,
+              "fill": "{pink}",
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 0.5,
+                  "opacity": 0.3
+                }
+              ]
+            },
+            {
+              "id": "star3",
+              "type": "shape",
+              "kind": "star",
+              "cx": 68.0,
+              "cy": 469.4,
+              "r": 24.733333333333334,
+              "inner": 0.45,
+              "rotate": 8,
+              "fill": "{pink}",
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 0.5,
+                  "opacity": 0.3
+                }
+              ]
+            },
+            {
+              "id": "note",
+              "type": "group",
+              "transform": {
+                "rotate": -4,
+                "origin": [
+                  244,
+                  461.0
+                ]
+              },
+              "layers": [
+                {
+                  "type": "text",
+                  "content": "{note}",
+                  "font": "Permanent Marker",
+                  "weight": 400,
+                  "size": 20,
+                  "letterSpacing": 0,
+                  "lineHeight": 1.15,
+                  "x": 144,
+                  "y": 469,
+                  "color": "{ink}"
+                },
+                {
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M12 20.6C6.2 16.4 2.6 12.9 2.6 8.9 2.6 6.2 4.6 4.3 7.1 4.3c2.1 0 3.8 1.2 4.9 3 1.1-1.8 2.8-3 4.9-3 2.5 0 4.5 1.9 4.5 4.6 0 4-3.6 7.5-9.4 11.7z",
+                  "viewBox": [
+                    0,
+                    0,
+                    24,
+                    24
+                  ],
+                  "x": 342,
+                  "y": 452,
+                  "width": 20,
+                  "height": 20,
+                  "fill": "none",
+                  "stroke": "{ink}",
+                  "strokeWidth": 1.6
+                }
+              ]
+            },
+            {
+              "id": "mark",
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 328,
+              "y": 20,
+              "size": 48,
+              "color": "{ink}",
+              "opacity": 0.85,
+              "transform": {
+                "rotate": 8,
+                "origin": [
+                  352.0,
+                  44.0
+                ]
+              },
+              "when": "mark"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "aspect": "square"
+      },
+      "layers": [
+        {
+          "id": "sheet",
+          "type": "group",
+          "clip": [
+            {
+              "type": "shape",
+              "kind": "rect",
+              "seed": "page",
+              "x": 2,
+              "y": 2,
+              "width": 396,
+              "height": 396,
+              "fill": "#ffffff",
+              "edge": {
+                "kind": "deckle",
+                "size": 4,
+                "step": 10
+              }
+            }
+          ],
+          "layers": [
+            {
+              "id": "cream",
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 0,
+              "width": 400,
+              "height": 400,
+              "fill": "{paper}"
+            },
+            {
+              "id": "snap1",
+              "type": "group",
+              "transform": {
+                "rotate": -3,
+                "origin": [
+                  123.0,
+                  97.23076923076923
+                ]
+              },
+              "layers": [
+                {
+                  "type": "group",
+                  "x": 20,
+                  "y": 18,
+                  "width": 206,
+                  "height": 158.46153846153845,
+                  "viewBox": [
+                    0,
+                    0,
+                    824,
+                    633.8461538461538
+                  ],
+                  "layers": [
+                    {
+                      "type": "image",
+                      "src": "{photo}",
+                      "x": 0,
+                      "y": 0,
+                      "width": 824,
+                      "height": 633.8461538461538,
+                      "fit": "cover",
+                      "opacity": 0.92,
+                      "effects": [
+                        {
+                          "kind": "duotone",
+                          "colors": [
+                            "{shadow}",
+                            "{mid}",
+                            "{light}"
+                          ]
+                        },
+                        {
+                          "kind": "saturate",
+                          "amount": 0.7
+                        },
+                        {
+                          "kind": "levels",
+                          "slope": 0.9,
+                          "intercept": 0.05
+                        }
+                      ],
+                      "clip": [
+                        {
+                          "type": "shape",
+                          "kind": "rect",
+                          "seed": "snap1",
+                          "x": 0,
+                          "y": 0,
+                          "width": 824,
+                          "height": 633.8461538461538,
+                          "fill": "#ffffff",
+                          "edge": {
+                            "kind": "deckle",
+                            "size": 8.8,
+                            "step": 20
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "snap2",
+              "type": "group",
+              "transform": {
+                "rotate": 2.5,
+                "origin": [
+                  279.0,
+                  177.23076923076923
+                ]
+              },
+              "layers": [
+                {
+                  "type": "group",
+                  "x": 176,
+                  "y": 98,
+                  "width": 206,
+                  "height": 158.46153846153845,
+                  "viewBox": [
+                    0,
+                    0,
+                    824,
+                    633.8461538461538
+                  ],
+                  "layers": [
+                    {
+                      "type": "image",
+                      "src": "{opt.photo2}",
+                      "x": 0,
+                      "y": 0,
+                      "width": 824,
+                      "height": 633.8461538461538,
+                      "fit": "cover",
+                      "opacity": 0.92,
+                      "effects": [
+                        {
+                          "kind": "duotone",
+                          "colors": [
+                            "{shadow}",
+                            "{mid}",
+                            "{light}"
+                          ]
+                        },
+                        {
+                          "kind": "saturate",
+                          "amount": 0.7
+                        },
+                        {
+                          "kind": "levels",
+                          "slope": 0.9,
+                          "intercept": 0.05
+                        }
+                      ],
+                      "clip": [
+                        {
+                          "type": "shape",
+                          "kind": "rect",
+                          "seed": "snap2",
+                          "x": 0,
+                          "y": 0,
+                          "width": 824,
+                          "height": 633.8461538461538,
+                          "fill": "#ffffff",
+                          "edge": {
+                            "kind": "deckle",
+                            "size": 8.8,
+                            "step": 20
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "snap3",
+              "type": "group",
+              "transform": {
+                "rotate": -1.5,
+                "origin": [
+                  110.58,
+                  264.1384615384615
+                ]
+              },
+              "layers": [
+                {
+                  "type": "group",
+                  "x": 22,
+                  "y": 196,
+                  "width": 177.16,
+                  "height": 136.27692307692305,
+                  "viewBox": [
+                    0,
+                    0,
+                    708.64,
+                    545.1076923076922
+                  ],
+                  "layers": [
+                    {
+                      "type": "image",
+                      "src": "{opt.photo3}",
+                      "x": 0,
+                      "y": 0,
+                      "width": 708.64,
+                      "height": 545.1076923076922,
+                      "fit": "cover",
+                      "opacity": 0.92,
+                      "effects": [
+                        {
+                          "kind": "duotone",
+                          "colors": [
+                            "{shadow}",
+                            "{mid}",
+                            "{light}"
+                          ]
+                        },
+                        {
+                          "kind": "saturate",
+                          "amount": 0.7
+                        },
+                        {
+                          "kind": "levels",
+                          "slope": 0.9,
+                          "intercept": 0.05
+                        }
+                      ],
+                      "clip": [
+                        {
+                          "type": "shape",
+                          "kind": "rect",
+                          "seed": "snap3",
+                          "x": 0,
+                          "y": 0,
+                          "width": 708.64,
+                          "height": 545.1076923076922,
+                          "fill": "#ffffff",
+                          "edge": {
+                            "kind": "deckle",
+                            "size": 8.8,
+                            "step": 20
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "tape1",
+              "type": "shape",
+              "kind": "rect",
+              "x": 62,
+              "y": 12,
+              "width": 80,
+              "height": 22,
+              "rotate": -8,
+              "fill": "{tape}",
+              "opacity": 0.75,
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 1,
+                  "opacity": 0.15
+                }
+              ]
+            },
+            {
+              "id": "tape2",
+              "type": "shape",
+              "kind": "rect",
+              "x": 250,
+              "y": 90,
+              "width": 80,
+              "height": 22,
+              "rotate": 6,
+              "fill": "{tape}",
+              "opacity": 0.75,
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 1,
+                  "opacity": 0.15
+                }
+              ]
+            },
+            {
+              "id": "tape3",
+              "type": "shape",
+              "kind": "rect",
+              "x": 60,
+              "y": 188,
+              "width": 80,
+              "height": 22,
+              "rotate": -4,
+              "fill": "{tape}",
+              "opacity": 0.75,
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 1,
+                  "opacity": 0.15
+                }
+              ]
+            },
+            {
+              "id": "star1",
+              "type": "shape",
+              "kind": "star",
+              "cx": 356.0,
+              "cy": 51.3,
+              "r": 22.966666666666665,
+              "inner": 0.45,
+              "rotate": -12,
+              "fill": "{pink}",
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 0.5,
+                  "opacity": 0.3
+                }
+              ]
+            },
+            {
+              "id": "star2",
+              "type": "shape",
+              "kind": "star",
+              "cx": 343.0,
+              "cy": 236.05,
+              "r": 18.55,
+              "inner": 0.45,
+              "rotate": 20,
+              "fill": "{pink}",
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 0.5,
+                  "opacity": 0.3
+                }
+              ]
+            },
+            {
+              "id": "star3",
+              "type": "shape",
+              "kind": "star",
+              "cx": 37.0,
+              "cy": 354.15,
+              "r": 20.316666666666666,
+              "inner": 0.45,
+              "rotate": 8,
+              "fill": "{pink}",
+              "effects": [
+                {
+                  "kind": "shadow",
+                  "x": 0,
+                  "y": 1,
+                  "blur": 0.5,
+                  "opacity": 0.3
+                }
+              ]
+            },
+            {
+              "id": "note",
+              "type": "group",
+              "transform": {
+                "rotate": -4,
+                "origin": [
+                  286,
+                  303.6
+                ]
+              },
+              "layers": [
+                {
+                  "type": "text",
+                  "content": [
+                    "{noteTitle}",
+                    "{noteArtist}"
+                  ],
+                  "font": "Permanent Marker",
+                  "weight": 400,
+                  "size": 36,
+                  "letterSpacing": 0,
+                  "lineHeight": 1.12,
+                  "x": 186,
+                  "y": 318,
+                  "color": "{ink}"
+                },
+                {
+                  "type": "shape",
+                  "kind": "path",
+                  "d": "M12 20.6C6.2 16.4 2.6 12.9 2.6 8.9 2.6 6.2 4.6 4.3 7.1 4.3c2.1 0 3.8 1.2 4.9 3 1.1-1.8 2.8-3 4.9-3 2.5 0 4.5 1.9 4.5 4.6 0 4-3.6 7.5-9.4 11.7z",
+                  "viewBox": [
+                    0,
+                    0,
+                    24,
+                    24
+                  ],
+                  "x": 330,
+                  "y": 336,
+                  "width": 30,
+                  "height": 30,
+                  "fill": "none",
+                  "stroke": "{ink}",
+                  "strokeWidth": 1.6
+                }
+              ]
+            },
+            {
+              "id": "mark",
+              "type": "icon",
+              "markup": "{mark}",
+              "x": 282,
+              "y": 20,
+              "size": 40,
+              "color": "{ink}",
+              "opacity": 0.85,
+              "transform": {
+                "rotate": 8,
+                "origin": [
+                  302.0,
+                  40.0
+                ]
+              },
+              "when": "mark"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.06,
+      "blend": "multiply"
+    }
+  ]
+}

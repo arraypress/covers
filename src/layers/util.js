@@ -5,8 +5,8 @@
  * @module layers/util
  */
 
-import { attrs, esc } from '../svg.js';
-import { len } from '../geometry.js';
+import { attrs, esc } from '@arraypress/image-effects/svg';
+import { len } from '@arraypress/image-effects/length';
 
 /**
  * A coordinate: px as a number, `'50%'` of the canvas along `axis`, or a
@@ -20,6 +20,19 @@ import { len } from '../geometry.js';
 export function pos(v, axis, canvas) {
   if (typeof v === 'string' && v.trim().endsWith('%')) return (parseFloat(v) / 100) * (axis === 'x' ? canvas.width : canvas.height);
   return len(/** @type {any} */ (v), canvas, 0);
+}
+
+/**
+ * Opacity and blend-mode attributes shared by every layer.
+ *
+ * @param {{ opacity?: number, blend?: string }} layer - The layer.
+ * @returns {Record<string, string | number | undefined>} Attributes for the layer's group.
+ */
+export function layerAttrs(layer) {
+  return {
+    opacity: layer.opacity != null && layer.opacity < 1 ? Math.max(0, layer.opacity) : undefined,
+    style: layer.blend && layer.blend !== 'normal' ? `mix-blend-mode:${layer.blend}` : undefined,
+  };
 }
 
 /**

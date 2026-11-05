@@ -1,0 +1,170 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "instant",
+  "description": "Instant photo, flat: a white instant-film frame tilted on a flat field of the accent, the photo in it slightly faded like the film, the title written on the strip in marker and the artist set clean above. Slots: {name} (artist), {title} (release), {photo}, the palette (accent = the field), `tilt`, `focus`. Fonts: Permanent Marker, Inter Tight (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "requires": [
+    "photo"
+  ],
+  "params": {
+    "tilt": -4,
+    "focus": "center"
+  },
+  "vars": {
+    "ink": {
+      "readable": "@accent"
+    }
+  },
+  "layers": [
+    {
+      "id": "field",
+      "type": "solid",
+      "color": "@accent"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 90,
+          "letterSpacing": -0.03,
+          "x": 500,
+          "y": 122,
+          "align": "center",
+          "maxWidth": 900,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "$ink"
+        }
+      ]
+    },
+    {
+      "id": "print",
+      "type": "group",
+      "transform": {
+        "rotate": "{tilt}",
+        "origin": [
+          "50vmin",
+          "56.5vmin"
+        ]
+      },
+      "layers": [
+        {
+          "id": "under",
+          "type": "shape",
+          "kind": "rect",
+          "x": "21.2%",
+          "y": "18.2%",
+          "width": "60%",
+          "height": "79%",
+          "fill": "#000000",
+          "opacity": 0.12
+        },
+        {
+          "id": "frame",
+          "type": "shape",
+          "kind": "rect",
+          "x": "20%",
+          "y": "17%",
+          "width": "60%",
+          "height": "79%",
+          "radius": "0.6vmin",
+          "fill": "#f7f5ef"
+        },
+        {
+          "id": "photo",
+          "type": "image",
+          "src": "{photo}",
+          "x": "23%",
+          "y": "20%",
+          "width": "54%",
+          "height": "54%",
+          "fit": "cover",
+          "focus": "{focus}",
+          "effects": [
+            {
+              "kind": "levels",
+              "slope": 0.88,
+              "intercept": 0.06
+            },
+            {
+              "kind": "saturate",
+              "amount": 0.85
+            }
+          ]
+        },
+        {
+          "id": "sheen",
+          "type": "shape",
+          "kind": "rect",
+          "x": "23%",
+          "y": "20%",
+          "width": "54%",
+          "height": "54%",
+          "fill": {
+            "type": "linear",
+            "angle": 135,
+            "colors": [
+              "#ffffff",
+              "#ffffff"
+            ],
+            "opacities": [
+              0.16,
+              0
+            ]
+          }
+        },
+        {
+          "id": "strip",
+          "type": "group",
+          "viewBox": [
+            0,
+            0,
+            1000,
+            1000
+          ],
+          "fit": "cover",
+          "layers": [
+            {
+              "id": "title",
+              "type": "text",
+              "content": "{title}",
+              "font": "Permanent Marker",
+              "weight": 400,
+              "size": 92,
+              "minSize": 86,
+              "lineHeight": 0.98,
+              "letterSpacing": -0.02,
+              "anchor": "center",
+              "position": {
+                "x": 0.5,
+                "y": 0.852
+              },
+              "align": "center",
+              "maxWidth": 560,
+              "maxLines": 2,
+              "balance": true,
+              "color": "#1c1f2b"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05
+    }
+  ]
+}

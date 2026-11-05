@@ -6,7 +6,7 @@
  */
 
 import { fontBytes } from '../fonts.js';
-import { toBase64 } from '../platform/bytes.js';
+import { toBase64 } from '../platform/index.js';
 
 /** Faces embedded in this document already (live text). @type {WeakMap<object, Set<string>>} */
 const embedded = new WeakMap();

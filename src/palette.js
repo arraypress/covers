@@ -20,7 +20,7 @@
  */
 
 import { relativeLuminance, contrastRatio, readableOn, readableText } from '@arraypress/color-utils';
-import { toHex, toOklch, fromOklch, mixOklab } from './color.js';
+import { toHex, toOklch, fromOklch, mixOklab } from '@arraypress/image-effects/color';
 
 /**
  * Curated presets. Each is a full palette; the light ones pair with the

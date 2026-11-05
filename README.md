@@ -59,6 +59,7 @@ const svg = await renderSvg({
 | `cover(options)` | Resolve size and palette and expand the recipe into a layer stack. Pure, synchronous; returns plain data you can inspect or tweak. |
 | `renderSvg(cover)` | `Promise<string>`: an SVG document. Byte-identical for the same input. |
 | `renderSvg(cover, { t })` | The frame at `t` seconds, for [keyframed](#animation) layers (static covers ignore it). |
+| `renderSvg(cover, { images: 'webp', quality })` | Embedded photos and pixel effects re-encoded as WebP where smaller (about a third off a photo-heavy flyer; needs sharp). For SVGs shown in browsers: librsvg (sharp, `renderImage`) can't draw WebP. |
 | `renderImage(cover, { format, quality, lossless, effort, cache })` | `Promise<Buffer>` (Node, sharp): `'webp'` (default), `'png'`, `'avif'` or `'jpeg'`; `lossless` for WebP/AVIF (default: the recipe's preference). |
 | `renderBlob(cover, { format, quality, width })`, `rasterize(svg, options)` | `Promise<Blob>` in the browser: PNG, JPEG or WebP through a canvas. |
 | `renderPages(cover)` | `{ front, back }`: both sides of a card, ticket or flyer (see [Pages](#two-sided-pages)). |
@@ -287,81 +288,15 @@ Coordinates in px of the layer's canvas (or its group's `viewBox`), or `'50%'`. 
 
 ## Effects
 
-`effects: [{ kind, … }]` on any layer or group, applied in order (`src/effects/`, one module per family). Most are SVG filters (vector, sized in the layer's units); the ones filters can't do are computed on pixels (◆): the layer is drawn once at the pixels it's shown at (sharp in Node, a canvas in the browser), processed on a typed array and embedded as one image. Copies (▲) redraw the layer's own markup. Lengths are px or `'vmin'` strings; points (`center`, `at`) are `[x, y]` fractions.
+`effects: [{ kind, … }]` on any layer or group, applied in order: 71 kinds of blur, distortion, colour grading, light, texture and print, and digital effects, from [`@arraypress/image-effects`](https://github.com/arraypress/image-effects#effects) (a dependency; its README lists every kind with its options, and it works on its own for photos outside covers). Most are SVG filters (vector, sized in the layer's units); the ones filters can't do are computed on pixels: the layer is drawn once at the pixels it's shown at (sharp in Node, a canvas in the browser), processed and embedded as one image. `extrude` and `mirror` redraw the layer's own markup.
 
-| Kind | Options | |
-|---|---|---|
-| **Blur** | | |
-| `blur` | `radius`, or `x`, `y`; `edge: 'duplicate'` | Gaussian. |
-| `motion` | `angle`, `length` (σ along), `spread` | Directional blur at any angle (on pixels in `renderImage`: librsvg can't blur along a turned axis). |
-| `zoom` ◆ | `center`, `amount` (0–0.95) | Radial: each point smeared toward the centre. |
-| `spin` ◆ | `center`, `angle` | Rotational blur round a centre; the centre stays sharp. |
-| `tilt` ◆ | `center`, `angle`, `width`, `falloff`, `radius`, `saturate` | Tilt-shift: a sharp band, the blur growing beyond it. |
-| `lens` ◆ | `radius`, `blades` (0 round, 5–8), `rotation`, `highlights`, `threshold` | Lens blur: highlights become bokeh discs or polygons. |
-| **Distort** | | |
-| `wave` ◆ | `amplitude`, `wavelength`, `angle`, `phase`, `shape` (`sine`, `triangle`, `square`) | |
-| `ripple` ◆ | `center`, `amplitude`, `wavelength`, `phase`, `radius` | Rings on water. |
-| `twirl` ◆ | `center`, `angle`, `radius` | Swirl. |
-| `bulge`, `pinch` ◆ | `center`, `amount`, `radius` | |
-| `fisheye` ◆ | `center`, `amount` | Barrel distortion over the frame. |
-| `glass` ◆ | `texture` (`frosted`, `reeded`, `pebbled`), `size`, `amount`, `angle`, `shade`, `seed` | Through frosted, fluted or pebbled glass. |
-| `displace` ◆ | `amount`, `map: { layers }` (else seeded noise: `size`, `octaves`, `seed`), `mode` (`gradient`, `channels`) | Displacement by a texture, a photo or type. |
-| `kaleidoscope` ◆ | `segments`, `center`, `angle`, `scale` | |
-| `mirror` ▲ | `keep` (`left`, `top`, `top-left`, …), `at` | One half (or quarter) reflected. |
-| `stretch` ◆ | `at`, `direction`, `length`, `fade` | Pixel stretch: one row or column smeared to the edge. |
-| `sort` ◆ | `direction`, `threshold` (`[lo, hi]`), `by` (`luma`, `hue`, `saturation`), `reverse`, `length`, `seed` | Pixel sorting. |
-| **Colour** | | |
-| `curves` | `points`, `red`, `green`, `blue` (`[[in, out], …]`, 0–1) | Smooth tone curve, per channel too. |
-| `levels`, `grayscale` | `black`, `white`, `gamma`, `output`; or `slope`, `intercept` (`contrast`, `brightness`) | |
-| `gradientMap` | `colors`, `stops`, `space` (`srgb`, `oklab`) | Tones through a multi-stop gradient. |
-| `duotone` | `colors`, `contrast` | |
-| `posterize` | `levels` | |
-| `threshold` | `level`, `ink`, `paper` | Two colours. |
-| `invert` | `amount` | |
-| `hue` | `angle`, `saturation`, `lightness` | Hue/saturation. |
-| `saturate`, `vibrance` ◆ | `amount`; `amount`, `saturation` | Vibrance lifts muted colours, holds skin. |
-| `colorBalance` | `shadows`, `midtones`, `highlights` (`[r, g, b]`, −1–1) | |
-| `channelMixer` | `red`, `green`, `blue` (`[r, g, b, k]`), `monochrome`, `gray` | |
-| `sepia`, `matrix` | `amount`; `values` | |
-| `look` | `name` (`fade`, `crossProcess`, `bleachBypass`, `tealOrange`, `warmFilm`, `coolFilm`, `noir`), `amount` | Graded presets. |
-| **Light** | | |
-| `bloom` | `threshold`, `radius`, `intensity`, `color` | Highlights glowing (spreads past the layer: neon type). |
-| `halation` | `threshold`, `radius`, `intensity`, `color` | Film's red halo round highlights. |
-| `glow`, `shadow` | `x`, `y`, `blur`, `color`, `opacity`, `spread` | A halo or drop shadow from the alpha. |
-| `vignette` | `shape` (`ellipse`, `circle`, `rect`), `size`, `softness`, `amount`, `color`, `center` | |
-| `lightLeak` | `edge`, `colors`, `intensity`, `seed` | Warm light fogging an edge. |
-| `lensFlare` | `at`, `size`, `intensity`, `color`, `ghosts`, `streak`, `seed` | Soft glow, halo, ghosts, optional anamorphic streak. |
-| `rays` ◆ | `center` (default the brightest patch), `threshold`, `length`, `intensity`, `color` | God rays: occluders cast shafts. |
-| **Texture and print** | | |
-| `grain` | `amount`, `size`, `color`, `seed` | Film grain, strongest in the midtones. |
-| `dust` ◆ | `amount`, `scratches`, `color` (`light`, `dark`, `mixed`), `seed` | Dust, hairs and scratches. |
-| `paper` | `texture` (`paper`, `canvas`), `scale`, `amount`, `angle` | Printed on paper or canvas. |
-| `scanlines` | `spacing`, `thickness`, `amount` | |
-| `crt` ◆ | `mask` (`aperture`, `shadow`), `size`, `amount`, `scanlines`, `curvature` | Phosphor RGB mask. |
-| `vhs` ◆ | `shift`, `bleed`, `jitter`, `tracking`, `noise`, `seed` | Chroma smear and shift, line jitter, tracking noise. |
-| `jpeg` ◆ | `quality`, `block`, `passes`, `subsample` | Real JPEG compression, blocks at any size. |
-| `halftone` | `ink`, `cell`, `angle`, `contrast`, `lift`, `softness`, `shape` (`dot`, `line`, `square`, `diamond`, `cross`) | One-ink screen (two layers, `multiply`, a `transform`: a two-ink overprint). |
-| `newsprint` ◆ | `cell`, `angles` (`[c, m, y, k]`), `paper`, `gain`, `gcr` | CMYK process halftone, rosettes. |
-| `dither` | `ink`, `paper`, `cell`, `contrast`, `brightness`, `pixelate`, `weights`, `matrix` | Ordered 1-bit. |
-| `wear`, `xerox`, `photocopy`, `grit` | `rough`, `uneven`, `specks`; `rough`, `dropout`; `ink`, `contrast`, `lift`, `noise`; `amount`, `frequency` | Riso drum wear, copier toner. |
-| `rough`, `warp` | `scale`, `frequency`, `octaves` | Displacement: a wobble, a melt. |
-| **Digital** | | |
-| `chromatic`, `rgbSplit` | `amount`, `angle`, `mode` (`directional`, `radial` ◆), `center` | Chromatic aberration. |
-| `glitch` ◆ | `amount`, `shift`, `slices`, `blocks`, `seed` | RGB shift, torn slices, displaced blocks. |
-| `pixelate`, `mosaic` ◆ | `size`, `shape` (`square`, `hex`) | |
-| `ascii` ◆ | `cell`, `ramp`, `color` (`source` or a colour), `background`, `invert`, `contrast` | |
-| `edges` | `radius`, `amount`, `style` (`ink`, `glow`), `color`, `mono` | Find edges, glowing edges. |
-| `sketch` | `radius`, `darkness`, `color` | Pencil drawing. |
-| `emboss` | `angle`, `amount`, `radius`, `color` | |
-| `sharpen` | `amount`, `radius` | Unsharp mask. |
-| **Other** | | |
-| `border` | `width`, `color`, `line`, `lineWidth`, `shape: 'circle'` | Die-cut sticker border, or a round backing. |
-| `extrude` ▲ | `depth`, `angle`, `offset`, `steps`, `color`, `to` | Block extrusion. |
-| `filter` | `markup` | Raw primitives (`{{seed}}`, `{{id}}`). |
+```js
+{ type: 'image', src: photo, effects: [{ kind: 'look', name: 'warmFilm' }, { kind: 'tilt', center: [0.5, 0.6] }, 'grain'] }
+```
 
-**`mask`, on any effect**: where it applies, from none to full. `{ gradient: 'linear', from: [x, y], to: [x, y] }`, `{ gradient: 'radial', center, from, to, aspect }` (radii), `{ gradient: 'band', center, angle, from, to }` (distances from a line), or `{ layers: [...] }` (their luminance); each takes `invert` and `ease`. The mix is exact: inside the filter, or per pixel. "The left half motion-blurred, the face sharp" is `{ kind: 'motion', length: '6vmin', mask: { gradient: 'linear', from: [0.4, 0.5], to: [0.25, 0.5] } }`.
+**`mask`, on any effect**: where it applies, from none to full: a gradient (`linear`, `radial`, `band`), or `{ layers: [...] }` (their luminance; any covers layers). "The left half motion-blurred, the face sharp" is `{ kind: 'motion', length: '6vmin', mask: { gradient: 'linear', from: [0.4, 0.5], to: [0.25, 0.5] } }`. `displace` takes `map: { layers }` the same way.
 
-Every effect also takes `colorSpace` (`'sRGB'`, the default, or `'linearRGB'`) and `pad`. Numbers are in the layer's units: inside a group, its grid's, so an effect looks the same at every output size. Random ones take a `seed` (else the layer's stream). JSON recipes are validated kind by kind (`EFFECT_OPTIONS`). Where nothing can draw pixels (a Worker), `lens` falls back to a Gaussian blur, `tilt` to one through its band, and the other ◆ effects are left out.
+Numbers are in the layer's units: inside a group, its grid's, so an effect looks the same at every output size. Random ones take a `seed` (else the layer's stream). JSON recipes are validated kind by kind (`EFFECT_OPTIONS`). Where nothing can draw pixels (a Worker), `lens` falls back to a Gaussian blur, `tilt` to one through its band, and the other ◆ effects are left out.
 
 ### Paints
 
@@ -594,8 +529,16 @@ Layers `bg`, `mesh` or `photo`, `grain` (+ `title`). The palette of a photo (`im
 ### `brand`
 A brand on every format, the default for [`kit`](#brand-kit): avatars (the mark, or an initial), headers and banners (mark and name in the safe zone), posts and stories, business cards (front: mark and name; back: `person`, `role`, `lines`), letterhead and compliment slips, tickets (with a Code 128 `ticket` number), passes and stickers. Options: `name`, `tagline`, `mark`, `photo`, `lines`, `person`, `role`, `ticket`, `compliments`.
 
-### Flyers (examples)
-`examples/recipes/`: `bloomfall.json` (riso, two misregistered inks, halftoned cut-out), `grid-rest-rhythm.json` (Neo-Swiss grid, justified headline), `wheatpaste-torn.json` (torn sheet, knockout type, creases). `flyers/` holds ~45 more (aura, Neo-Swiss, acid, riso, kinetic, festival, varsity, ephemera, Bauhaus, 70s, lo-fi, zine), each with a release cover, and `release/` 16 cover-only styles. Each is drawn on a design grid in a `group`, so it renders at any `format`.
+### Flyers and release covers
+The package ships 76 more recipes beside the built-ins, each drawn on a design grid in a `group` so it renders at any `format`: `recipes/flyers/` (44 flyers: aura, Neo-Swiss, acid, riso, kinetic, festival, varsity, ephemera, Bauhaus, 70s, lo-fi, zine, wheatpaste; each re-composes for a 3000×3000 cover with `format: 'release'`), `recipes/release/` (20 cover-only styles) and `recipes/release/series/` (12 more for a series). Import one as JSON, or load it by path:
+
+```js
+import bloomfall from '@arraypress/covers/recipes/flyers/bloomfall.json' with { type: 'json' };
+const svg = await renderSvg({ recipe: defineRecipe(bloomfall), seed: 'gig', mark, photo, cutout });
+// or by path (Node): loadRecipe(new URL(import.meta.resolve('@arraypress/covers/recipes/release/swiss.json')))
+```
+
+They fill slots from the options (`{name}`, `{mark}`, `{photo}`, `{cutout}`…; each file's `params` has defaults), and their `$schema` points at the bundled schema.
 
 ### Your own
 
@@ -772,6 +715,7 @@ Notes:
 - Entries with nested ids (`blog/2026/post`) need a rest route: `[...slug].webp.ts`.
 - In `output: 'server'`, add `export const prerender = true;` to keep the covers static. On-demand routes also work (the entry is looked up by slug).
 - `coverUrl(slug, { base, format })` encodes each path segment.
+- **Keep covers external to Vite's SSR bundle**: `vite: { ssr: { external: ['@arraypress/covers'] } }` in `astro.config.mjs` (any Vite SSR build). Bundled, Vite resolves covers' `#harfbuzz` import against the project's own harfbuzzjs (satori ships an older one), and text fails with "hb.Blob is not a constructor". `@arraypress/image-effects` needs nothing (no `#` imports).
 
 ## Caching
 
@@ -829,7 +773,8 @@ Contour carries grain, so it stays lossy like the rest. Pass `lossless: true` to
 `npm test` runs the suite, including:
 
 - **Byte identity with 1.0**: 694 covers (every built-in recipe across palettes, aspects and options, and every 1.0 layer on its own), hashed with the 1.0.0 code before any 1.1 change, must render the same SVG.
-- **Image filters**: numeric properties per effect (spin and zoom keep the centre pixel, threshold draws two colours, a lens turns a point into a disc of its radius, pixel sort keeps every pixel of a row, a turned motion blur is directional, masks leave the layer exact where they're 0), seeds, validation and the Worker fallback; `COVERS_SLOW=1` renders every effect at 3000².
+- **Effects on layers**: masks drawn from layers, and effects validated in JSON recipes (the effects themselves are tested in `@arraypress/image-effects`).
+- **Every published recipe** (built-ins, `flyers/`, `release/`) validates against the schema and defines.
 - **A browser smoke test** in headless Chrome over the DevTools protocol (`COVERS_CDP`, default `http://localhost:9334`; skipped without one): vector and text covers draw the same bytes as Node, the pixel layers render, `renderBlob` encodes PNG and WebP, and HarfBuzz loads its wasm from a URL.
 
 `npm run test:worker` runs covers inside workerd with `wrangler dev` (needs wrangler).

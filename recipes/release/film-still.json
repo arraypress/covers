@@ -1,0 +1,102 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "film-still",
+  "description": "A film still: the photo letterboxed at 1.85:1 in black bars, graded and grained like a frame grab; the title set as a subtitle line in the lower bar and the artist as an opening credit in the upper one. Slots: {name} (artist), {title} (release), {photo}, `subtitle` (the subtitle colour; white, or the classic yellow #f2d94e), `focus`. Fonts: Inter Tight (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "requires": [
+    "photo"
+  ],
+  "params": {
+    "subtitle": "#f4f1ea",
+    "focus": "center"
+  },
+  "layers": [
+    {
+      "id": "black",
+      "type": "solid",
+      "color": "#050505"
+    },
+    {
+      "id": "frame",
+      "type": "image",
+      "src": "{photo}",
+      "x": "0%",
+      "y": "23%",
+      "width": "100%",
+      "height": "54%",
+      "fit": "cover",
+      "focus": "{focus}",
+      "effects": [
+        {
+          "kind": "levels",
+          "contrast": 1.08,
+          "brightness": -0.02
+        },
+        {
+          "kind": "saturate",
+          "amount": 0.86
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "credit",
+          "type": "text",
+          "content": {
+            "upper": "{name}"
+          },
+          "font": "Inter Tight",
+          "weight": 500,
+          "size": 86,
+          "lineHeight": 1.08,
+          "letterSpacing": 0.12,
+          "anchor": "center",
+          "position": {
+            "x": 0.5,
+            "y": 0.115
+          },
+          "align": "center",
+          "maxWidth": 940,
+          "maxLines": 2,
+          "balance": true,
+          "color": "#f4f1ea"
+        },
+        {
+          "id": "subtitle",
+          "type": "text",
+          "content": "{title}",
+          "font": "Inter Tight",
+          "weight": 500,
+          "size": 86,
+          "lineHeight": 1.1,
+          "letterSpacing": -0.01,
+          "anchor": "center",
+          "position": {
+            "x": 0.5,
+            "y": 0.885
+          },
+          "align": "center",
+          "maxWidth": 940,
+          "maxLines": 2,
+          "balance": true,
+          "color": "{subtitle}"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.1,
+      "size": 1.4
+    }
+  ]
+}

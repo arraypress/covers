@@ -36,14 +36,15 @@
  * @module type/typeset
  */
 
-import { attrs, esc, num } from '../svg.js';
-import { len, place, anchorAlign, unit } from '../geometry.js';
-import { toHex } from '../color.js';
+import { attrs, esc, num } from '@arraypress/image-effects/svg';
+import { len } from '@arraypress/image-effects/length';
+import { place, anchorAlign, unit } from '../geometry.js';
+import { toHex } from '@arraypress/image-effects/color';
 import { layout, caseText } from '../text.js';
-import { paint } from '../effects/paint.js';
+import { paint } from '../paint/index.js';
 import { pos, wrap } from '../layers/util.js';
-import { presetStrokes } from '../effects/paint-presets.js';
-import { extrude } from '../effects/extrude.js';
+import { presetStrokes } from '../paint/presets.js';
+import { extrude } from '@arraypress/image-effects/effects/extrude';
 import { dashArray } from '../layers/shape.js';
 import { faceFor, mappedPath, setLine } from './line.js';
 import { textPathD, pathSampler } from './path.js';

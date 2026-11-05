@@ -1,0 +1,633 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "odd-tile",
+  "description": "The mark repeated: a 4 × 3 grid of the mark on the page colour with hairline rules, one tile (param `odd`, 0–11) turned 45° on a square of the accent; the artist and title under the grid. Slots: {name} (artist), {title} (release), {mark}, the palette (bg, text, accent), `odd`. Fonts: Inter Tight (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "params": {
+    "odd": 6
+  },
+  "requires": [
+    "mark"
+  ],
+  "layers": [
+    {
+      "id": "page",
+      "type": "solid",
+      "color": "@bg"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "bg0",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 0
+          }
+        },
+        {
+          "id": "m0",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 50,
+          "y": 50,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 0
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 0
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                125,
+                125
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg1",
+          "type": "shape",
+          "kind": "rect",
+          "x": 250,
+          "y": 0,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 1
+          }
+        },
+        {
+          "id": "m1",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 300,
+          "y": 50,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 1
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 1
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                375,
+                125
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg2",
+          "type": "shape",
+          "kind": "rect",
+          "x": 500,
+          "y": 0,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 2
+          }
+        },
+        {
+          "id": "m2",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 550,
+          "y": 50,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 2
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 2
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                625,
+                125
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg3",
+          "type": "shape",
+          "kind": "rect",
+          "x": 750,
+          "y": 0,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 3
+          }
+        },
+        {
+          "id": "m3",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 800,
+          "y": 50,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 3
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 3
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                875,
+                125
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg4",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 250,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 4
+          }
+        },
+        {
+          "id": "m4",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 50,
+          "y": 300,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 4
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 4
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                125,
+                375
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg5",
+          "type": "shape",
+          "kind": "rect",
+          "x": 250,
+          "y": 250,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 5
+          }
+        },
+        {
+          "id": "m5",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 300,
+          "y": 300,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 5
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 5
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                375,
+                375
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg6",
+          "type": "shape",
+          "kind": "rect",
+          "x": 500,
+          "y": 250,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 6
+          }
+        },
+        {
+          "id": "m6",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 550,
+          "y": 300,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 6
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 6
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                625,
+                375
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg7",
+          "type": "shape",
+          "kind": "rect",
+          "x": 750,
+          "y": 250,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 7
+          }
+        },
+        {
+          "id": "m7",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 800,
+          "y": 300,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 7
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 7
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                875,
+                375
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg8",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 500,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 8
+          }
+        },
+        {
+          "id": "m8",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 50,
+          "y": 550,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 8
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 8
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                125,
+                625
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg9",
+          "type": "shape",
+          "kind": "rect",
+          "x": 250,
+          "y": 500,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 9
+          }
+        },
+        {
+          "id": "m9",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 300,
+          "y": 550,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 9
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 9
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                375,
+                625
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg10",
+          "type": "shape",
+          "kind": "rect",
+          "x": 500,
+          "y": 500,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 10
+          }
+        },
+        {
+          "id": "m10",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 550,
+          "y": 550,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 10
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 10
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                625,
+                625
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "bg11",
+          "type": "shape",
+          "kind": "rect",
+          "x": 750,
+          "y": 500,
+          "width": 250,
+          "height": 250,
+          "fill": "@accent",
+          "when": {
+            "odd": 11
+          }
+        },
+        {
+          "id": "m11",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 800,
+          "y": 550,
+          "size": 150,
+          "color": {
+            "if": {
+              "odd": 11
+            },
+            "then": "@onAccent",
+            "else": "@text"
+          },
+          "transform": {
+            "if": {
+              "odd": 11
+            },
+            "then": {
+              "rotate": 45,
+              "origin": [
+                875,
+                625
+              ]
+            },
+            "else": {
+              "rotate": 0
+            }
+          }
+        },
+        {
+          "id": "rules",
+          "type": "shape",
+          "stroke": "@text",
+          "strokeWidth": 1.4,
+          "opacity": 0.35,
+          "items": [
+            {
+              "kind": "line",
+              "x1": 250,
+              "y1": 0,
+              "x2": 250,
+              "y2": 750
+            },
+            {
+              "kind": "line",
+              "x1": 500,
+              "y1": 0,
+              "x2": 500,
+              "y2": 750
+            },
+            {
+              "kind": "line",
+              "x1": 750,
+              "y1": 0,
+              "x2": 750,
+              "y2": 750
+            },
+            {
+              "kind": "line",
+              "x1": 0,
+              "y1": 250,
+              "x2": 1000,
+              "y2": 250
+            },
+            {
+              "kind": "line",
+              "x1": 0,
+              "y1": 500,
+              "x2": 1000,
+              "y2": 500
+            },
+            {
+              "kind": "line",
+              "x1": 0,
+              "y1": 750,
+              "x2": 1000,
+              "y2": 750
+            }
+          ]
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 88,
+          "letterSpacing": -0.015,
+          "x": 44,
+          "y": 848,
+          "maxWidth": 912,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "@text"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 88,
+          "letterSpacing": -0.01,
+          "x": 44,
+          "y": 950,
+          "maxWidth": 912,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "@text"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.04
+    }
+  ]
+}

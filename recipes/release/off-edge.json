@@ -1,0 +1,96 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "off-edge",
+  "description": "The mark as the artwork: one flat field in the accent, the mark huge and cropped off two edges in the readable ink, the artist and title small and square in the top-left corner. Slots: {name} (artist), {title} (release), {mark}, the palette (accent). Fonts: Inter Tight (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "requires": [
+    "mark"
+  ],
+  "vars": {
+    "ink": {
+      "readable": "@accent"
+    },
+    "crop": {
+      "pick": [
+        [
+          300,
+          300,
+          1120
+        ],
+        [
+          250,
+          360,
+          1180
+        ],
+        [
+          380,
+          250,
+          1080
+        ]
+      ]
+    }
+  },
+  "layers": [
+    {
+      "id": "field",
+      "type": "solid",
+      "color": "@accent"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": "$crop.0",
+          "y": "$crop.1",
+          "size": "$crop.2",
+          "color": "$ink"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": "{name}",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 88,
+          "letterSpacing": -0.015,
+          "x": 52,
+          "y": 116,
+          "maxWidth": 896,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "$ink"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Inter Tight",
+          "weight": 400,
+          "size": 88,
+          "letterSpacing": -0.01,
+          "x": 52,
+          "y": 208,
+          "maxWidth": 896,
+          "maxLines": 1,
+          "fit": "shrink",
+          "color": "$ink"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 // Reusable stacks: `defs` and `use`.
 import type { Layer, BaseLayer, Length } from '../index.js';
-import type { LayerTransform } from '../effects/transform.js';
+import type { LayerTransform } from './transform.js';
 import type { RenderContext, Markup } from './context.js';
 
 /** `defs`: named layers (each with an `id`) that `use` draws; nothing is drawn here. */

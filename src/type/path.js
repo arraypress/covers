@@ -5,8 +5,8 @@
  * @module type/path
  */
 
-import { num } from '../svg.js';
-import { len } from '../geometry.js';
+import { num } from '@arraypress/image-effects/svg';
+import { len } from '@arraypress/image-effects/length';
 import { flattenPath } from '../flatten.js';
 import { pos } from '../layers/util.js';
 

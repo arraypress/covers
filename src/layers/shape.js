@@ -4,11 +4,11 @@
  * @module layers/shape
  */
 
-import { attrs, num } from '../svg.js';
-import { len } from '../geometry.js';
-import { toHex } from '../color.js';
-import { paint } from '../effects/paint.js';
-import { presetStrokes } from '../effects/paint-presets.js';
+import { attrs, num } from '@arraypress/image-effects/svg';
+import { len } from '@arraypress/image-effects/length';
+import { toHex } from '@arraypress/image-effects/color';
+import { paint } from '../paint/index.js';
+import { presetStrokes } from '../paint/presets.js';
 import { wrap, pos } from './util.js';
 import { geometry } from './geometry.js';
 import { soften } from './soft.js';

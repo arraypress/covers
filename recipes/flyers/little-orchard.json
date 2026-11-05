@@ -1,0 +1,105 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "little-orchard",
+  "description": "Riso, yellow + blue: a yellow flood to the paper's margin, the photo over it as a 45° medium-blue halftone clipped to the top panel, so it prints green and navy; a serif name and a chunky justified line under it, a small foot line and the mark, both drums a little off register and worn. With format 'release' it re-composes for a 3000×3000 cover: the halftone panel shorter, the name and the release title as the chunky line. Re-expressed from the Logomarks scenes lab (FlyerCards, 'Riso · yellow + blue').",
+  "params": {
+    "paper": "#f4efe4",
+    "yellow": "#ffe800",
+    "blue": "#3255a4",
+    "name": "Little Orchard",
+    "line": "NIGHT MARKET",
+    "foot": [["Every Friday in July · 6 — 11 pm", "Orchard Row car park"]],
+    "artist": "Little Orchard",
+    "release": "LANTERN ROWS"
+  },
+  "layers": [
+    { "id": "paper", "type": "solid", "color": "{paper}" },
+    { "id": "fibres", "type": "texture", "kind": "paper" },
+    {
+      "id": "poster",
+      "type": "group",
+      "when": { "not": { "format": "release" } },
+      "viewBox": [0, 0, 400, 500],
+      "fit": "contain",
+      "layers": [
+        {
+          "id": "yellowInk",
+          "type": "group",
+          "blend": "multiply",
+          "transform": { "translate": [1.2, 1.5] },
+          "effects": [{ "kind": "wear", "rough": 1.3 }],
+          "layers": [{ "id": "flood", "type": "shape", "kind": "rect", "x": 14, "y": 14, "width": 372, "height": 472, "fill": "{yellow}" }]
+        },
+        {
+          "id": "blueInk",
+          "type": "group",
+          "blend": "multiply",
+          "transform": { "translate": [-0.6, -0.4], "rotate": 0.2, "origin": [200, 250] },
+          "effects": [{ "kind": "wear", "rough": 1.3 }],
+          "layers": [
+            {
+              "id": "photo",
+              "type": "image",
+              "when": "photo",
+              "src": "{photo}",
+              "x": -200,
+              "y": 14,
+              "width": 790,
+              "height": 443,
+              "fit": "cover",
+              "effects": [{ "kind": "halftone", "ink": "{blue}", "cell": 5, "angle": 45, "contrast": 1.2, "lift": -0.08 }],
+              "clip": [{ "type": "shape", "kind": "rect", "x": 14, "y": 14, "width": 372, "height": 330, "fill": "#000000" }]
+            },
+            { "id": "name", "type": "text", "content": "{name}", "font": "Instrument Serif", "style": "italic", "weight": 400, "size": 58, "letterSpacing": 0, "x": 22, "y": 408, "color": "{blue}" },
+            { "id": "line", "type": "text", "content": "{line}", "font": "Bricolage Grotesque", "weight": 800, "size": 46, "letterSpacing": -0.0435, "x": 22, "y": 452, "width": 356, "color": "{blue}" },
+            { "id": "foot", "type": "table", "font": "Bricolage Grotesque", "weight": 600, "size": 9.5, "color": "{blue}", "y": 474, "columns": [{ "x": 22 }, { "x": 378, "align": "right" }], "rows": "{foot}" },
+            { "id": "mark", "type": "icon", "markup": "{mark}", "x": 340, "y": 360, "size": 36.9, "color": "{blue}", "when": "mark" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "when": { "format": "release" },
+      "viewBox": [0, 0, 400, 400],
+      "fit": "contain",
+      "layers": [
+        {
+          "id": "yellowInk",
+          "type": "group",
+          "blend": "multiply",
+          "transform": { "translate": [1.2, 1.5] },
+          "effects": [{ "kind": "wear", "rough": 1.3 }],
+          "layers": [{ "id": "flood", "type": "shape", "kind": "rect", "x": 14, "y": 14, "width": 372, "height": 372, "fill": "{yellow}" }]
+        },
+        {
+          "id": "blueInk",
+          "type": "group",
+          "blend": "multiply",
+          "transform": { "translate": [-0.6, -0.4], "rotate": 0.2, "origin": [200, 200] },
+          "effects": [{ "kind": "wear", "rough": 1.3 }],
+          "layers": [
+            {
+              "id": "photo",
+              "type": "image",
+              "when": "photo",
+              "src": "{photo}",
+              "x": -150,
+              "y": 14,
+              "width": 700,
+              "height": 393,
+              "fit": "cover",
+              "effects": [{ "kind": "halftone", "ink": "{blue}", "cell": 4.6, "angle": 45, "contrast": 1.2, "lift": -0.08 }],
+              "clip": [{ "type": "shape", "kind": "rect", "x": 14, "y": 14, "width": 372, "height": 246, "fill": "#000000" }]
+            },
+            { "id": "artist", "type": "text", "content": "{artist}", "font": "Instrument Serif", "style": "italic", "weight": 400, "size": 56, "letterSpacing": 0, "x": 22, "y": 318, "color": "{blue}" },
+            { "id": "mark", "type": "icon", "markup": "{mark}", "x": 338, "y": 278, "size": 42, "color": "{blue}", "when": "mark" },
+            { "id": "title", "type": "text", "content": "{release}", "font": "Bricolage Grotesque", "weight": 800, "size": 50, "letterSpacing": -0.0435, "x": 22, "y": 368, "width": 356, "color": "{blue}" }
+          ]
+        }
+      ]
+    },
+    { "id": "print", "type": "grain", "amount": 0.04, "size": 1.5, "blend": "multiply" }
+  ]
+}

@@ -1,0 +1,535 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "tour-kairo",
+  "description": "Tour poster: pink paper, everything in photocopied black (rough edges, toner dropout, dust), two xeroxed photos, a dates grid with SOLD OUT bars, the name stacked in Unbounded and Bebas Neue, each line justified to its width, the top and bottom halves alike. Square (release): the stack re-set larger round the name, PART I. beside one photo, no dates. Re-expressed from the Logomarks scenes lab (ZineCards, 'Tour poster').",
+  "params": {
+    "artist": "Kairo",
+    "release": "Part I",
+    "part": "PART",
+    "partNo": "I.",
+    "dates": [
+      [
+        "11/14",
+        "SHOW ADDED",
+        "LONDON",
+        "THE HALF MOON"
+      ],
+      [
+        "11/15",
+        {
+          "content": "SOLD OUT",
+          "color": "#e8399a"
+        },
+        "LONDON",
+        "THE HALF MOON"
+      ],
+      [
+        "11/21",
+        {
+          "content": "SOLD OUT",
+          "color": "#e8399a"
+        },
+        "NEW YORK",
+        "SALLE ROSE"
+      ],
+      [
+        "11/28",
+        {
+          "content": "SOLD OUT",
+          "color": "#e8399a"
+        },
+        "LOS ANGELES",
+        "THE ORCHID"
+      ]
+    ],
+    "paper": "#e8399a",
+    "ink": "#16040d"
+  },
+  "layers": [
+    {
+      "id": "paper",
+      "type": "solid",
+      "color": "{paper}"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "aspect": "square"
+        }
+      },
+      "layers": [
+        {
+          "id": "ink",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "xerox",
+              "rough": 1.6
+            }
+          ],
+          "layers": [
+            {
+              "id": "barsTop",
+              "type": "shape",
+              "fill": "{ink}",
+              "items": [
+                {
+                  "kind": "rect",
+                  "x": 56,
+                  "y": 29.5,
+                  "width": 72,
+                  "height": 13
+                },
+                {
+                  "kind": "rect",
+                  "x": 56,
+                  "y": 43.5,
+                  "width": 72,
+                  "height": 13
+                },
+                {
+                  "kind": "rect",
+                  "x": 56,
+                  "y": 57.5,
+                  "width": 72,
+                  "height": 13
+                }
+              ]
+            },
+            {
+              "id": "datesTop",
+              "type": "table",
+              "font": "Geist",
+              "weight": 800,
+              "letterSpacing": -0.032,
+              "size": 12.5,
+              "color": "{ink}",
+              "y": 26,
+              "rowHeight": 14,
+              "columns": [
+                {
+                  "x": 14
+                },
+                {
+                  "x": 58
+                },
+                {
+                  "x": 204,
+                  "align": "center"
+                },
+                {
+                  "x": 386,
+                  "align": "right"
+                }
+              ],
+              "rows": "{dates}"
+            },
+            {
+              "id": "partTop",
+              "type": "text",
+              "content": "{part}",
+              "font": "Geist",
+              "weight": 800,
+              "letterSpacing": -0.032,
+              "size": 15,
+              "x": 14,
+              "y": 124,
+              "color": "{ink}"
+            },
+            {
+              "id": "numTop",
+              "type": "text",
+              "content": "{partNo}",
+              "font": "Geist",
+              "weight": 800,
+              "letterSpacing": -0.032,
+              "size": 15,
+              "x": 386,
+              "y": 124,
+              "align": "right",
+              "color": "{ink}"
+            },
+            {
+              "id": "photoTop",
+              "type": "group",
+              "x": 164,
+              "y": 80,
+              "width": 72,
+              "height": 72,
+              "viewBox": [
+                0,
+                0,
+                576,
+                576
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 576,
+                  "height": 576,
+                  "fit": "cover",
+                  "effects": [
+                    {
+                      "kind": "photocopy",
+                      "ink": "{ink}",
+                      "frequency": 0.1062
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "barsBottom",
+              "type": "shape",
+              "fill": "{ink}",
+              "items": [
+                {
+                  "kind": "rect",
+                  "x": 56,
+                  "y": 449.5,
+                  "width": 72,
+                  "height": 13
+                },
+                {
+                  "kind": "rect",
+                  "x": 56,
+                  "y": 463.5,
+                  "width": 72,
+                  "height": 13
+                },
+                {
+                  "kind": "rect",
+                  "x": 56,
+                  "y": 477.5,
+                  "width": 72,
+                  "height": 13
+                }
+              ]
+            },
+            {
+              "id": "datesBottom",
+              "type": "table",
+              "font": "Geist",
+              "weight": 800,
+              "letterSpacing": -0.032,
+              "size": 12.5,
+              "color": "{ink}",
+              "y": 446,
+              "rowHeight": 14,
+              "columns": [
+                {
+                  "x": 14
+                },
+                {
+                  "x": 58
+                },
+                {
+                  "x": 204,
+                  "align": "center"
+                },
+                {
+                  "x": 386,
+                  "align": "right"
+                }
+              ],
+              "rows": "{dates}"
+            },
+            {
+              "id": "partBottom",
+              "type": "text",
+              "content": "{part}",
+              "font": "Geist",
+              "weight": 800,
+              "letterSpacing": -0.032,
+              "size": 15,
+              "x": 14,
+              "y": 404,
+              "color": "{ink}"
+            },
+            {
+              "id": "numBottom",
+              "type": "text",
+              "content": "{partNo}",
+              "font": "Geist",
+              "weight": 800,
+              "letterSpacing": -0.032,
+              "size": 15,
+              "x": 386,
+              "y": 404,
+              "align": "right",
+              "color": "{ink}"
+            },
+            {
+              "id": "photoBottom",
+              "type": "group",
+              "x": 164,
+              "y": 360,
+              "width": 72,
+              "height": 72,
+              "viewBox": [
+                0,
+                0,
+                576,
+                576
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 576,
+                  "height": 576,
+                  "fit": "cover",
+                  "effects": [
+                    {
+                      "kind": "photocopy",
+                      "ink": "{ink}",
+                      "frequency": 0.1062
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "kairoTop",
+              "type": "text",
+              "content": {
+                "upper": "{artist}"
+              },
+              "font": "Unbounded",
+              "weight": 900,
+              "letterSpacing": 0,
+              "color": "{ink}",
+              "size": 22,
+              "x": 75,
+              "y": 176,
+              "width": 250
+            },
+            {
+              "id": "the",
+              "type": "text",
+              "content": "THE",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "letterSpacing": 0,
+              "color": "{ink}",
+              "size": 54,
+              "x": 125,
+              "y": 218,
+              "width": 150
+            },
+            {
+              "id": "name",
+              "type": "text",
+              "content": {
+                "upper": "{artist}"
+              },
+              "font": "Bebas Neue",
+              "weight": 400,
+              "letterSpacing": 0,
+              "color": "{ink}",
+              "size": 86,
+              "x": 14,
+              "y": 290,
+              "width": 372
+            },
+            {
+              "id": "tour",
+              "type": "text",
+              "content": "TOUR",
+              "font": "Bebas Neue",
+              "weight": 400,
+              "letterSpacing": 0,
+              "color": "{ink}",
+              "size": 54,
+              "x": 105,
+              "y": 330,
+              "width": 190
+            },
+            {
+              "id": "kairoBottom",
+              "type": "text",
+              "content": {
+                "upper": "{artist}"
+              },
+              "font": "Unbounded",
+              "weight": 900,
+              "letterSpacing": 0,
+              "color": "{ink}",
+              "size": 22,
+              "x": 75,
+              "y": 352,
+              "width": 250
+            },
+            {
+              "id": "dust",
+              "type": "texture",
+              "kind": "dust",
+              "count": 70,
+              "color": "{ink}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "aspect": "square"
+      },
+      "layers": [
+        {
+          "id": "ink",
+          "type": "group",
+          "effects": [
+            {
+              "kind": "xerox",
+              "rough": 1.6
+            }
+          ],
+          "layers": [
+            {
+              "id": "part",
+              "type": "text",
+              "content": "PART",
+              "font": "Geist",
+              "weight": 800,
+              "letterSpacing": -0.032,
+              "size": 38,
+              "x": 16,
+              "y": 92,
+              "color": "{ink}"
+            },
+            {
+              "id": "num",
+              "type": "text",
+              "content": "I.",
+              "font": "Geist",
+              "weight": 800,
+              "letterSpacing": -0.032,
+              "size": 38,
+              "x": 384,
+              "y": 92,
+              "align": "right",
+              "color": "{ink}"
+            },
+            {
+              "id": "photo",
+              "type": "group",
+              "x": 150,
+              "y": 14,
+              "width": 100,
+              "height": 100,
+              "viewBox": [
+                0,
+                0,
+                800,
+                800
+              ],
+              "when": "photo",
+              "layers": [
+                {
+                  "type": "image",
+                  "src": "{photo}",
+                  "x": 0,
+                  "y": 0,
+                  "width": 800,
+                  "height": 800,
+                  "fit": "cover",
+                  "effects": [
+                    {
+                      "kind": "photocopy",
+                      "ink": "{ink}",
+                      "frequency": 0.1062
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "kairoTop",
+              "type": "text",
+              "content": {
+                "upper": "{artist}"
+              },
+              "font": "Unbounded",
+              "weight": 900,
+              "letterSpacing": 0,
+              "color": "{ink}",
+              "size": 40,
+              "x": 50,
+              "y": 168,
+              "width": 300
+            },
+            {
+              "id": "name",
+              "type": "text",
+              "content": {
+                "upper": "{artist}"
+              },
+              "font": "Bebas Neue",
+              "weight": 400,
+              "letterSpacing": 0,
+              "color": "{ink}",
+              "size": 176,
+              "x": 12,
+              "y": 318,
+              "width": 376
+            },
+            {
+              "id": "kairoBottom",
+              "type": "text",
+              "content": {
+                "upper": "{artist}"
+              },
+              "font": "Unbounded",
+              "weight": 900,
+              "letterSpacing": 0,
+              "color": "{ink}",
+              "size": 40,
+              "x": 50,
+              "y": 384,
+              "width": 300
+            },
+            {
+              "id": "dust",
+              "type": "texture",
+              "kind": "dust",
+              "count": 60,
+              "color": "{ink}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05,
+      "blend": "multiply"
+    }
+  ]
+}

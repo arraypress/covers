@@ -1,0 +1,364 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "label",
+  "description": "The mark as a record label: a close-up of a black record (grooves, a sheen) with its centre label in the accent, the mark above the spindle hole, the artist set round the top of the label and the title straight across under the hole. Slots: {name} (artist), {title} (release), {mark}, the palette (accent = the label). Fonts: Space Grotesk (register them as TTF/WOFF; WOFF2 can't be outlined).",
+  "requires": [
+    "mark"
+  ],
+  "vars": {
+    "ink": {
+      "readable": "@accent"
+    }
+  },
+  "layers": [
+    {
+      "id": "vinyl",
+      "type": "solid",
+      "color": "#0c0c0d"
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        1000,
+        1000
+      ],
+      "fit": "cover",
+      "layers": [
+        {
+          "id": "grooves",
+          "type": "shape",
+          "items": [
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 420
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 431
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 442
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 447
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 458
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 469
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 474
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 485
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 496
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 501
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 512
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 523
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 528
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 539
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 550
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 555
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 566
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 577
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 582
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 593
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 604
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 609
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 620
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 631
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 636
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 647
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 658
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 663
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 674
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 685
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 690
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 701
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 712
+            },
+            {
+              "kind": "circle",
+              "cx": 500,
+              "cy": 500,
+              "r": 717
+            }
+          ],
+          "fill": "none",
+          "stroke": "#ffffff",
+          "strokeWidth": 1.4,
+          "opacity": 0.11
+        },
+        {
+          "id": "sheen",
+          "type": "shape",
+          "kind": "sector",
+          "cx": 500,
+          "cy": 500,
+          "r": 760,
+          "start": -62,
+          "end": -28,
+          "fill": "#ffffff",
+          "opacity": 0.14,
+          "effects": [
+            {
+              "kind": "blur",
+              "radius": 40
+            }
+          ]
+        },
+        {
+          "id": "sheen2",
+          "type": "shape",
+          "kind": "sector",
+          "cx": 500,
+          "cy": 500,
+          "r": 760,
+          "start": 118,
+          "end": 152,
+          "fill": "#ffffff",
+          "opacity": 0.06,
+          "effects": [
+            {
+              "kind": "blur",
+              "radius": 40
+            }
+          ]
+        },
+        {
+          "id": "label",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 500,
+          "r": 400,
+          "fill": "@accent"
+        },
+        {
+          "id": "rim",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 500,
+          "r": 372,
+          "fill": "none",
+          "stroke": "$ink",
+          "strokeWidth": 2,
+          "opacity": 0.45
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 415,
+          "y": 250,
+          "size": 170,
+          "color": "$ink"
+        },
+        {
+          "id": "hole",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 500,
+          "cy": 500,
+          "r": 17,
+          "fill": "#0c0c0d"
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "content": {
+            "upper": "{name}"
+          },
+          "font": "Space Grotesk",
+          "weight": 700,
+          "size": 90,
+          "letterSpacing": 0.04,
+          "path": {
+            "kind": "arc",
+            "cx": 500,
+            "cy": 500,
+            "r": 285,
+            "start": -80,
+            "end": 80
+          },
+          "color": "$ink"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "font": "Space Grotesk",
+          "weight": 500,
+          "size": 90,
+          "letterSpacing": -0.02,
+          "x": 500,
+          "y": 668,
+          "align": "center",
+          "maxWidth": 600,
+          "maxLines": 2,
+          "lineHeight": 1,
+          "balance": true,
+          "color": "$ink"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05
+    }
+  ]
+}

@@ -4,8 +4,7 @@
  * @module render/key
  */
 
-import { loadBytes } from '../platform/index.js';
-import { hexDigest, u8, isBytes } from '../platform/bytes.js';
+import { loadBytes, hexDigest, u8, isBytes } from '../platform/index.js';
 import { fontBytes } from '../fonts.js';
 import { cover } from '../render.js';
 import { VERSION } from '../version.js';

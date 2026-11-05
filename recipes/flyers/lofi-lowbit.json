@@ -1,0 +1,880 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "lofi-lowbit",
+  "description": "Lo-fi bitmap launch: a Bayer-dithered sky and sun (gradients dithered in two inks, unpixelated), the pixel mark as the sun's face, a dithered photo in a classic Mac window, extruded 5×7 bitmap type stepped out square by square, an amber Space Mono terminal. Square (release): sky, sun and the photo window above, the extruded name across the horizon, the title as the terminal's prompt. The bitmap type and the Mac window chrome are baked path and shape data (covers has no bitmap font or OS chrome). Re-expressed from the Logomarks scenes lab (FlyerCards3, 'Lo-fi · bitmap launch').",
+  "params": {
+    "artist": "Lowbit",
+    "release": "Pure Feeling",
+    "command": "lowbit --install",
+    "banner": "LOWBIT 2.0 · 4 MB OF PURE FEELING",
+    "status": "out now on floppy + streams",
+    "foot": "LAUNCH PARTY · FRI 09.04 · ARCADE ROOM"
+  },
+  "layers": [
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "aspect": "square"
+        }
+      },
+      "layers": [
+        {
+          "id": "sky",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 300,
+          "fill": {
+            "type": "linear",
+            "colors": [
+              "#000000",
+              "#ffffff"
+            ],
+            "angle": 180
+          },
+          "effects": [
+            {
+              "kind": "dither",
+              "ink": "#3a1a8c",
+              "paper": "#ff6a2b",
+              "cell": 3.4,
+              "contrast": 1,
+              "brightness": 0,
+              "pixelate": false
+            }
+          ]
+        },
+        {
+          "id": "sun",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 110,
+          "cy": 132,
+          "r": 78,
+          "fill": {
+            "type": "radial",
+            "colors": [
+              "#ffffff",
+              "#dddddd",
+              "#222222"
+            ],
+            "stops": [
+              0,
+              0.55,
+              1
+            ],
+            "r": 78
+          },
+          "effects": [
+            {
+              "kind": "dither",
+              "ink": "#ff6a2b",
+              "paper": "#ffb31a",
+              "cell": 3.4,
+              "contrast": 1,
+              "brightness": 0,
+              "pixelate": false
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 68,
+          "y": 90,
+          "size": 84,
+          "color": "#3a1a8c",
+          "when": "mark"
+        },
+        {
+          "id": "ground",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 296,
+          "width": 400,
+          "height": 204,
+          "fill": "#3a1a8c"
+        },
+        {
+          "id": "photo-window-frame",
+          "type": "shape",
+          "items": [
+            {
+              "kind": "rect",
+              "x": 239,
+              "y": 33,
+              "width": 142,
+              "height": 166,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 236,
+              "y": 30,
+              "width": 142,
+              "height": 166,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.5
+            },
+            {
+              "kind": "rect",
+              "x": 236,
+              "y": 30,
+              "width": 142,
+              "height": 18,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.5
+            },
+            {
+              "kind": "rect",
+              "x": 239,
+              "y": 33.5,
+              "width": 136,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 239,
+              "y": 35.7,
+              "width": 136,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 239,
+              "y": 37.9,
+              "width": 136,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 239,
+              "y": 40.1,
+              "width": 136,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 239,
+              "y": 42.3,
+              "width": 136,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 239,
+              "y": 44.5,
+              "width": 136,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 245,
+              "y": 34,
+              "width": 11,
+              "height": 10,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.3
+            },
+            {
+              "kind": "rect",
+              "x": 280.2,
+              "y": 32,
+              "width": 53.6,
+              "height": 14,
+              "fill": "#ffffff"
+            }
+          ]
+        },
+        {
+          "id": "photo-window-title",
+          "type": "text",
+          "content": "me.bmp",
+          "font": "Silkscreen",
+          "weight": 700,
+          "size": 9.5,
+          "letterSpacing": 0,
+          "x": 307,
+          "y": 43,
+          "color": "#000000",
+          "align": "center"
+        },
+        {
+          "id": "photo",
+          "type": "image",
+          "src": "{photo}",
+          "x": 236,
+          "y": 48,
+          "width": 142,
+          "height": 148,
+          "fit": "cover",
+          "effects": [
+            {
+              "kind": "dither",
+              "ink": "#14082e",
+              "paper": "#ff6a2b",
+              "cell": 2.8,
+              "contrast": 1.5,
+              "brightness": 0.08
+            }
+          ],
+          "when": "photo"
+        },
+        {
+          "id": "shadow5",
+          "type": "shape",
+          "kind": "path",
+          "d": "M41.5 226.5h10v10h-10zM41.5 236.5h10v10h-10zM41.5 246.5h10v10h-10zM41.5 256.5h10v10h-10zM41.5 266.5h10v10h-10zM41.5 276.5h10v10h-10zM41.5 286.5h50v10h-50zM111.5 226.5h30v10h-30zM101.5 236.5h10v10h-10zM141.5 236.5h10v10h-10zM101.5 246.5h10v10h-10zM141.5 246.5h10v10h-10zM101.5 256.5h10v10h-10zM141.5 256.5h10v10h-10zM101.5 266.5h10v10h-10zM141.5 266.5h10v10h-10zM101.5 276.5h10v10h-10zM141.5 276.5h10v10h-10zM111.5 286.5h30v10h-30zM161.5 226.5h10v10h-10zM201.5 226.5h10v10h-10zM161.5 236.5h10v10h-10zM201.5 236.5h10v10h-10zM161.5 246.5h10v10h-10zM201.5 246.5h10v10h-10zM161.5 256.5h10v10h-10zM181.5 256.5h10v10h-10zM201.5 256.5h10v10h-10zM161.5 266.5h10v10h-10zM181.5 266.5h10v10h-10zM201.5 266.5h10v10h-10zM161.5 276.5h10v10h-10zM181.5 276.5h10v10h-10zM201.5 276.5h10v10h-10zM171.5 286.5h10v10h-10zM191.5 286.5h10v10h-10zM221.5 226.5h40v10h-40zM221.5 236.5h10v10h-10zM261.5 236.5h10v10h-10zM221.5 246.5h10v10h-10zM261.5 246.5h10v10h-10zM221.5 256.5h40v10h-40zM221.5 266.5h10v10h-10zM261.5 266.5h10v10h-10zM221.5 276.5h10v10h-10zM261.5 276.5h10v10h-10zM221.5 286.5h40v10h-40zM281.5 226.5h30v10h-30zM291.5 236.5h10v10h-10zM291.5 246.5h10v10h-10zM291.5 256.5h10v10h-10zM291.5 266.5h10v10h-10zM291.5 276.5h10v10h-10zM281.5 286.5h30v10h-30zM321.5 226.5h50v10h-50zM341.5 236.5h10v10h-10zM341.5 246.5h10v10h-10zM341.5 256.5h10v10h-10zM341.5 266.5h10v10h-10zM341.5 276.5h10v10h-10zM341.5 286.5h10v10h-10z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "shadow4",
+          "type": "shape",
+          "kind": "path",
+          "d": "M39 224h10v10h-10zM39 234h10v10h-10zM39 244h10v10h-10zM39 254h10v10h-10zM39 264h10v10h-10zM39 274h10v10h-10zM39 284h50v10h-50zM109 224h30v10h-30zM99 234h10v10h-10zM139 234h10v10h-10zM99 244h10v10h-10zM139 244h10v10h-10zM99 254h10v10h-10zM139 254h10v10h-10zM99 264h10v10h-10zM139 264h10v10h-10zM99 274h10v10h-10zM139 274h10v10h-10zM109 284h30v10h-30zM159 224h10v10h-10zM199 224h10v10h-10zM159 234h10v10h-10zM199 234h10v10h-10zM159 244h10v10h-10zM199 244h10v10h-10zM159 254h10v10h-10zM179 254h10v10h-10zM199 254h10v10h-10zM159 264h10v10h-10zM179 264h10v10h-10zM199 264h10v10h-10zM159 274h10v10h-10zM179 274h10v10h-10zM199 274h10v10h-10zM169 284h10v10h-10zM189 284h10v10h-10zM219 224h40v10h-40zM219 234h10v10h-10zM259 234h10v10h-10zM219 244h10v10h-10zM259 244h10v10h-10zM219 254h40v10h-40zM219 264h10v10h-10zM259 264h10v10h-10zM219 274h10v10h-10zM259 274h10v10h-10zM219 284h40v10h-40zM279 224h30v10h-30zM289 234h10v10h-10zM289 244h10v10h-10zM289 254h10v10h-10zM289 264h10v10h-10zM289 274h10v10h-10zM279 284h30v10h-30zM319 224h50v10h-50zM339 234h10v10h-10zM339 244h10v10h-10zM339 254h10v10h-10zM339 264h10v10h-10zM339 274h10v10h-10zM339 284h10v10h-10z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "shadow3",
+          "type": "shape",
+          "kind": "path",
+          "d": "M36.5 221.5h10v10h-10zM36.5 231.5h10v10h-10zM36.5 241.5h10v10h-10zM36.5 251.5h10v10h-10zM36.5 261.5h10v10h-10zM36.5 271.5h10v10h-10zM36.5 281.5h50v10h-50zM106.5 221.5h30v10h-30zM96.5 231.5h10v10h-10zM136.5 231.5h10v10h-10zM96.5 241.5h10v10h-10zM136.5 241.5h10v10h-10zM96.5 251.5h10v10h-10zM136.5 251.5h10v10h-10zM96.5 261.5h10v10h-10zM136.5 261.5h10v10h-10zM96.5 271.5h10v10h-10zM136.5 271.5h10v10h-10zM106.5 281.5h30v10h-30zM156.5 221.5h10v10h-10zM196.5 221.5h10v10h-10zM156.5 231.5h10v10h-10zM196.5 231.5h10v10h-10zM156.5 241.5h10v10h-10zM196.5 241.5h10v10h-10zM156.5 251.5h10v10h-10zM176.5 251.5h10v10h-10zM196.5 251.5h10v10h-10zM156.5 261.5h10v10h-10zM176.5 261.5h10v10h-10zM196.5 261.5h10v10h-10zM156.5 271.5h10v10h-10zM176.5 271.5h10v10h-10zM196.5 271.5h10v10h-10zM166.5 281.5h10v10h-10zM186.5 281.5h10v10h-10zM216.5 221.5h40v10h-40zM216.5 231.5h10v10h-10zM256.5 231.5h10v10h-10zM216.5 241.5h10v10h-10zM256.5 241.5h10v10h-10zM216.5 251.5h40v10h-40zM216.5 261.5h10v10h-10zM256.5 261.5h10v10h-10zM216.5 271.5h10v10h-10zM256.5 271.5h10v10h-10zM216.5 281.5h40v10h-40zM276.5 221.5h30v10h-30zM286.5 231.5h10v10h-10zM286.5 241.5h10v10h-10zM286.5 251.5h10v10h-10zM286.5 261.5h10v10h-10zM286.5 271.5h10v10h-10zM276.5 281.5h30v10h-30zM316.5 221.5h50v10h-50zM336.5 231.5h10v10h-10zM336.5 241.5h10v10h-10zM336.5 251.5h10v10h-10zM336.5 261.5h10v10h-10zM336.5 271.5h10v10h-10zM336.5 281.5h10v10h-10z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "shadow2",
+          "type": "shape",
+          "kind": "path",
+          "d": "M34 219h10v10h-10zM34 229h10v10h-10zM34 239h10v10h-10zM34 249h10v10h-10zM34 259h10v10h-10zM34 269h10v10h-10zM34 279h50v10h-50zM104 219h30v10h-30zM94 229h10v10h-10zM134 229h10v10h-10zM94 239h10v10h-10zM134 239h10v10h-10zM94 249h10v10h-10zM134 249h10v10h-10zM94 259h10v10h-10zM134 259h10v10h-10zM94 269h10v10h-10zM134 269h10v10h-10zM104 279h30v10h-30zM154 219h10v10h-10zM194 219h10v10h-10zM154 229h10v10h-10zM194 229h10v10h-10zM154 239h10v10h-10zM194 239h10v10h-10zM154 249h10v10h-10zM174 249h10v10h-10zM194 249h10v10h-10zM154 259h10v10h-10zM174 259h10v10h-10zM194 259h10v10h-10zM154 269h10v10h-10zM174 269h10v10h-10zM194 269h10v10h-10zM164 279h10v10h-10zM184 279h10v10h-10zM214 219h40v10h-40zM214 229h10v10h-10zM254 229h10v10h-10zM214 239h10v10h-10zM254 239h10v10h-10zM214 249h40v10h-40zM214 259h10v10h-10zM254 259h10v10h-10zM214 269h10v10h-10zM254 269h10v10h-10zM214 279h40v10h-40zM274 219h30v10h-30zM284 229h10v10h-10zM284 239h10v10h-10zM284 249h10v10h-10zM284 259h10v10h-10zM284 269h10v10h-10zM274 279h30v10h-30zM314 219h50v10h-50zM334 229h10v10h-10zM334 239h10v10h-10zM334 249h10v10h-10zM334 259h10v10h-10zM334 269h10v10h-10zM334 279h10v10h-10z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "shadow1",
+          "type": "shape",
+          "kind": "path",
+          "d": "M31.5 216.5h10v10h-10zM31.5 226.5h10v10h-10zM31.5 236.5h10v10h-10zM31.5 246.5h10v10h-10zM31.5 256.5h10v10h-10zM31.5 266.5h10v10h-10zM31.5 276.5h50v10h-50zM101.5 216.5h30v10h-30zM91.5 226.5h10v10h-10zM131.5 226.5h10v10h-10zM91.5 236.5h10v10h-10zM131.5 236.5h10v10h-10zM91.5 246.5h10v10h-10zM131.5 246.5h10v10h-10zM91.5 256.5h10v10h-10zM131.5 256.5h10v10h-10zM91.5 266.5h10v10h-10zM131.5 266.5h10v10h-10zM101.5 276.5h30v10h-30zM151.5 216.5h10v10h-10zM191.5 216.5h10v10h-10zM151.5 226.5h10v10h-10zM191.5 226.5h10v10h-10zM151.5 236.5h10v10h-10zM191.5 236.5h10v10h-10zM151.5 246.5h10v10h-10zM171.5 246.5h10v10h-10zM191.5 246.5h10v10h-10zM151.5 256.5h10v10h-10zM171.5 256.5h10v10h-10zM191.5 256.5h10v10h-10zM151.5 266.5h10v10h-10zM171.5 266.5h10v10h-10zM191.5 266.5h10v10h-10zM161.5 276.5h10v10h-10zM181.5 276.5h10v10h-10zM211.5 216.5h40v10h-40zM211.5 226.5h10v10h-10zM251.5 226.5h10v10h-10zM211.5 236.5h10v10h-10zM251.5 236.5h10v10h-10zM211.5 246.5h40v10h-40zM211.5 256.5h10v10h-10zM251.5 256.5h10v10h-10zM211.5 266.5h10v10h-10zM251.5 266.5h10v10h-10zM211.5 276.5h40v10h-40zM271.5 216.5h30v10h-30zM281.5 226.5h10v10h-10zM281.5 236.5h10v10h-10zM281.5 246.5h10v10h-10zM281.5 256.5h10v10h-10zM281.5 266.5h10v10h-10zM271.5 276.5h30v10h-30zM311.5 216.5h50v10h-50zM331.5 226.5h10v10h-10zM331.5 236.5h10v10h-10zM331.5 246.5h10v10h-10zM331.5 256.5h10v10h-10zM331.5 266.5h10v10h-10zM331.5 276.5h10v10h-10z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "name",
+          "type": "shape",
+          "kind": "path",
+          "d": "M29 214h10v10h-10zM29 224h10v10h-10zM29 234h10v10h-10zM29 244h10v10h-10zM29 254h10v10h-10zM29 264h10v10h-10zM29 274h50v10h-50zM99 214h30v10h-30zM89 224h10v10h-10zM129 224h10v10h-10zM89 234h10v10h-10zM129 234h10v10h-10zM89 244h10v10h-10zM129 244h10v10h-10zM89 254h10v10h-10zM129 254h10v10h-10zM89 264h10v10h-10zM129 264h10v10h-10zM99 274h30v10h-30zM149 214h10v10h-10zM189 214h10v10h-10zM149 224h10v10h-10zM189 224h10v10h-10zM149 234h10v10h-10zM189 234h10v10h-10zM149 244h10v10h-10zM169 244h10v10h-10zM189 244h10v10h-10zM149 254h10v10h-10zM169 254h10v10h-10zM189 254h10v10h-10zM149 264h10v10h-10zM169 264h10v10h-10zM189 264h10v10h-10zM159 274h10v10h-10zM179 274h10v10h-10zM209 214h40v10h-40zM209 224h10v10h-10zM249 224h10v10h-10zM209 234h10v10h-10zM249 234h10v10h-10zM209 244h40v10h-40zM209 254h10v10h-10zM249 254h10v10h-10zM209 264h10v10h-10zM249 264h10v10h-10zM209 274h40v10h-40zM269 214h30v10h-30zM279 224h10v10h-10zM279 234h10v10h-10zM279 244h10v10h-10zM279 254h10v10h-10zM279 264h10v10h-10zM269 274h30v10h-30zM309 214h50v10h-50zM329 224h10v10h-10zM329 234h10v10h-10zM329 244h10v10h-10zM329 254h10v10h-10zM329 264h10v10h-10zM329 274h10v10h-10z",
+          "fill": "#fff4e0"
+        },
+        {
+          "id": "terminal-frame",
+          "type": "shape",
+          "items": [
+            {
+              "kind": "rect",
+              "x": 25,
+              "y": 313,
+              "width": 356,
+              "height": 150,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 22,
+              "y": 310,
+              "width": 356,
+              "height": 150,
+              "fill": "#0a0612",
+              "stroke": "#000000",
+              "strokeWidth": 1.5
+            },
+            {
+              "kind": "rect",
+              "x": 22,
+              "y": 310,
+              "width": 356,
+              "height": 18,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.5
+            },
+            {
+              "kind": "rect",
+              "x": 25,
+              "y": 313.5,
+              "width": 350,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 25,
+              "y": 315.7,
+              "width": 350,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 25,
+              "y": 317.9,
+              "width": 350,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 25,
+              "y": 320.1,
+              "width": 350,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 25,
+              "y": 322.3,
+              "width": 350,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 25,
+              "y": 324.5,
+              "width": 350,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 31,
+              "y": 314,
+              "width": 11,
+              "height": 10,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.3
+            },
+            {
+              "kind": "rect",
+              "x": 166.6,
+              "y": 312,
+              "width": 66.8,
+              "height": 14,
+              "fill": "#ffffff"
+            }
+          ]
+        },
+        {
+          "id": "terminal-title",
+          "type": "text",
+          "content": "Terminal",
+          "font": "Silkscreen",
+          "weight": 700,
+          "size": 9.5,
+          "letterSpacing": 0,
+          "x": 200,
+          "y": 323,
+          "color": "#000000",
+          "align": "center"
+        },
+        {
+          "id": "t1",
+          "type": "text",
+          "content": "> {command}",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 11.5,
+          "letterSpacing": 0,
+          "x": 34,
+          "y": 346,
+          "color": "#ffb31a"
+        },
+        {
+          "id": "t2",
+          "type": "text",
+          "content": "{banner}",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 11.5,
+          "letterSpacing": 0,
+          "x": 34,
+          "y": 364,
+          "color": "#fff4e0"
+        },
+        {
+          "id": "t3",
+          "type": "text",
+          "content": "> unpacking sky.bmp ........ ok",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 11.5,
+          "letterSpacing": 0,
+          "x": 34,
+          "y": 382,
+          "color": "#ffb31a"
+        },
+        {
+          "id": "t4",
+          "type": "text",
+          "content": "[##############......] 72%",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 11.5,
+          "letterSpacing": 0,
+          "x": 34,
+          "y": 400,
+          "color": "#ffb31a"
+        },
+        {
+          "id": "t5",
+          "type": "text",
+          "content": "> {status}",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 11.5,
+          "letterSpacing": 0,
+          "x": 34,
+          "y": 418,
+          "color": "#ffb31a"
+        },
+        {
+          "id": "t6",
+          "type": "text",
+          "content": "> ready",
+          "font": "Space Mono",
+          "weight": 400,
+          "size": 11.5,
+          "letterSpacing": 0,
+          "x": 34,
+          "y": 440,
+          "color": "#ffb31a"
+        },
+        {
+          "id": "caret",
+          "type": "shape",
+          "kind": "rect",
+          "x": 92,
+          "y": 430,
+          "width": 8,
+          "height": 13,
+          "fill": "#ffb31a"
+        },
+        {
+          "id": "foot",
+          "type": "text",
+          "content": "{foot}",
+          "font": "Silkscreen",
+          "weight": 400,
+          "size": 10,
+          "letterSpacing": 0.1,
+          "x": 200,
+          "y": 486,
+          "color": "#ffb31a",
+          "align": "center"
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "aspect": "square"
+      },
+      "layers": [
+        {
+          "id": "sky",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 0,
+          "width": 400,
+          "height": 236,
+          "fill": {
+            "type": "linear",
+            "colors": [
+              "#000000",
+              "#ffffff"
+            ],
+            "angle": 180
+          },
+          "effects": [
+            {
+              "kind": "dither",
+              "ink": "#3a1a8c",
+              "paper": "#ff6a2b",
+              "cell": 3.4,
+              "contrast": 1,
+              "brightness": 0,
+              "pixelate": false
+            }
+          ]
+        },
+        {
+          "id": "sun",
+          "type": "shape",
+          "kind": "circle",
+          "cx": 104,
+          "cy": 112,
+          "r": 74,
+          "fill": {
+            "type": "radial",
+            "colors": [
+              "#ffffff",
+              "#dddddd",
+              "#222222"
+            ],
+            "stops": [
+              0,
+              0.55,
+              1
+            ],
+            "r": 74
+          },
+          "effects": [
+            {
+              "kind": "dither",
+              "ink": "#ff6a2b",
+              "paper": "#ffb31a",
+              "cell": 3.4,
+              "contrast": 1,
+              "brightness": 0,
+              "pixelate": false
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 64,
+          "y": 72,
+          "size": 80,
+          "color": "#3a1a8c",
+          "when": "mark"
+        },
+        {
+          "id": "ground",
+          "type": "shape",
+          "kind": "rect",
+          "x": 0,
+          "y": 232,
+          "width": 400,
+          "height": 168,
+          "fill": "#3a1a8c"
+        },
+        {
+          "id": "photo-window-frame",
+          "type": "shape",
+          "items": [
+            {
+              "kind": "rect",
+              "x": 241,
+              "y": 23,
+              "width": 140,
+              "height": 150,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 238,
+              "y": 20,
+              "width": 140,
+              "height": 150,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.5
+            },
+            {
+              "kind": "rect",
+              "x": 238,
+              "y": 20,
+              "width": 140,
+              "height": 18,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.5
+            },
+            {
+              "kind": "rect",
+              "x": 241,
+              "y": 23.5,
+              "width": 134,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 241,
+              "y": 25.7,
+              "width": 134,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 241,
+              "y": 27.9,
+              "width": 134,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 241,
+              "y": 30.1,
+              "width": 134,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 241,
+              "y": 32.3,
+              "width": 134,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 241,
+              "y": 34.5,
+              "width": 134,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 247,
+              "y": 24,
+              "width": 11,
+              "height": 10,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.3
+            }
+          ]
+        },
+        {
+          "id": "photo",
+          "type": "image",
+          "src": "{photo}",
+          "x": 238,
+          "y": 38,
+          "width": 140,
+          "height": 132,
+          "fit": "cover",
+          "effects": [
+            {
+              "kind": "dither",
+              "ink": "#14082e",
+              "paper": "#ff6a2b",
+              "cell": 2.8,
+              "contrast": 1.5,
+              "brightness": 0.08
+            }
+          ],
+          "when": "photo"
+        },
+        {
+          "id": "shadow5",
+          "type": "shape",
+          "kind": "path",
+          "d": "M47.6 194h9.6v9.6h-9.6zM47.6 203.6h9.6v9.6h-9.6zM47.6 213.2h9.6v9.6h-9.6zM47.6 222.8h9.6v9.6h-9.6zM47.6 232.4h9.6v9.6h-9.6zM47.6 242h9.6v9.6h-9.6zM47.6 251.6h48v9.6h-48zM114.8 194h28.8v9.6h-28.8zM105.2 203.6h9.6v9.6h-9.6zM143.6 203.6h9.6v9.6h-9.6zM105.2 213.2h9.6v9.6h-9.6zM143.6 213.2h9.6v9.6h-9.6zM105.2 222.8h9.6v9.6h-9.6zM143.6 222.8h9.6v9.6h-9.6zM105.2 232.4h9.6v9.6h-9.6zM143.6 232.4h9.6v9.6h-9.6zM105.2 242h9.6v9.6h-9.6zM143.6 242h9.6v9.6h-9.6zM114.8 251.6h28.8v9.6h-28.8zM162.8 194h9.6v9.6h-9.6zM201.2 194h9.6v9.6h-9.6zM162.8 203.6h9.6v9.6h-9.6zM201.2 203.6h9.6v9.6h-9.6zM162.8 213.2h9.6v9.6h-9.6zM201.2 213.2h9.6v9.6h-9.6zM162.8 222.8h9.6v9.6h-9.6zM182 222.8h9.6v9.6h-9.6zM201.2 222.8h9.6v9.6h-9.6zM162.8 232.4h9.6v9.6h-9.6zM182 232.4h9.6v9.6h-9.6zM201.2 232.4h9.6v9.6h-9.6zM162.8 242h9.6v9.6h-9.6zM182 242h9.6v9.6h-9.6zM201.2 242h9.6v9.6h-9.6zM172.4 251.6h9.6v9.6h-9.6zM191.6 251.6h9.6v9.6h-9.6zM220.4 194h38.4v9.6h-38.4zM220.4 203.6h9.6v9.6h-9.6zM258.8 203.6h9.6v9.6h-9.6zM220.4 213.2h9.6v9.6h-9.6zM258.8 213.2h9.6v9.6h-9.6zM220.4 222.8h38.4v9.6h-38.4zM220.4 232.4h9.6v9.6h-9.6zM258.8 232.4h9.6v9.6h-9.6zM220.4 242h9.6v9.6h-9.6zM258.8 242h9.6v9.6h-9.6zM220.4 251.6h38.4v9.6h-38.4zM278 194h28.8v9.6h-28.8zM287.6 203.6h9.6v9.6h-9.6zM287.6 213.2h9.6v9.6h-9.6zM287.6 222.8h9.6v9.6h-9.6zM287.6 232.4h9.6v9.6h-9.6zM287.6 242h9.6v9.6h-9.6zM278 251.6h28.8v9.6h-28.8zM316.4 194h48v9.6h-48zM335.6 203.6h9.6v9.6h-9.6zM335.6 213.2h9.6v9.6h-9.6zM335.6 222.8h9.6v9.6h-9.6zM335.6 232.4h9.6v9.6h-9.6zM335.6 242h9.6v9.6h-9.6zM335.6 251.6h9.6v9.6h-9.6z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "shadow4",
+          "type": "shape",
+          "kind": "path",
+          "d": "M45.2 191.6h9.6v9.6h-9.6zM45.2 201.2h9.6v9.6h-9.6zM45.2 210.8h9.6v9.6h-9.6zM45.2 220.4h9.6v9.6h-9.6zM45.2 230h9.6v9.6h-9.6zM45.2 239.6h9.6v9.6h-9.6zM45.2 249.2h48v9.6h-48zM112.4 191.6h28.8v9.6h-28.8zM102.8 201.2h9.6v9.6h-9.6zM141.2 201.2h9.6v9.6h-9.6zM102.8 210.8h9.6v9.6h-9.6zM141.2 210.8h9.6v9.6h-9.6zM102.8 220.4h9.6v9.6h-9.6zM141.2 220.4h9.6v9.6h-9.6zM102.8 230h9.6v9.6h-9.6zM141.2 230h9.6v9.6h-9.6zM102.8 239.6h9.6v9.6h-9.6zM141.2 239.6h9.6v9.6h-9.6zM112.4 249.2h28.8v9.6h-28.8zM160.4 191.6h9.6v9.6h-9.6zM198.8 191.6h9.6v9.6h-9.6zM160.4 201.2h9.6v9.6h-9.6zM198.8 201.2h9.6v9.6h-9.6zM160.4 210.8h9.6v9.6h-9.6zM198.8 210.8h9.6v9.6h-9.6zM160.4 220.4h9.6v9.6h-9.6zM179.6 220.4h9.6v9.6h-9.6zM198.8 220.4h9.6v9.6h-9.6zM160.4 230h9.6v9.6h-9.6zM179.6 230h9.6v9.6h-9.6zM198.8 230h9.6v9.6h-9.6zM160.4 239.6h9.6v9.6h-9.6zM179.6 239.6h9.6v9.6h-9.6zM198.8 239.6h9.6v9.6h-9.6zM170 249.2h9.6v9.6h-9.6zM189.2 249.2h9.6v9.6h-9.6zM218 191.6h38.4v9.6h-38.4zM218 201.2h9.6v9.6h-9.6zM256.4 201.2h9.6v9.6h-9.6zM218 210.8h9.6v9.6h-9.6zM256.4 210.8h9.6v9.6h-9.6zM218 220.4h38.4v9.6h-38.4zM218 230h9.6v9.6h-9.6zM256.4 230h9.6v9.6h-9.6zM218 239.6h9.6v9.6h-9.6zM256.4 239.6h9.6v9.6h-9.6zM218 249.2h38.4v9.6h-38.4zM275.6 191.6h28.8v9.6h-28.8zM285.2 201.2h9.6v9.6h-9.6zM285.2 210.8h9.6v9.6h-9.6zM285.2 220.4h9.6v9.6h-9.6zM285.2 230h9.6v9.6h-9.6zM285.2 239.6h9.6v9.6h-9.6zM275.6 249.2h28.8v9.6h-28.8zM314 191.6h48v9.6h-48zM333.2 201.2h9.6v9.6h-9.6zM333.2 210.8h9.6v9.6h-9.6zM333.2 220.4h9.6v9.6h-9.6zM333.2 230h9.6v9.6h-9.6zM333.2 239.6h9.6v9.6h-9.6zM333.2 249.2h9.6v9.6h-9.6z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "shadow3",
+          "type": "shape",
+          "kind": "path",
+          "d": "M42.8 189.2h9.6v9.6h-9.6zM42.8 198.8h9.6v9.6h-9.6zM42.8 208.4h9.6v9.6h-9.6zM42.8 218h9.6v9.6h-9.6zM42.8 227.6h9.6v9.6h-9.6zM42.8 237.2h9.6v9.6h-9.6zM42.8 246.8h48v9.6h-48zM110 189.2h28.8v9.6h-28.8zM100.4 198.8h9.6v9.6h-9.6zM138.8 198.8h9.6v9.6h-9.6zM100.4 208.4h9.6v9.6h-9.6zM138.8 208.4h9.6v9.6h-9.6zM100.4 218h9.6v9.6h-9.6zM138.8 218h9.6v9.6h-9.6zM100.4 227.6h9.6v9.6h-9.6zM138.8 227.6h9.6v9.6h-9.6zM100.4 237.2h9.6v9.6h-9.6zM138.8 237.2h9.6v9.6h-9.6zM110 246.8h28.8v9.6h-28.8zM158 189.2h9.6v9.6h-9.6zM196.4 189.2h9.6v9.6h-9.6zM158 198.8h9.6v9.6h-9.6zM196.4 198.8h9.6v9.6h-9.6zM158 208.4h9.6v9.6h-9.6zM196.4 208.4h9.6v9.6h-9.6zM158 218h9.6v9.6h-9.6zM177.2 218h9.6v9.6h-9.6zM196.4 218h9.6v9.6h-9.6zM158 227.6h9.6v9.6h-9.6zM177.2 227.6h9.6v9.6h-9.6zM196.4 227.6h9.6v9.6h-9.6zM158 237.2h9.6v9.6h-9.6zM177.2 237.2h9.6v9.6h-9.6zM196.4 237.2h9.6v9.6h-9.6zM167.6 246.8h9.6v9.6h-9.6zM186.8 246.8h9.6v9.6h-9.6zM215.6 189.2h38.4v9.6h-38.4zM215.6 198.8h9.6v9.6h-9.6zM254 198.8h9.6v9.6h-9.6zM215.6 208.4h9.6v9.6h-9.6zM254 208.4h9.6v9.6h-9.6zM215.6 218h38.4v9.6h-38.4zM215.6 227.6h9.6v9.6h-9.6zM254 227.6h9.6v9.6h-9.6zM215.6 237.2h9.6v9.6h-9.6zM254 237.2h9.6v9.6h-9.6zM215.6 246.8h38.4v9.6h-38.4zM273.2 189.2h28.8v9.6h-28.8zM282.8 198.8h9.6v9.6h-9.6zM282.8 208.4h9.6v9.6h-9.6zM282.8 218h9.6v9.6h-9.6zM282.8 227.6h9.6v9.6h-9.6zM282.8 237.2h9.6v9.6h-9.6zM273.2 246.8h28.8v9.6h-28.8zM311.6 189.2h48v9.6h-48zM330.8 198.8h9.6v9.6h-9.6zM330.8 208.4h9.6v9.6h-9.6zM330.8 218h9.6v9.6h-9.6zM330.8 227.6h9.6v9.6h-9.6zM330.8 237.2h9.6v9.6h-9.6zM330.8 246.8h9.6v9.6h-9.6z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "shadow2",
+          "type": "shape",
+          "kind": "path",
+          "d": "M40.4 186.8h9.6v9.6h-9.6zM40.4 196.4h9.6v9.6h-9.6zM40.4 206h9.6v9.6h-9.6zM40.4 215.6h9.6v9.6h-9.6zM40.4 225.2h9.6v9.6h-9.6zM40.4 234.8h9.6v9.6h-9.6zM40.4 244.4h48v9.6h-48zM107.6 186.8h28.8v9.6h-28.8zM98 196.4h9.6v9.6h-9.6zM136.4 196.4h9.6v9.6h-9.6zM98 206h9.6v9.6h-9.6zM136.4 206h9.6v9.6h-9.6zM98 215.6h9.6v9.6h-9.6zM136.4 215.6h9.6v9.6h-9.6zM98 225.2h9.6v9.6h-9.6zM136.4 225.2h9.6v9.6h-9.6zM98 234.8h9.6v9.6h-9.6zM136.4 234.8h9.6v9.6h-9.6zM107.6 244.4h28.8v9.6h-28.8zM155.6 186.8h9.6v9.6h-9.6zM194 186.8h9.6v9.6h-9.6zM155.6 196.4h9.6v9.6h-9.6zM194 196.4h9.6v9.6h-9.6zM155.6 206h9.6v9.6h-9.6zM194 206h9.6v9.6h-9.6zM155.6 215.6h9.6v9.6h-9.6zM174.8 215.6h9.6v9.6h-9.6zM194 215.6h9.6v9.6h-9.6zM155.6 225.2h9.6v9.6h-9.6zM174.8 225.2h9.6v9.6h-9.6zM194 225.2h9.6v9.6h-9.6zM155.6 234.8h9.6v9.6h-9.6zM174.8 234.8h9.6v9.6h-9.6zM194 234.8h9.6v9.6h-9.6zM165.2 244.4h9.6v9.6h-9.6zM184.4 244.4h9.6v9.6h-9.6zM213.2 186.8h38.4v9.6h-38.4zM213.2 196.4h9.6v9.6h-9.6zM251.6 196.4h9.6v9.6h-9.6zM213.2 206h9.6v9.6h-9.6zM251.6 206h9.6v9.6h-9.6zM213.2 215.6h38.4v9.6h-38.4zM213.2 225.2h9.6v9.6h-9.6zM251.6 225.2h9.6v9.6h-9.6zM213.2 234.8h9.6v9.6h-9.6zM251.6 234.8h9.6v9.6h-9.6zM213.2 244.4h38.4v9.6h-38.4zM270.8 186.8h28.8v9.6h-28.8zM280.4 196.4h9.6v9.6h-9.6zM280.4 206h9.6v9.6h-9.6zM280.4 215.6h9.6v9.6h-9.6zM280.4 225.2h9.6v9.6h-9.6zM280.4 234.8h9.6v9.6h-9.6zM270.8 244.4h28.8v9.6h-28.8zM309.2 186.8h48v9.6h-48zM328.4 196.4h9.6v9.6h-9.6zM328.4 206h9.6v9.6h-9.6zM328.4 215.6h9.6v9.6h-9.6zM328.4 225.2h9.6v9.6h-9.6zM328.4 234.8h9.6v9.6h-9.6zM328.4 244.4h9.6v9.6h-9.6z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "shadow1",
+          "type": "shape",
+          "kind": "path",
+          "d": "M38 184.4h9.6v9.6h-9.6zM38 194h9.6v9.6h-9.6zM38 203.6h9.6v9.6h-9.6zM38 213.2h9.6v9.6h-9.6zM38 222.8h9.6v9.6h-9.6zM38 232.4h9.6v9.6h-9.6zM38 242h48v9.6h-48zM105.2 184.4h28.8v9.6h-28.8zM95.6 194h9.6v9.6h-9.6zM134 194h9.6v9.6h-9.6zM95.6 203.6h9.6v9.6h-9.6zM134 203.6h9.6v9.6h-9.6zM95.6 213.2h9.6v9.6h-9.6zM134 213.2h9.6v9.6h-9.6zM95.6 222.8h9.6v9.6h-9.6zM134 222.8h9.6v9.6h-9.6zM95.6 232.4h9.6v9.6h-9.6zM134 232.4h9.6v9.6h-9.6zM105.2 242h28.8v9.6h-28.8zM153.2 184.4h9.6v9.6h-9.6zM191.6 184.4h9.6v9.6h-9.6zM153.2 194h9.6v9.6h-9.6zM191.6 194h9.6v9.6h-9.6zM153.2 203.6h9.6v9.6h-9.6zM191.6 203.6h9.6v9.6h-9.6zM153.2 213.2h9.6v9.6h-9.6zM172.4 213.2h9.6v9.6h-9.6zM191.6 213.2h9.6v9.6h-9.6zM153.2 222.8h9.6v9.6h-9.6zM172.4 222.8h9.6v9.6h-9.6zM191.6 222.8h9.6v9.6h-9.6zM153.2 232.4h9.6v9.6h-9.6zM172.4 232.4h9.6v9.6h-9.6zM191.6 232.4h9.6v9.6h-9.6zM162.8 242h9.6v9.6h-9.6zM182 242h9.6v9.6h-9.6zM210.8 184.4h38.4v9.6h-38.4zM210.8 194h9.6v9.6h-9.6zM249.2 194h9.6v9.6h-9.6zM210.8 203.6h9.6v9.6h-9.6zM249.2 203.6h9.6v9.6h-9.6zM210.8 213.2h38.4v9.6h-38.4zM210.8 222.8h9.6v9.6h-9.6zM249.2 222.8h9.6v9.6h-9.6zM210.8 232.4h9.6v9.6h-9.6zM249.2 232.4h9.6v9.6h-9.6zM210.8 242h38.4v9.6h-38.4zM268.4 184.4h28.8v9.6h-28.8zM278 194h9.6v9.6h-9.6zM278 203.6h9.6v9.6h-9.6zM278 213.2h9.6v9.6h-9.6zM278 222.8h9.6v9.6h-9.6zM278 232.4h9.6v9.6h-9.6zM268.4 242h28.8v9.6h-28.8zM306.8 184.4h48v9.6h-48zM326 194h9.6v9.6h-9.6zM326 203.6h9.6v9.6h-9.6zM326 213.2h9.6v9.6h-9.6zM326 222.8h9.6v9.6h-9.6zM326 232.4h9.6v9.6h-9.6zM326 242h9.6v9.6h-9.6z",
+          "fill": "#14082e"
+        },
+        {
+          "id": "name",
+          "type": "shape",
+          "kind": "path",
+          "d": "M35.6 182h9.6v9.6h-9.6zM35.6 191.6h9.6v9.6h-9.6zM35.6 201.2h9.6v9.6h-9.6zM35.6 210.8h9.6v9.6h-9.6zM35.6 220.4h9.6v9.6h-9.6zM35.6 230h9.6v9.6h-9.6zM35.6 239.6h48v9.6h-48zM102.8 182h28.8v9.6h-28.8zM93.2 191.6h9.6v9.6h-9.6zM131.6 191.6h9.6v9.6h-9.6zM93.2 201.2h9.6v9.6h-9.6zM131.6 201.2h9.6v9.6h-9.6zM93.2 210.8h9.6v9.6h-9.6zM131.6 210.8h9.6v9.6h-9.6zM93.2 220.4h9.6v9.6h-9.6zM131.6 220.4h9.6v9.6h-9.6zM93.2 230h9.6v9.6h-9.6zM131.6 230h9.6v9.6h-9.6zM102.8 239.6h28.8v9.6h-28.8zM150.8 182h9.6v9.6h-9.6zM189.2 182h9.6v9.6h-9.6zM150.8 191.6h9.6v9.6h-9.6zM189.2 191.6h9.6v9.6h-9.6zM150.8 201.2h9.6v9.6h-9.6zM189.2 201.2h9.6v9.6h-9.6zM150.8 210.8h9.6v9.6h-9.6zM170 210.8h9.6v9.6h-9.6zM189.2 210.8h9.6v9.6h-9.6zM150.8 220.4h9.6v9.6h-9.6zM170 220.4h9.6v9.6h-9.6zM189.2 220.4h9.6v9.6h-9.6zM150.8 230h9.6v9.6h-9.6zM170 230h9.6v9.6h-9.6zM189.2 230h9.6v9.6h-9.6zM160.4 239.6h9.6v9.6h-9.6zM179.6 239.6h9.6v9.6h-9.6zM208.4 182h38.4v9.6h-38.4zM208.4 191.6h9.6v9.6h-9.6zM246.8 191.6h9.6v9.6h-9.6zM208.4 201.2h9.6v9.6h-9.6zM246.8 201.2h9.6v9.6h-9.6zM208.4 210.8h38.4v9.6h-38.4zM208.4 220.4h9.6v9.6h-9.6zM246.8 220.4h9.6v9.6h-9.6zM208.4 230h9.6v9.6h-9.6zM246.8 230h9.6v9.6h-9.6zM208.4 239.6h38.4v9.6h-38.4zM266 182h28.8v9.6h-28.8zM275.6 191.6h9.6v9.6h-9.6zM275.6 201.2h9.6v9.6h-9.6zM275.6 210.8h9.6v9.6h-9.6zM275.6 220.4h9.6v9.6h-9.6zM275.6 230h9.6v9.6h-9.6zM266 239.6h28.8v9.6h-28.8zM304.4 182h48v9.6h-48zM323.6 191.6h9.6v9.6h-9.6zM323.6 201.2h9.6v9.6h-9.6zM323.6 210.8h9.6v9.6h-9.6zM323.6 220.4h9.6v9.6h-9.6zM323.6 230h9.6v9.6h-9.6zM323.6 239.6h9.6v9.6h-9.6z",
+          "fill": "#fff4e0"
+        },
+        {
+          "id": "terminal-frame",
+          "type": "shape",
+          "items": [
+            {
+              "kind": "rect",
+              "x": 21,
+              "y": 275,
+              "width": 361,
+              "height": 110,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 18,
+              "y": 272,
+              "width": 361,
+              "height": 110,
+              "fill": "#0a0612",
+              "stroke": "#000000",
+              "strokeWidth": 1.5
+            },
+            {
+              "kind": "rect",
+              "x": 18,
+              "y": 272,
+              "width": 361,
+              "height": 18,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.5
+            },
+            {
+              "kind": "rect",
+              "x": 21,
+              "y": 275.5,
+              "width": 355,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 21,
+              "y": 277.7,
+              "width": 355,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 21,
+              "y": 279.9,
+              "width": 355,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 21,
+              "y": 282.1,
+              "width": 355,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 21,
+              "y": 284.3,
+              "width": 355,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 21,
+              "y": 286.5,
+              "width": 355,
+              "height": 1.1,
+              "fill": "#000000"
+            },
+            {
+              "kind": "rect",
+              "x": 27,
+              "y": 276,
+              "width": 11,
+              "height": 10,
+              "fill": "#ffffff",
+              "stroke": "#000000",
+              "strokeWidth": 1.3
+            }
+          ]
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": {
+            "join": [
+              [
+                ">",
+                {
+                  "upper": "{release}"
+                }
+              ],
+              " "
+            ]
+          },
+          "font": "Space Mono",
+          "weight": 700,
+          "size": 37,
+          "letterSpacing": 0,
+          "x": 30,
+          "y": 348,
+          "color": "#ffb31a"
+        },
+        {
+          "id": "caret",
+          "type": "shape",
+          "kind": "rect",
+          "x": 354,
+          "y": 322,
+          "width": 16,
+          "height": 28,
+          "fill": "#ffb31a"
+        }
+      ]
+    },
+    {
+      "id": "grain",
+      "type": "grain",
+      "amount": 0.05,
+      "blend": "multiply"
+    }
+  ]
+}

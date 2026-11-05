@@ -5,12 +5,12 @@
  */
 
 import { node } from './platform/index.js';
-import { createRng } from './rng.js';
-import { resolveSize, unit, len } from './geometry.js';
+import { createRng } from '@arraypress/image-effects/rng';
+import { resolveSize, unit } from './geometry.js';
+import { len } from '@arraypress/image-effects/length';
 import { resolveFormat, printMarks, zonesOverlay, safeBox } from './formats/index.js';
 import { animate, isAnimated } from './animate/index.js';
 import { preloadIcons } from './icons.js';
-import { rasterize } from './raster/index.js';
 import { resolvePalette } from './palette.js';
 import { fontPool } from './fonts.js';
 import { LAYERS } from './layers.js';
@@ -20,15 +20,15 @@ import { registerDefs, renderUse } from './render/use.js';
 import { expandRepeat } from './layers/repeat.js';
 import { scaledReport } from './render/report.js';
 import { hasLayoutRef, resolveLayoutRefs } from './type/layout-ref.js';
-import { svgPixels } from './render/tiles.js';
-import { IDENTITY, compose } from './effects/transform.js';
-import { needsPixels } from './effects/index.js';
+import { rasterize, svgPixels, webpImages } from '@arraypress/image-effects/raster';
+import { IDENTITY, compose } from './render/transform.js';
+import { needsPixels } from '@arraypress/image-effects';
 import { backdropSampler } from './render/backdrop.js';
 import { noise, applyGrain } from './render/grain.js';
 import { extractPalette } from './extract.js';
 import { recipes, applyOverrides } from './recipes.js';
 import { defineRecipe } from './json-recipe.js';
-import { attrs, esc, num } from './svg.js';
+import { attrs, esc, num } from '@arraypress/image-effects/svg';
 
 export { VERSION } from './version.js';
 export { coverKey } from './render/key.js';
@@ -317,7 +317,7 @@ function documentFor(c, parts) {
  * The same cover always gives byte-identical output.
  *
  * @param {import('./index.js').CoverOptions | import('./index.js').Cover} input - The cover.
- * @param {{ t?: number }} [options] - `t`: the time to draw, in seconds, for layers with keyframes (static covers ignore it).
+ * @param {{ t?: number, images?: 'webp', quality?: number }} [options] - `t`: the time to draw, in seconds, for layers with keyframes (static covers ignore it). `images: 'webp'`: embedded photos and pixel effects re-encoded as WebP where smaller (`quality` for photos, default 82; needs sharp), for SVGs shown in browsers (librsvg can't draw WebP).
  * @returns {Promise<string>} The SVG document.
  *
  * @example
@@ -326,7 +326,10 @@ function documentFor(c, parts) {
 export async function renderSvg(input, options = {}) {
   const c = cover(input);
   const sharp = c.layers.some(hasImage) ? await loadSharp(false) : undefined;
-  return documentFor(c, await renderLayers(c, sharp, { t: options.t }));
+  const svg = documentFor(c, await renderLayers(c, sharp, { t: options.t }));
+  if (!options.images) return svg;
+  if (options.images !== 'webp') throw new TypeError(`Unknown images "${options.images}" (webp)`);
+  return webpImages(svg, sharp ?? await loadSharp(false), { quality: options.quality });
 }
 
 /**

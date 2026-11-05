@@ -4,11 +4,10 @@
  * @module layers/svg
  */
 
-import { attrs, esc, num } from '../svg.js';
+import { attrs, esc, num } from '@arraypress/image-effects/svg';
 import { unit } from '../geometry.js';
 import { pos, wrap } from './util.js';
-import { expandDropShadows } from '../effects/drop-shadow.js';
-import { filterReach } from '../effects/region.js';
+import { expandDropShadows, filterReach } from '@arraypress/image-effects';
 
 
 /**

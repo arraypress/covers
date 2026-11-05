@@ -4,10 +4,10 @@
  * @module render/group
  */
 
-import { attrs, esc, num } from '../svg.js';
+import { attrs, esc, num } from '@arraypress/image-effects/svg';
 import { pos } from '../layers/util.js';
 import { scaledReport } from './report.js';
-import { IDENTITY, compose } from '../effects/transform.js';
+import { IDENTITY, compose } from './transform.js';
 
 /**
  * `group` — a stack of layers drawn as one: in a box (`x`, `y`, `width`,
@@ -40,7 +40,7 @@ export async function renderGroup(layer, ctx, decorate) {
   const tx = bx + (bw - vw * sx) * ax;
   const ty = by + (bh - vh * sy) * ay;
   const k = Math.min(sx, sy);
-  /** @type {import('../effects/transform.js').Affine} Grid units to the box. */
+  /** @type {import('./transform.js').Affine} Grid units to the box. */
   const grid = [sx, 0, 0, sy, tx - vx * sx, ty - vy * sy];
   const parts = await ctx.stack(layer.layers ?? [], { tag: 'g', width: vw, height: vh, scale: k, res: Math.max(sx, sy), matrix: grid });
   let defs = parts.map((/** @type {any} */ p) => p.defs).join('');
