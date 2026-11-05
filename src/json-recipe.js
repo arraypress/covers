@@ -60,10 +60,11 @@ import { len } from '@arraypress/image-effects/length';
 import { ANCHORS } from './geometry.js';
 import { toHex, mixOklab, mixOklch, onBackground, gradientAt } from '@arraypress/image-effects/color';
 import { LAYERS, toneColor } from './layers.js';
-import { LAYER_OPTIONS, COMMON } from './layer-options.js';
+import { LAYER_OPTIONS, COMMON, MOTION_OPTIONS } from './layer-options.js';
 import { EFFECT_OPTIONS, EFFECT_COMMON, MASK_GRADIENTS } from '@arraypress/image-effects';
 import { shapesOnly } from './layers/svg.js';
 import { LAYOUT_FIELDS } from './type/layout-ref.js';
+import { MOTION_PRESETS } from './animate/timing.js';
 
 /** Options every recipe can read without declaring them. */
 const CONTENT = ['title', 'label', 'icon', 'image', 'name', 'mark', 'photo', 'cutout', 'date', 'dates', 'time', 'venue', 'address', 'lines', 'lineup', 'tracklist', 'price', 'meta', 'page'];
@@ -546,6 +547,8 @@ export function validate(json) {
       if (!Object.hasOwn(known, k)) fail(`${path}.${k}`, `"${layer.type}" layers have no option "${k}" (${Object.keys(known).join(', ')})`);
       if (k === 'effects') {
         checkEffects(`${path}.effects`, v);
+      } else if (k === 'motion') {
+        checkMotion(`${path}.motion`, v);
       } else if (NESTED.includes(k) && Array.isArray(v) && v.every((x) => isPlain(x) && typeof x.type === 'string')) {
         v.forEach((x, j) => checkLayer(`${path}.${k}[${j}]${x.id ? ` (${x.id})` : ''}`, x));
       } else if (k === 'layer' && isPlain(v) && typeof v.type === 'string') {
@@ -580,6 +583,19 @@ export function validate(json) {
         if (k === 'mask' && isPlain(x)) checkEffectMask(`${at}.mask`, x);
         else if (k === 'map' && isPlain(x) && Array.isArray(x.layers)) x.layers.forEach((/** @type {any} */ l, /** @type {number} */ j) => checkLayer(`${at}.map.layers[${j}]`, l));
         else checkValue(`${at}.${k}`, x);
+      }
+    });
+  };
+  // Motion: known presets and options (values are checked as values).
+  const checkMotion = (/** @type {string} */ path, /** @type {any} */ v) => {
+    (Array.isArray(v) ? v : [v]).forEach((m, i) => {
+      const at = Array.isArray(v) ? `${path}[${i}]` : path;
+      const preset = typeof m === 'string' ? m : m?.preset;
+      if (typeof preset === 'string' && !/[{$@]/.test(preset) && !Object.hasOwn(MOTION_PRESETS, preset)) fail(at, `unknown motion preset "${preset}" (${Object.keys(MOTION_PRESETS).join(', ')})`);
+      if (!isPlain(m)) return checkValue(at, m);
+      for (const [k, x] of Object.entries(m)) {
+        if (!Object.hasOwn(MOTION_OPTIONS, k)) fail(`${at}.${k}`, `motions have no option "${k}" (${Object.keys(MOTION_OPTIONS).join(', ')})`);
+        checkValue(`${at}.${k}`, x);
       }
     });
   };

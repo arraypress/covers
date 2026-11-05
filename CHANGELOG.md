@@ -5,6 +5,25 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] — 2026-11-05
+
+Animation, built to the 1.1 design: covers that move in the SVG itself. Every published recipe renders as before (all 76, SVG at 4:5 and as release covers, and `renderImage` PNGs: 228 renders byte-identical to 1.2.0).
+
+### Added
+
+- **`motion` on every layer**: CSS keyframes in the SVG, so a plain `<img>` or inline SVG plays with no script. `translate` (by an offset, or through points), `path` (travel a path from where the layer is), `rotate`, `scale` / `scaleX` / `scaleY` about an `origin`, `opacity`; timing as CSS (`duration`, `delay`, `easing`, `direction`, `iterations`); a list of motions per layer; presets `drift`, `spin`, `breathe`, `blink`, `marquee` (`motion: 'blink'`). The whole layer moves, its effects and masks with it; `blend` stays on the outermost group.
+- **`marquee`**: text on a path runs along it, one repeat of its words per `duration`, looping without a seam. The text is outlines, so each glyph is drawn once and placed by `<use>` copies that share one set of keyframes (the path sampled as `translate() rotate()`), each copy with its own delay.
+- **`vary`**: layer options as lists of stops (`{ axes: { wdth: [62, 150] } }`), drawn frame by frame and played as outline morphs (CSS `d: path()`). A variable font interpolates its outlines point by point between masters, so morphing the outlines it draws breathes a width axis as the font itself would; frames that differ in more than their outlines are refused.
+- **Stills**: `poster` (seconds) is the frame `renderImage`, `renderBlob` and `animate: false` draw, and what an animated SVG shows under `prefers-reduced-motion` (its own attributes); without it, the layers at rest. `renderSvg(cover, { t })` draws a still at `t` for motion too, following CSS timing (so it matches what a browser shows at `t`).
+- **`prefers-reduced-motion`**: one rule in the SVG's stylesheet stops every animation. Animation names carry a hash of the document, so covers inlined together never collide.
+- **Eight recipes that move**, `recipes/flyers/*-motion.json`: `afterglow`, `linger` and `solvane` (aura orbs drifting), `halden-orbit` (rings turning opposite ways), `lumio-stack` (widths breathing), `arcfield-mirror` (a turning ring and a marquee on three waves), `drag-solenne` (the smear drifting) and `lofi-lowbit` (a blinking cursor): the Logomarks scenes lab's animated flyers. Each is its at-rest recipe with motion added, and renders as it when still.
+- `MOTION_PRESETS`; the `Motion`, `MotionPreset` and `Easing` types; `motion` in the recipe schema (options and presets checked in JSON recipes).
+
+### Changed
+
+- `renderSvg(cover, { t })` now also applies `motion` at `t` (covers without motion are unchanged).
+- The keyframes module moved to `src/animate/keyframes.js` (`src/animate/` holds the motion modules too); the exports are the same.
+
 ## [1.2.0] — 2026-11-05
 
 The image filters are now their own library, [`@arraypress/image-effects`](https://github.com/arraypress/image-effects), and covers depends on it. Nothing a covers user sees changes: the same exports, the same effect options, and the same output (every built-in and example recipe, 224 renders, checked before and after the split: SVG byte-identical, rasters pixel-identical).

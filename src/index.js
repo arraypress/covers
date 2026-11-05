@@ -24,4 +24,4 @@ export { EFFECTS, EFFECT_OPTIONS } from '@arraypress/image-effects';
 export { rasterize } from '@arraypress/image-effects/raster';
 export { lint } from './lint/index.js';
 export { kit, KIT_FORMATS } from './kit/index.js';
-export { valueAt } from './animate/index.js';
+export { valueAt, MOTION_PRESETS } from './animate/index.js';

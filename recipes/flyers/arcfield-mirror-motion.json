@@ -1,0 +1,397 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "arcfield-mirror-motion",
+  "description": "Kinetic type, mirror and wave, moving: arcfield-mirror with the label turning round the mark (once in 36 s) and the marquee running along the three waves (one repeat in 9 s, the middle wave the other way), as the Logomarks scenes lab plays it. The separators are ✶ (a built-in symbol: the fonts here have no ✱). Stills are arcfield-mirror at rest, with ✶.",
+  "params": {
+    "name": "ARCFIELD",
+    "ring": "ARCFIELD RECORDS ✶ NEW MUSIC EVERY FRIDAY ✶ EST. 2026 ✶ ",
+    "marquee": "OUT NOW ✶ ARCFIELD ✶ OUT NOW ✶ ARCFIELD ✶ OUT NOW ✶ ARCFIELD ✶ OUT NOW ✶ ARCFIELD ✶ OUT NOW ✶ ARCFIELD ✶ ",
+    "unit": 194,
+    "left": [
+      "VOL.",
+      "012"
+    ],
+    "right": [
+      "SIDE",
+      "A/B"
+    ],
+    "artist": "Arcfield",
+    "release": "Mirror Songs",
+    "field": "#d4ff3a",
+    "ink": "#0b0b0b"
+  },
+  "layers": [
+    {
+      "id": "field",
+      "type": "solid",
+      "color": "{field}"
+    },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        500
+      ],
+      "fit": "contain",
+      "when": {
+        "not": {
+          "format": "release"
+        }
+      },
+      "layers": [
+        {
+          "type": "text",
+          "content": "{name}",
+          "font": "Bebas Neue",
+          "weight": 400,
+          "size": 66,
+          "letterSpacing": 0,
+          "x": 200,
+          "y": 102,
+          "align": "center",
+          "width": 376,
+          "stretch": [
+            1,
+            1.75
+          ],
+          "color": "{ink}",
+          "id": "name"
+        },
+        {
+          "type": "text",
+          "content": "{name}",
+          "font": "Bebas Neue",
+          "weight": 400,
+          "size": 66,
+          "letterSpacing": 0,
+          "x": 200,
+          "y": 102,
+          "align": "center",
+          "width": 376,
+          "stretch": [
+            1,
+            -1.2
+          ],
+          "id": "reflection",
+          "transform": {
+            "translate": [
+              0,
+              4
+            ]
+          },
+          "fill": "none",
+          "stroke": "{ink}",
+          "strokeWidth": 0.9,
+          "mask": [
+            {
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 104,
+              "width": 400,
+              "height": 66,
+              "fill": {
+                "type": "linear",
+                "colors": [
+                  "#ffffff",
+                  "#000000"
+                ],
+                "angle": 180
+              }
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 130,
+          "y": 218,
+          "size": 140,
+          "color": "{ink}",
+          "when": "mark"
+        },
+        {
+          "id": "ring",
+          "type": "text",
+          "content": "{ring}",
+          "font": "Unbounded",
+          "weight": 700,
+          "size": 12.5,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "path": {
+            "kind": "circle",
+            "cx": 200,
+            "cy": 288,
+            "r": 102,
+            "start": 270
+          },
+          "fitPath": 3,
+          "motion": {
+            "preset": "spin",
+            "duration": 36,
+            "origin": [
+              200,
+              288
+            ]
+          }
+        },
+        {
+          "id": "left",
+          "type": "text",
+          "content": "{left}",
+          "font": "Space Mono",
+          "weight": 700,
+          "size": 9,
+          "lineHeight": 1.444,
+          "letterSpacing": 0,
+          "x": 16,
+          "y": 198,
+          "color": "{ink}"
+        },
+        {
+          "id": "right",
+          "type": "text",
+          "content": "{right}",
+          "font": "Space Mono",
+          "weight": 700,
+          "size": 9,
+          "lineHeight": 1.444,
+          "letterSpacing": 0,
+          "x": 384,
+          "y": 198,
+          "align": "right",
+          "color": "{ink}"
+        },
+        {
+          "id": "wave1",
+          "type": "text",
+          "content": "{marquee}",
+          "font": "Bebas Neue",
+          "weight": 400,
+          "size": 24,
+          "letterSpacing": 0.0208,
+          "color": "{ink}",
+          "path": {
+            "kind": "wave",
+            "x1": -20,
+            "x2": 520,
+            "y": 422,
+            "amplitude": 4.5,
+            "wavelength": 200,
+            "phase": 3.141592653589793
+          },
+          "startOffset": 0,
+          "align": "left",
+          "motion": {
+            "preset": "marquee",
+            "duration": 9
+          }
+        },
+        {
+          "id": "wave2",
+          "type": "text",
+          "content": "{marquee}",
+          "font": "Bebas Neue",
+          "weight": 400,
+          "size": 24,
+          "letterSpacing": 0.0208,
+          "color": "{ink}",
+          "path": {
+            "kind": "wave",
+            "x1": -70,
+            "x2": 470,
+            "y": 452,
+            "amplitude": 4.5,
+            "wavelength": 200,
+            "phase": 3.141592653589793
+          },
+          "startOffset": {
+            "mul": [
+              "{unit}",
+              -1
+            ]
+          },
+          "align": "left",
+          "motion": {
+            "preset": "marquee",
+            "duration": 9,
+            "direction": "reverse"
+          }
+        },
+        {
+          "id": "wave3",
+          "type": "text",
+          "content": "{marquee}",
+          "font": "Bebas Neue",
+          "weight": 400,
+          "size": 24,
+          "letterSpacing": 0.0208,
+          "color": "{ink}",
+          "path": {
+            "kind": "wave",
+            "x1": -20,
+            "x2": 520,
+            "y": 482,
+            "amplitude": 4.5,
+            "wavelength": 200,
+            "phase": 3.141592653589793
+          },
+          "startOffset": 0,
+          "align": "left",
+          "motion": {
+            "preset": "marquee",
+            "duration": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "cover",
+      "type": "group",
+      "viewBox": [
+        0,
+        0,
+        400,
+        400
+      ],
+      "fit": "contain",
+      "when": {
+        "format": "release"
+      },
+      "layers": [
+        {
+          "type": "text",
+          "content": "{name}",
+          "font": "Bebas Neue",
+          "weight": 400,
+          "size": 58,
+          "letterSpacing": 0,
+          "x": 200,
+          "y": 86,
+          "align": "center",
+          "width": 376,
+          "stretch": [
+            1,
+            1.75
+          ],
+          "color": "{ink}",
+          "id": "name"
+        },
+        {
+          "type": "text",
+          "content": "{name}",
+          "font": "Bebas Neue",
+          "weight": 400,
+          "size": 58,
+          "letterSpacing": 0,
+          "x": 200,
+          "y": 86,
+          "align": "center",
+          "width": 376,
+          "stretch": [
+            1,
+            -1.2
+          ],
+          "id": "reflection",
+          "transform": {
+            "translate": [
+              0,
+              4
+            ]
+          },
+          "fill": "none",
+          "stroke": "{ink}",
+          "strokeWidth": 0.9,
+          "mask": [
+            {
+              "type": "shape",
+              "kind": "rect",
+              "x": 0,
+              "y": 88,
+              "width": 400,
+              "height": 56,
+              "fill": {
+                "type": "linear",
+                "colors": [
+                  "#ffffff",
+                  "#000000"
+                ],
+                "angle": 180
+              }
+            }
+          ]
+        },
+        {
+          "id": "mark",
+          "type": "icon",
+          "markup": "{mark}",
+          "x": 146,
+          "y": 200,
+          "size": 108,
+          "color": "{ink}",
+          "when": "mark"
+        },
+        {
+          "id": "ring",
+          "type": "text",
+          "content": {
+            "upper": "{release} ✶ "
+          },
+          "font": "Unbounded",
+          "weight": 700,
+          "size": 36,
+          "letterSpacing": 0,
+          "color": "{ink}",
+          "path": {
+            "kind": "circle",
+            "cx": 200,
+            "cy": 254,
+            "r": 76,
+            "start": 270
+          },
+          "fitPath": 4,
+          "motion": {
+            "preset": "spin",
+            "duration": 36,
+            "origin": [
+              200,
+              254
+            ]
+          }
+        },
+        {
+          "id": "wave",
+          "type": "text",
+          "content": {
+            "upper": "{artist} ✶ {release} ✶ {artist} ✶ {release} ✶ "
+          },
+          "font": "Bebas Neue",
+          "weight": 400,
+          "size": 36,
+          "letterSpacing": 0.0208,
+          "color": "{ink}",
+          "path": {
+            "kind": "wave",
+            "x1": -40,
+            "x2": 500,
+            "y": 389,
+            "amplitude": 4.5,
+            "wavelength": 200,
+            "phase": 3.141592653589793
+          },
+          "startOffset": 54,
+          "align": "left",
+          "motion": {
+            "preset": "marquee",
+            "duration": 9
+          }
+        }
+      ]
+    }
+  ]
+}

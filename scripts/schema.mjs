@@ -11,7 +11,8 @@
 
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { LAYER_OPTIONS, COMMON } from '../src/layer-options.js';
+import { LAYER_OPTIONS, COMMON, MOTION_OPTIONS } from '../src/layer-options.js';
+import { MOTION_PRESETS } from '../src/animate/timing.js';
 import { EFFECT_OPTIONS, EFFECT_COMMON } from '@arraypress/image-effects';
 
 /** Operators: name → [description, argument schema]. */
@@ -132,6 +133,19 @@ export function buildSchema() {
           },
         })),
       },
+      motion: {
+        anyOf: [{ $ref: '#/$defs/motionItem' }, { type: 'array', items: { $ref: '#/$defs/motionItem' } }],
+      },
+      motionItem: {
+        anyOf: [
+          { enum: Object.keys(MOTION_PRESETS), description: 'A preset with its defaults.' },
+          {
+            type: 'object',
+            additionalProperties: false,
+            properties: Object.fromEntries(Object.entries(MOTION_OPTIONS).map(([k, d]) => [k, k === 'preset' ? { enum: Object.keys(MOTION_PRESETS), description: d } : { $ref: '#/$defs/value', description: d }])),
+          },
+        ],
+      },
       layer: {
         type: 'object',
         required: ['type'],
@@ -144,7 +158,7 @@ export function buildSchema() {
           if: { properties: { type: { const: type } }, required: ['type'] },
           then: {
             properties: Object.fromEntries(
-              Object.entries({ ...LAYER_OPTIONS[type], ...COMMON }).map(([k, d]) => [k, k === 'effects' ? { $ref: '#/$defs/effects', description: d } : { $ref: '#/$defs/value', description: d }]),
+              Object.entries({ ...LAYER_OPTIONS[type], ...COMMON }).map(([k, d]) => [k, k === 'effects' ? { $ref: '#/$defs/effects', description: d } : k === 'motion' ? { $ref: '#/$defs/motion', description: d } : { $ref: '#/$defs/value', description: d }]),
             ),
             propertyNames: { enum: ['type', 'id', 'when', ...Object.keys(LAYER_OPTIONS[type]), ...Object.keys(COMMON)] },
           },

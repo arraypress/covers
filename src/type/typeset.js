@@ -54,6 +54,7 @@ import { fallbackFaces, shapeText } from './fallback.js';
 import { controlGlyphs, glyphCount } from './glyphs.js';
 import { loadSpans, spanLines, shapeSpans, spanText } from './spans.js';
 import { recordLayout } from './layout-ref.js';
+import { marquee } from '../animate/marquee.js';
 
 /** Options that switch the text layer onto this typesetter. */
 export const TYPE_OPTIONS = ['x', 'y', 'width', 'justify', 'lengthAdjust', 'fit', 'stretch', 'axes', 'stroke', 'strokeWidth', 'strokes', 'fill', 'path', 'startOffset', 'fitPath', 'dy', 'render', 'autoColors', 'lines', 'spans', 'glyphs', 'fallback', 'split', 'dash', 'extrude', 'maxHeight', 'autoThreshold'];
@@ -171,7 +172,7 @@ export async function typeset(layer, ctx) {
     }
     const so = layer.startOffset ?? (layer.fitPath ? 0 : 0.5);
     const offset = typeof so === 'number' && so <= 1 && so >= 0 ? so * sampler.length : pos(so, 'x', ctx.canvas);
-    const start = layer.fitPath ? offset : align === 'center' || layer.align == null ? offset - run.width / 2 : align === 'right' ? offset - run.width : offset;
+    let start = layer.fitPath ? offset : align === 'center' || layer.align == null ? offset - run.width / 2 : align === 'right' ? offset - run.width : offset;
     const dy = len(layer.dy, ctx.canvas, 0);
     const adv = (/** @type {number} */ i) => (i + 1 < run.glyphs.length ? run.glyphs[i + 1].x : run.width) - run.glyphs[i].x;
     const mids = run.glyphs.map((g, i) => g.x + adv(i) / 2);
@@ -186,8 +187,17 @@ export async function typeset(layer, ctx) {
     const whole = { x: 0, y: 0, width: ctx.width, height: ctx.height };
     const fill = layer.fill === 'none' ? { defs: '', value: 'none' } : layer.color === 'auto' ? { defs: '', value: await autoColor(layer, ctx, whole) } : paint(layer.fill ?? layer.color, p.text, { id: `${id}f`, box: whole, canvas: ctx.canvas });
     defs += fill.defs;
+    // A marquee (motion): the still moves the start; playing, each glyph is drawn once in its own frame and placed by copies.
+    const running = /** @type {any} */ (ctx).marquee && marquee(/** @type {any} */ (ctx).marquee, {
+      run, mids, start, sampler, id,
+      glyph: (i) => drawBuckets({ glyphs: [run.glyphs[i]] }, (only) => mappedPath(face, run, size, (gx, gy) => [gx - mids[i], gy + dy], (g) => g === run.glyphs[i] && only(g)), fill.value, strokes, ctx),
+    });
+    if (running) {
+      start += running.shift;
+      defs += running.defs;
+    }
     report(ctx, layer, content, size, face, null, { capHeight: (face.capHeight / face.upem) * size });
-    const drawn = drawBuckets(run, along, fill.value, strokes, ctx);
+    const drawn = running?.body ?? drawBuckets(run, along, fill.value, strokes, ctx);
     recordLayout(ctx, layer.id, whole, { x: 0, y: 0, baseline: 0, size, lines: 1 });
     return { defs, body: wrap(layer, finish(drawn, layer, ctx)) };
   }

@@ -56,7 +56,7 @@ export async function check(): Promise<void> {
 }
 
 // 1.1
-import { renderPages, lint, kit, configure, registerFont, FORMATS, rasterize, type Effect } from '../src/index.js';
+import { renderPages, lint, kit, configure, registerFont, FORMATS, rasterize, type Effect, type Motion, MOTION_PRESETS } from '../src/index.js';
 export async function check11(): Promise<void> {
   const fx: Effect[] = [{ kind: 'halftone', ink: '#0078bf', cell: 5.2, angle: 15 }, { kind: 'wear' }];
   const poster: Layer[] = [
@@ -128,4 +128,22 @@ export async function filters(photo: Uint8Array) {
   const badMask: Effect = { kind: 'blur', mask: { gradient: 'diamond' } };
   const png: Uint8Array = await renderImage({ layers: [{ type: 'image', src: photo, effects: [...fx, 'grain', 'invert'] }] });
   void [bad, badMask, png];
+}
+
+// Motion: plays in the SVG; stills at a poster time.
+export async function motion() {
+  const m: Motion[] = [
+    { translate: ['5vw', '-4vw'], scale: 1.08, origin: ['22%', '66%'], duration: 26, easing: 'inOut', direction: 'alternate' },
+    { preset: 'spin', duration: 50, origin: [200, 222], direction: 'reverse' },
+    { vary: { axes: { wdth: [62, 150] } }, duration: 2.8, delay: -0.32, easing: [0.42, 0, 0.58, 1], iterations: 'infinite' },
+    { opacity: [1, 0, 1], easing: 'step', duration: 1.1 },
+    { path: { kind: 'ellipse', rx: 12, ry: 8 }, duration: 9 },
+  ];
+  // @ts-expect-error: not a preset
+  const badPreset: Motion = { preset: 'wobble' };
+  // @ts-expect-error: not a direction
+  const badDirection: Motion = { direction: 'sideways' };
+  const svg: string = await renderSvg({ poster: 1.5, layers: [{ type: 'solid', color: '#000', motion: m }, { type: 'shape', kind: 'rect', motion: 'blink' }] });
+  const still: string = await renderSvg({ animate: false, layers: [{ type: 'solid', motion: ['drift', 'breathe'] }] }, { t: 2 });
+  void [badPreset, badDirection, svg, still, MOTION_PRESETS.marquee.duration];
 }

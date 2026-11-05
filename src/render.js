@@ -9,7 +9,7 @@ import { createRng } from '@arraypress/image-effects/rng';
 import { resolveSize, unit } from './geometry.js';
 import { len } from '@arraypress/image-effects/length';
 import { resolveFormat, printMarks, zonesOverlay, safeBox } from './formats/index.js';
-import { animate, isAnimated } from './animate/index.js';
+import { animate, isAnimated, renderMotion, createSheet, nameSheet } from './animate/index.js';
 import { preloadIcons } from './icons.js';
 import { resolvePalette } from './palette.js';
 import { fontPool } from './fonts.js';
@@ -39,7 +39,7 @@ export { safeBox } from './formats/index.js';
 const built = new WeakSet();
 
 /** Options that belong to the cover itself, never to a recipe layer. */
-const COVER_KEYS = new Set(['width', 'height', 'aspect', 'seed', 'palette', 'recipe', 'layers', 'fonts', 'alt', 'radius', 'output', 'format', 'dpi', 'bleed', 'safe', 'cropMarks', 'cutLine', 'cut', 'textRender', 'overlay', 'loop']);
+const COVER_KEYS = new Set(['width', 'height', 'aspect', 'seed', 'palette', 'recipe', 'layers', 'fonts', 'alt', 'radius', 'output', 'format', 'dpi', 'bleed', 'safe', 'cropMarks', 'cutLine', 'cut', 'textRender', 'overlay', 'loop', 'animate', 'poster']);
 
 /**
  * Build a cover: resolve its size and palette and expand its recipe into a
@@ -120,6 +120,8 @@ export function cover(options) {
   if (fmt?.zones) /** @type {any} */ (result).zones = fmt.zones;
   if (o.overlay) /** @type {any} */ (result).overlay = o.overlay;
   if (o.loop != null) /** @type {any} */ (result).loop = o.loop;
+  if (o.animate === false) /** @type {any} */ (result).animate = false;
+  if (o.poster != null) /** @type {any} */ (result).poster = o.poster;
   built.add(result);
   return result;
 }
@@ -136,7 +138,9 @@ export function cover(options) {
  * @property {((box: { x: number, y: number, width: number, height: number }) => Promise<string | undefined>) | undefined} backdrop
  * @property {((entry: any) => void) | undefined} report
  * @property {object} doc - Identity of the document being rendered.
- * @property {number} [t] - The time being drawn (seconds), for animated layers.
+ * @property {number} [t] - The time being drawn (seconds), for animated layers: the frame stills show.
+ * @property {boolean} [live] - Motion plays in the SVG (CSS keyframes in `sheet`).
+ * @property {import('./animate/sheet.js').Sheet} [sheet]
  */
 
 /**
@@ -172,12 +176,13 @@ async function renderStack(layers, scope) {
     if (!layer || !Object.hasOwn(LAYERS, layer.type)) throw new TypeError(`Unknown layer type "${layer?.type}". Types: ${Object.keys(LAYERS).join(', ')}`);
     const n = (seen[layer.type] = (seen[layer.type] ?? -1) + 1);
     const key = layer.seed ?? layer.id ?? `${layer.type}#${n}`;
+    const stream = scope.seedPrefix ? `${c.seed}:${scope.seedPrefix}/${key}` : `${c.seed}:${key}`;
     const ctx = /** @type {any} */ ({
       width: scope.width,
       height: scope.height,
       canvas: { width: scope.width, height: scope.height },
       palette: c.palette,
-      rng: createRng(scope.seedPrefix ? `${c.seed}:${scope.seedPrefix}/${key}` : `${c.seed}:${key}`),
+      rng: createRng(stream),
       id: top ? `l${i}` : `${scope.prefix}_${i}`,
       fonts: scope.fonts,
       sharp: scope.sharp,
@@ -214,7 +219,16 @@ async function renderStack(layers, scope) {
         height: sub.height ?? self.height,
       });
     };
-    const markup = wrapped(layer) ? await renderWrapped(/** @type {any} */ (layer), ctx, scope, renderOne) : await renderOne(/** @type {any} */ (layer), ctx);
+    // The layer drawn with its stream from the start (motion draws it more than once, and its frames with `extra` context).
+    const draw = (/** @type {any} */ l, /** @type {any} */ extra) => {
+      ctx.rng = createRng(stream);
+      const x = extra ? { ...ctx, ...extra } : ctx;
+      return wrapped(l) ? renderWrapped(l, x, scope, renderOne) : renderOne(l, x);
+    };
+    // Motion is drawn when it plays, or at a time a still asks for; otherwise the layer is at rest.
+    const markup = layer.motion != null && (scope.live || scope.t != null)
+      ? await renderMotion(layer, ctx, { live: Boolean(scope.live), t: scope.t, sheet: /** @type {any} */ (scope.sheet), draw })
+      : await draw(layer);
     out.push({ layer, ...markup, ctx });
   }
   return out;
@@ -244,7 +258,7 @@ async function renderOne(layer, ctx) {
  *
  * @param {import('./index.js').Cover} c
  * @param {any} sharp
- * @param {{ report?: (entry: any) => void, t?: number, raster?: boolean, reach?: { px: number } }} [extra] - `raster`: drawn for `renderImage` (librsvg), so effects may take its faster forms; `reach` collects how far filters reach, output px.
+ * @param {{ report?: (entry: any) => void, t?: number, live?: boolean, sheet?: import('./animate/sheet.js').Sheet, raster?: boolean, reach?: { px: number } }} [extra] - `t`: the time to draw (default the cover's `poster`); `live`: motion plays (into `sheet`); `raster`: drawn for `renderImage` (librsvg), so effects may take its faster forms; `reach` collects how far filters reach, output px.
  */
 async function renderLayers(c, sharp, extra = {}) {
   // Icon sets named anywhere in the stack load first (from node_modules, or configure({ icons }) elsewhere).
@@ -255,7 +269,7 @@ async function renderLayers(c, sharp, extra = {}) {
   scan(c.layers);
   if (names.size) await preloadIcons(names);
   const auto = c.layers.some(usesAuto);
-  const t = /** @type {any} */ (extra).t;
+  const t = extra.t ?? /** @type {any} */ (c).poster;
   return renderStack(c.layers, {
     c,
     sharp,
@@ -270,6 +284,8 @@ async function renderLayers(c, sharp, extra = {}) {
     layout: new Map(),
     defs: new Map(),
     t,
+    live: extra.live,
+    sheet: extra.sheet,
     raster: extra.raster,
     reach: extra.reach,
   });
@@ -316,8 +332,12 @@ function documentFor(c, parts) {
  * needs no fonts; images are embedded as data URIs; nothing is fetched.
  * The same cover always gives byte-identical output.
  *
+ * Layers with `motion` play in the SVG (CSS keyframes, stopped by
+ * `prefers-reduced-motion`), unless the cover has `animate: false` or a
+ * time is asked for: then it's a still.
+ *
  * @param {import('./index.js').CoverOptions | import('./index.js').Cover} input - The cover.
- * @param {{ t?: number, images?: 'webp', quality?: number }} [options] - `t`: the time to draw, in seconds, for layers with keyframes (static covers ignore it). `images: 'webp'`: embedded photos and pixel effects re-encoded as WebP where smaller (`quality` for photos, default 82; needs sharp), for SVGs shown in browsers (librsvg can't draw WebP).
+ * @param {{ t?: number, images?: 'webp', quality?: number }} [options] - `t`: a still at this time, in seconds, for layers with keyframes or motion (static covers ignore it). `images: 'webp'`: embedded photos and pixel effects re-encoded as WebP where smaller (`quality` for photos, default 82; needs sharp), for SVGs shown in browsers (librsvg can't draw WebP).
  * @returns {Promise<string>} The SVG document.
  *
  * @example
@@ -325,8 +345,21 @@ function documentFor(c, parts) {
  */
 export async function renderSvg(input, options = {}) {
   const c = cover(input);
+  return svgDocument(c, { ...options, live: options.t == null && /** @type {any} */ (c).animate !== false });
+}
+
+/**
+ * A cover's SVG document, playing its motion or still.
+ *
+ * @param {import('./index.js').Cover} c
+ * @param {{ t?: number, live?: boolean, images?: 'webp', quality?: number }} options
+ * @returns {Promise<string>}
+ */
+async function svgDocument(c, options) {
   const sharp = c.layers.some(hasImage) ? await loadSharp(false) : undefined;
-  const svg = documentFor(c, await renderLayers(c, sharp, { t: options.t }));
+  const sheet = options.live ? createSheet() : undefined;
+  const parts = await renderLayers(c, sharp, { t: options.t, live: options.live, sheet });
+  const svg = sheet && !sheet.empty ? nameSheet(documentFor(c, [{ defs: `<style>${sheet.css()}</style>`, body: '' }, ...parts])) : documentFor(c, parts);
   if (!options.images) return svg;
   if (options.images !== 'webp') throw new TypeError(`Unknown images "${options.images}" (webp)`);
   return webpImages(svg, sharp ?? await loadSharp(false), { quality: options.quality });
@@ -386,14 +419,15 @@ export async function renderReport(input) {
 }
 
 /**
- * Render a cover to an image in the browser (a canvas; no sharp).
+ * Render a cover to an image in the browser (a canvas; no sharp): a still,
+ * the cover's `poster` frame or its layers at rest.
  *
  * @param {import('./index.js').CoverOptions | import('./index.js').Cover} input
  * @param {{ format?: 'png' | 'jpeg' | 'webp', quality?: number, scale?: number, width?: number }} [options]
  * @returns {Promise<Blob>}
  */
 export async function renderBlob(input, options = {}) {
-  return rasterize(await renderSvg(input), options);
+  return rasterize(await svgDocument(cover(input), {}), options);
 }
 
 /** @type {Promise<any> | undefined} */

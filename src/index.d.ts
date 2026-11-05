@@ -16,8 +16,9 @@ import type { GlyphControl } from './type/glyphs.js';
 import type { Cut } from './formats/cut.js';
 import type { ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer } from './layers/index.js';
 import type { Zones, PrintInfo, FormatName } from './formats/index.js';
+import type { Motion, MotionPreset, Easing } from './animate/index.js';
 
-export type { RepeatLayer, DefsLayer, UseLayer, TextSpan, GlyphControl, Cut };
+export type { RepeatLayer, DefsLayer, UseLayer, TextSpan, GlyphControl, Cut, Motion, MotionPreset, Easing };
 export type { Color, Length, Rng, LayerTransform, EffectKind, Paint, TextPath, GroupLayer, ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, Zones, PrintInfo, FormatName };
 export type { ShapeSpec, TableCell } from './layers/index.js';
 export type { Format } from './formats/index.js';
@@ -33,7 +34,7 @@ export { kit, KIT_FORMATS } from './kit/index.js';
 export { FORMATS } from './formats/index.js';
 export { configure } from './platform/index.js';
 export { EFFECTS, EFFECT_OPTIONS } from '@arraypress/image-effects';
-export { valueAt } from './animate/index.js';
+export { valueAt, MOTION_PRESETS } from './animate/index.js';
 export { toHex, toOklch, fromOklch, mixOklab, mixOklch, onBackground, gradientAt } from '@arraypress/image-effects/color';
 export { createRng, hashString } from '@arraypress/image-effects/rng';
 
@@ -138,6 +139,8 @@ export interface BaseLayer {
   clip?: Layer[];
   /** Draw the layer in a box: the print `'trim'` or `'safe'` area, or fractions of the canvas. */
   area?: 'bleed' | 'trim' | 'safe' | Region;
+  /** Move in the SVG itself (CSS keyframes, no script): a motion, a preset name, or a list. */
+  motion?: Motion | MotionPreset | (Motion | MotionPreset)[];
 }
 
 export interface SolidLayer extends BaseLayer {
@@ -936,6 +939,10 @@ export interface CoverOptions extends RecipeOptions {
   textRender?: 'outline' | 'live';
   /** Seconds: the length of an animated cover's loop (keyframes with `loop` wrap at it). */
   loop?: number;
+  /** `false`: `renderSvg` draws a still, no CSS (layers' `motion` at the `poster` time, else at rest). */
+  animate?: boolean;
+  /** Seconds: the frame stills show (`renderImage`, `renderBlob`, `animate: false`, and an animated SVG under reduced motion). Default: the layers at rest. */
+  poster?: number;
 }
 
 /** A resolved cover (from {@link cover}). */
@@ -960,6 +967,9 @@ export interface Cover {
   pages?: string[];
   overlay?: boolean;
   loop?: number;
+  /** `false` when the cover is drawn as a still. */
+  animate?: false;
+  poster?: number;
   textRender?: 'outline' | 'live';
 }
 
@@ -992,7 +1002,7 @@ export function cover(options: CoverOptions | Cover): Cover;
 
 /** How `renderSvg` draws. */
 export interface RenderSvgOptions {
-  /** The time to draw, in seconds, for keyframed layers. */
+  /** A still at this time, in seconds, for keyframed layers and `motion` (instead of playing it). */
   t?: number;
   /** `'webp'`: embedded photos and pixel effects re-encoded as WebP where smaller (needs sharp). For SVGs shown in browsers; librsvg (sharp) can't draw WebP. */
   images?: 'webp';
@@ -1006,7 +1016,7 @@ export function renderSvg(input: CoverOptions | Cover, options?: RenderSvgOption
 /** Render each page of a two-sided piece: `{ front, back }`. */
 export function renderPages(input: CoverOptions, options?: { pages?: string[] }): Promise<Record<string, string>>;
 
-/** Render to an image in the browser (a canvas; no sharp). */
+/** Render to an image in the browser (a canvas; no sharp): a still, the `poster` frame or the layers at rest. */
 export function renderBlob(input: CoverOptions | Cover, options?: RasterizeOptions): Promise<Blob>;
 
 /** Register a font for every cover. */

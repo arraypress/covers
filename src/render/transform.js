@@ -25,9 +25,7 @@ export function transformAttr(t, canvas) {
   const parts = [];
   const tr = Array.isArray(t.translate) ? { x: t.translate[0], y: t.translate[1] } : t.translate;
   if (tr) parts.push(`translate(${num(pos(tr.x ?? 0, 'x', canvas))} ${num(pos(tr.y ?? 0, 'y', canvas))})`);
-  const o = t.origin === undefined || t.origin === 'center'
-    ? [canvas.width / 2, canvas.height / 2]
-    : Array.isArray(t.origin) ? [pos(t.origin[0], 'x', canvas), pos(t.origin[1], 'y', canvas)] : [pos(t.origin.x, 'x', canvas), pos(t.origin.y, 'y', canvas)];
+  const o = originOf(t.origin, canvas);
   const inner = [];
   if (t.rotate) inner.push(`rotate(${num(t.rotate, 3)})`);
   let [sx, sy] = t.scale == null ? [1, 1] : Array.isArray(t.scale) ? t.scale : [t.scale, t.scale];
@@ -38,6 +36,20 @@ export function transformAttr(t, canvas) {
   if (t.skewY) inner.push(`skewY(${num(t.skewY, 3)})`);
   if (inner.length) parts.push(`translate(${num(o[0])} ${num(o[1])}) ${inner.join(' ')} translate(${num(-o[0])} ${num(-o[1])})`);
   return parts.length ? parts.join(' ') : undefined;
+}
+
+/**
+ * A transform's `origin` in px: `[x, y]` or `{ x, y }` (px, `'%'` or
+ * lengths), or `'center'` (the default).
+ *
+ * @param {unknown} origin
+ * @param {{ width: number, height: number }} canvas
+ * @returns {[number, number]}
+ */
+export function originOf(origin, canvas) {
+  if (origin === undefined || origin === 'center') return [canvas.width / 2, canvas.height / 2];
+  const o = /** @type {any} */ (origin);
+  return Array.isArray(o) ? [pos(o[0], 'x', canvas), pos(o[1], 'y', canvas)] : [pos(o.x, 'x', canvas), pos(o.y, 'y', canvas)];
 }
 
 /** @typedef {[number, number, number, number, number, number]} Affine - `[a, b, c, d, e, f]`, as SVG's `matrix()`. */

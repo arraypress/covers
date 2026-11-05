@@ -15,7 +15,8 @@ export interface LayerTransform {
   origin?: [Length, Length] | { x?: Length; y?: Length } | 'center';
 }
 
-
+/** A transform's `origin` in px (`'center'`, the default, is the canvas centre). */
+export function originOf(origin: LayerTransform['origin'], canvas: { width: number; height: number }): [number, number];
 /** A `transform` option as an SVG transform string (a string is used as written). */
 export function transformAttr(t: LayerTransform | string | undefined, canvas: { width: number; height: number }): string | undefined;
 

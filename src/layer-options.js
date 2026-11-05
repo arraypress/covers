@@ -52,5 +52,25 @@ export const COMMON = {
   effects: '[{ kind, mask, colorSpace, … }]: filters, pixel effects and copies, in order (see the README\'s Effects table; kinds in EFFECTS).',
   mask: 'Layers whose luminance masks this one (white shows).', knockout: 'Layers cut out of this one.', clip: 'Layers this one shows only inside.',
   area: 'trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box.',
+  motion: 'A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS).',
+};
+
+/** @type {Record<string, string>} A motion's options. */
+export const MOTION_OPTIONS = {
+  preset: 'drift | spin | breathe | blink | marquee: its defaults, under whatever else is set.',
+  translate: '[x, y] to move by (px in the layer\'s grid, "%" or lengths), or a list of points [[0, 0], [x, y], …].',
+  path: 'Travel a path from where the layer is: path data, { d }, or a text-path kind ({ kind: circle | ellipse | arc | wave, … }).',
+  rotate: 'Degrees to turn to, or a list of angles.',
+  scale: 'A factor to grow to, or a list.', scaleX: 'Horizontal factor, or a list.', scaleY: 'Vertical factor, or a list.',
+  opacity: '0–1 to fade to (times the layer\'s own), or a list.',
+  origin: '[x, y] the turn and scale are about (px, "%" or lengths). Default the centre.',
+  vary: 'Layer options as lists of stops ({ axes: { wdth: [62, 150] } }): drawn frame by frame, played as outline morphs.',
+  frames: 'vary: frames drawn per stop. Default 12.',
+  marquee: 'true: text on a path runs along it, one repeat of its words per duration (they must repeat).',
+  duration: 'Seconds per iteration. Default 2 (or the preset\'s).',
+  delay: 'Seconds before it starts; negative starts it part-way.',
+  easing: 'linear | ease | in | out | inOut | step, or [x1, y1, x2, y2]: between each pair of stops.',
+  direction: 'normal | reverse | alternate | alternate-reverse',
+  iterations: 'A number, or "infinite" (the default).',
 };
 

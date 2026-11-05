@@ -57,8 +57,8 @@ const svg = await renderSvg({
 | Export | |
 |---|---|
 | `cover(options)` | Resolve size and palette and expand the recipe into a layer stack. Pure, synchronous; returns plain data you can inspect or tweak. |
-| `renderSvg(cover)` | `Promise<string>`: an SVG document. Byte-identical for the same input. |
-| `renderSvg(cover, { t })` | The frame at `t` seconds, for [keyframed](#animation) layers (static covers ignore it). |
+| `renderSvg(cover)` | `Promise<string>`: an SVG document. Byte-identical for the same input. Layers with [`motion`](#animation) play in it. |
+| `renderSvg(cover, { t })` | A still at `t` seconds, for [motion and keyframes](#animation) (static covers ignore it). |
 | `renderSvg(cover, { images: 'webp', quality })` | Embedded photos and pixel effects re-encoded as WebP where smaller (about a third off a photo-heavy flyer; needs sharp). For SVGs shown in browsers: librsvg (sharp, `renderImage`) can't draw WebP. |
 | `renderImage(cover, { format, quality, lossless, effort, cache })` | `Promise<Buffer>` (Node, sharp): `'webp'` (default), `'png'`, `'avif'` or `'jpeg'`; `lossless` for WebP/AVIF (default: the recipe's preference). |
 | `renderBlob(cover, { format, quality, width })`, `rasterize(svg, options)` | `Promise<Blob>` in the browser: PNG, JPEG or WebP through a canvas. |
@@ -67,7 +67,7 @@ const svg = await renderSvg({
 | `lint(cover, { target: 'spotify' })` | Release-art checks (see [lint](#lint)). |
 | `configure({ load, network, harfbuzz, shaper, icons, fonts })`, `registerFont(font)` | Loading and text, per platform (see [Running anywhere](#running-anywhere)). |
 | `FORMATS`, `KIT_FORMATS`, `safeBox(cover)` | Named formats with their safe zones (see [Formats](#formats)). |
-| `EFFECTS`, `EFFECT_OPTIONS`, `valueAt(keyframes, t)` | Effect kinds and their options; a keyframed value at a time. |
+| `EFFECTS`, `EFFECT_OPTIONS`, `MOTION_PRESETS`, `valueAt(keyframes, t)` | Effect kinds and their options; the motion presets; a keyframed value at a time. |
 | `coverKey(cover, options)` | The content-hash cache key (see [Caching](#caching)). |
 | `recipes` | The built-in recipes, by name. |
 | `defineRecipe(json)`, `loadRecipe(path)` | A recipe from a JSON document or file (see [JSON recipes](#json-recipes)). |
@@ -94,7 +94,9 @@ const svg = await renderSvg({
 | `overlay` | — | Draw the format's safe zones over the art, for previews. |
 | `page` | `'front'` | Which page of a two-sided piece to draw. |
 | `textRender` | `'outline'` | `'live'`: all text as `<text>` with `@font-face`. |
-| `loop` | — | Seconds: an animated cover's loop length. |
+| `animate` | `true` | `false`: `renderSvg` draws a still (no CSS). |
+| `poster` | — | Seconds: the frame stills show (`renderImage`, `renderBlob`, `animate: false`, reduced motion). Default the layers at rest. |
+| `loop` | — | Seconds: a keyframed cover's loop length. |
 | `alt` | the title | The SVG's `<title>`. |
 | `radius` | — | Rounded corners, transparent outside. |
 | any layer id | — | Customise a recipe's layer (see [Recipes](#recipes)). |
@@ -117,6 +119,7 @@ Layers paint bottom first. Every option has a default drawn from the palette, th
 | `clip` | Layers this one shows only inside (a photo in a circle, in type). |
 | `mask` | Layers whose luminance masks this one (a white-to-black `linear` fades it). |
 | `area` | Draw the layer in a box: `'trim'` or `'safe'` (print), or `{ x, y, width, height }` fractions. |
+| `motion` | Move in the SVG itself: a motion, a preset name, or a list (see [Animation](#animation)). |
 
 `blend` and `opacity` go on the outermost group, so a masked or filtered layer still blends with what's under it (two riso inks overprint).
 
@@ -402,9 +405,33 @@ Workers resolve `#harfbuzz` to a stub (harfbuzzjs compiles wasm at runtime, whic
 
 ## Animation
 
-Designed in, not built yet: any option can be `{ "keyframes": [[t, value], …], "ease", "loop" }` (seconds), and `renderSvg(cover, { t })` draws that frame; static covers ignore `t`. Numbers, colours (OKLab) and same-unit lengths interpolate.
+`motion` on any layer plays in the SVG itself, as CSS keyframes: a plain `<img>` or inline SVG animates with no script, and `prefers-reduced-motion` stops it (the SVG's own attributes are the still).
 
-The video phase: browser frames to WebCodecs (`VideoEncoder`, MP4/WebM) with `MediaRecorder` as the fallback; Node frames from sharp piped to ffmpeg (`@arraypress/video-utils` parses and embeds video URLs but has no encoder, so the runner lands there or beside it). CSS-animated SVG suits avatars and banners on websites (tiny, sharp, `prefers-reduced-motion`), but only for what CSS animates (transforms, opacity, colour); social platforms take video.
+```js
+await renderSvg({ width: 400, height: 500, layers: [
+  { type: 'mesh', blobs: [{ x: 0.22, y: 0.66, r: 0.22 }], blur: '15vw',
+    motion: { translate: ['5vw', '-4vw'], scale: 1.08, origin: ['22%', '66%'], duration: 26, easing: 'inOut', direction: 'alternate' } },
+  { type: 'text', content: 'HALDEN · SOUND SYSTEM · ', path: { kind: 'circle', r: 120 }, fitPath: 4, motion: { preset: 'spin', duration: 50 } },
+  { type: 'shape', kind: 'rect', x: 92, y: 430, width: 8, height: 13, fill: '#ffb31a', motion: 'blink' },
+] });
+```
+
+| Motion | |
+|---|---|
+| `translate` | `[x, y]` to move by (px in the layer's grid, `'%'`, lengths), or points to visit `[[0, 0], [x, y], …]`. |
+| `path` | Travel a path from where the layer is: path data, `{ d }`, or a text-path kind (`{ kind: 'ellipse', rx, ry }`). |
+| `rotate`, `scale`, `scaleX`, `scaleY` | To a value, or a list; about `origin` (`[x, y]`, default the centre). |
+| `opacity` | To a value (times the layer's own), or a list. |
+| `marquee` | `true`: text on a path runs along it, one repeat of its words per `duration` (they must repeat), looping seamlessly. |
+| `vary` | Layer options as lists of stops (`{ axes: { wdth: [62, 150] } }`), drawn `frames` times a stop (default 12) and played as outline morphs. |
+| `duration`, `delay`, `easing`, `direction`, `iterations` | As CSS: seconds; `linear`, `ease`, `in`, `out`, `inOut`, `step` or `[x1, y1, x2, y2]` between each pair of stops; `normal`, `reverse`, `alternate`, `alternate-reverse`; a number or `'infinite'` (the default). |
+| `preset` | `drift`, `spin`, `breathe`, `blink`, `marquee`: defaults under whatever else you set (`motion: 'blink'` alone works). |
+
+A single value moves from the layer at rest; a list is stops evenly spaced in time. Motion moves the whole layer, its effects and masks with it. Text is outlines, so `vary` can't animate a font: it draws the layer at each frame and morphs the outlines (`d: path()`), which is how a variable font interpolates its masters, so a width axis breathes as the font draws it. Browsers without the CSS `d` property (Safari, as of writing) show the still for a `vary`.
+
+`renderImage` (librsvg doesn't animate), `renderBlob` and `animate: false` draw a still: the `poster` frame, else the layers at rest. `renderSvg(cover, { t })` draws any frame; frames from `t` follow CSS timing, so they match what a browser shows at `t`.
+
+Any option can also be keyframed against `t` (`{ "keyframes": [[t, value], …], "ease", "loop" }`, seconds), for frames drawn one at a time; numbers, colours (OKLab) and same-unit lengths interpolate. Encoding frames to video (WebCodecs in browsers, ffmpeg in Node) is a later phase.
 
 ## Recipes
 
@@ -530,7 +557,7 @@ Layers `bg`, `mesh` or `photo`, `grain` (+ `title`). The palette of a photo (`im
 A brand on every format, the default for [`kit`](#brand-kit): avatars (the mark, or an initial), headers and banners (mark and name in the safe zone), posts and stories, business cards (front: mark and name; back: `person`, `role`, `lines`), letterhead and compliment slips, tickets (with a Code 128 `ticket` number), passes and stickers. Options: `name`, `tagline`, `mark`, `photo`, `lines`, `person`, `role`, `ticket`, `compliments`.
 
 ### Flyers and release covers
-The package ships 76 more recipes beside the built-ins, each drawn on a design grid in a `group` so it renders at any `format`: `recipes/flyers/` (44 flyers: aura, Neo-Swiss, acid, riso, kinetic, festival, varsity, ephemera, Bauhaus, 70s, lo-fi, zine, wheatpaste; each re-composes for a 3000×3000 cover with `format: 'release'`), `recipes/release/` (20 cover-only styles) and `recipes/release/series/` (12 more for a series). Import one as JSON, or load it by path:
+The package ships 84 more recipes beside the built-ins, each drawn on a design grid in a `group` so it renders at any `format`: `recipes/flyers/` (52 flyers: aura, Neo-Swiss, acid, riso, kinetic, festival, varsity, ephemera, Bauhaus, 70s, lo-fi, zine, wheatpaste, and eight `-motion` ones that move; each re-composes for a 3000×3000 cover with `format: 'release'`), `recipes/release/` (20 cover-only styles) and `recipes/release/series/` (12 more for a series). Import one as JSON, or load it by path:
 
 ```js
 import bloomfall from '@arraypress/covers/recipes/flyers/bloomfall.json' with { type: 'json' };

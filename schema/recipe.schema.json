@@ -4692,6 +4692,113 @@
         }
       ]
     },
+    "motion": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/motionItem"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/motionItem"
+          }
+        }
+      ]
+    },
+    "motionItem": {
+      "anyOf": [
+        {
+          "enum": [
+            "drift",
+            "spin",
+            "breathe",
+            "blink",
+            "marquee"
+          ],
+          "description": "A preset with its defaults."
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "preset": {
+              "enum": [
+                "drift",
+                "spin",
+                "breathe",
+                "blink",
+                "marquee"
+              ],
+              "description": "drift | spin | breathe | blink | marquee: its defaults, under whatever else is set."
+            },
+            "translate": {
+              "$ref": "#/$defs/value",
+              "description": "[x, y] to move by (px in the layer's grid, \"%\" or lengths), or a list of points [[0, 0], [x, y], …]."
+            },
+            "path": {
+              "$ref": "#/$defs/value",
+              "description": "Travel a path from where the layer is: path data, { d }, or a text-path kind ({ kind: circle | ellipse | arc | wave, … })."
+            },
+            "rotate": {
+              "$ref": "#/$defs/value",
+              "description": "Degrees to turn to, or a list of angles."
+            },
+            "scale": {
+              "$ref": "#/$defs/value",
+              "description": "A factor to grow to, or a list."
+            },
+            "scaleX": {
+              "$ref": "#/$defs/value",
+              "description": "Horizontal factor, or a list."
+            },
+            "scaleY": {
+              "$ref": "#/$defs/value",
+              "description": "Vertical factor, or a list."
+            },
+            "opacity": {
+              "$ref": "#/$defs/value",
+              "description": "0–1 to fade to (times the layer's own), or a list."
+            },
+            "origin": {
+              "$ref": "#/$defs/value",
+              "description": "[x, y] the turn and scale are about (px, \"%\" or lengths). Default the centre."
+            },
+            "vary": {
+              "$ref": "#/$defs/value",
+              "description": "Layer options as lists of stops ({ axes: { wdth: [62, 150] } }): drawn frame by frame, played as outline morphs."
+            },
+            "frames": {
+              "$ref": "#/$defs/value",
+              "description": "vary: frames drawn per stop. Default 12."
+            },
+            "marquee": {
+              "$ref": "#/$defs/value",
+              "description": "true: text on a path runs along it, one repeat of its words per duration (they must repeat)."
+            },
+            "duration": {
+              "$ref": "#/$defs/value",
+              "description": "Seconds per iteration. Default 2 (or the preset's)."
+            },
+            "delay": {
+              "$ref": "#/$defs/value",
+              "description": "Seconds before it starts; negative starts it part-way."
+            },
+            "easing": {
+              "$ref": "#/$defs/value",
+              "description": "linear | ease | in | out | inOut | step, or [x1, y1, x2, y2]: between each pair of stops."
+            },
+            "direction": {
+              "$ref": "#/$defs/value",
+              "description": "normal | reverse | alternate | alternate-reverse"
+            },
+            "iterations": {
+              "$ref": "#/$defs/value",
+              "description": "A number, or \"infinite\" (the default)."
+            }
+          }
+        }
+      ]
+    },
     "layer": {
       "type": "object",
       "required": [
@@ -4796,6 +4903,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -4812,7 +4923,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -4881,6 +4993,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -4900,7 +5016,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -4973,6 +5090,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -4993,7 +5114,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -5110,6 +5232,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -5141,7 +5267,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -5234,6 +5361,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -5259,7 +5390,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -5364,6 +5496,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -5392,7 +5528,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -5461,6 +5598,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -5480,7 +5621,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -5585,6 +5727,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -5613,7 +5759,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -5706,6 +5853,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -5731,7 +5882,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -5848,6 +6000,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -5879,7 +6035,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -6120,6 +6277,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -6183,7 +6344,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -6288,6 +6450,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -6316,7 +6482,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -6393,6 +6560,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -6414,7 +6585,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -6495,6 +6667,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -6517,7 +6693,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -6606,6 +6783,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -6630,7 +6811,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -6727,6 +6909,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -6753,7 +6939,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -6846,6 +7033,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -6871,7 +7062,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -6976,6 +7168,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -7004,7 +7200,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -7089,6 +7286,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -7112,7 +7313,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -7189,6 +7391,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -7210,7 +7416,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -7283,6 +7490,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -7303,7 +7514,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -7424,6 +7636,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -7456,7 +7672,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -7513,6 +7730,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -7529,7 +7750,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -7610,6 +7832,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -7632,7 +7858,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -7721,6 +7948,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -7745,7 +7976,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -7970,6 +8202,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -8028,7 +8264,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -8117,6 +8354,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -8141,7 +8382,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -8262,6 +8504,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -8294,7 +8540,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -8399,6 +8646,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -8427,7 +8678,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -8524,6 +8776,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -8550,7 +8806,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -8643,6 +8900,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -8668,7 +8929,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }
@@ -8781,6 +9043,10 @@
               "area": {
                 "$ref": "#/$defs/value",
                 "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
               }
             },
             "propertyNames": {
@@ -8811,7 +9077,8 @@
                 "mask",
                 "knockout",
                 "clip",
-                "area"
+                "area",
+                "motion"
               ]
             }
           }

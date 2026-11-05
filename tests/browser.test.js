@@ -104,3 +104,60 @@ test('browser: HarfBuzz wasm loads from a URL given to configure()', { skip: !av
     server.close();
   }
 });
+
+// Motion plays in Chrome: frames at two times differ where things move and nowhere else; reduced motion stops it.
+const MOVING = { width: 400, height: 300, seed: 'moving', layers: [
+  { type: 'solid', color: '#101018' },
+  { type: 'text', content: 'STILL', size: 40, x: 16, y: 160, color: '#fff' },
+  { type: 'shape', kind: 'rect', x: 200, y: 40, width: 40, height: 40, fill: '#ffb31a', motion: 'blink' },
+  { type: 'shape', kind: 'rect', x: 250, y: 195, width: 100, height: 10, fill: '#ff2bd6', motion: { preset: 'spin', duration: 4, origin: [300, 200] } },
+] };
+
+/** Mean absolute difference of two PNGs inside a box (0–255). */
+async function boxDiff(a, b, [x, y, w, h]) {
+  const { default: sharp } = await import('sharp');
+  const crop = (p) => sharp(p).extract({ left: x, top: y, width: w, height: h }).removeAlpha().raw().toBuffer();
+  const [pa, pb] = await Promise.all([crop(a), crop(b)]);
+  let d = 0;
+  for (let i = 0; i < pa.length; i++) d += Math.abs(pa[i] - pb[i]);
+  return d / pa.length;
+}
+
+test('browser: motion runs (frames differ where it moves, not elsewhere), in an <img> too, and stops for reduced motion', { skip: !available && 'no Chrome on COVERS_CDP' }, async () => {
+  const svg = await renderSvg(MOVING);
+  const uri = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+  await withTab(async ({ send, evaluate }) => {
+    await send('Emulation.setDeviceMetricsOverride', { width: 400, height: 300, deviceScaleFactor: 1, mobile: false });
+    const shot = async () => Buffer.from((await send('Page.captureScreenshot', { format: 'png' })).data, 'base64');
+    const open = async (url) => {
+      await send('Page.navigate', { url });
+      for (let i = 0; i < 100 && (await evaluate('document.readyState')) !== 'complete'; i++) await new Promise((r) => setTimeout(r, 30));
+    };
+    const at = async (t) => { await evaluate(`(() => { for (const a of document.getAnimations()) { a.pause(); a.currentTime = ${t * 1000}; } })()`); return shot(); };
+    const STILL = [0, 100, 180, 100];
+    const BLINK = [195, 35, 50, 50];
+    const SPIN = [240, 140, 120, 120];
+
+    await open(uri);
+    assert.equal(await evaluate('document.getAnimations().length'), 2);
+    const a = await at(0.25);
+    const b = await at(0.75);
+    assert.equal(await boxDiff(a, b, STILL), 0, 'still type unchanged');
+    assert.ok(await boxDiff(a, b, BLINK) > 20, 'the cursor blinked');
+    assert.ok(await boxDiff(a, b, SPIN) > 2, 'the bar turned');
+
+    await open(`data:text/html,<body style="margin:0"><img src="${uri}" width="400" height="300"></body>`);
+    const c = await shot();
+    await new Promise((r) => setTimeout(r, 700));
+    const d = await shot();
+    assert.equal(await boxDiff(c, d, STILL), 0);
+    assert.ok(await boxDiff(c, d, SPIN) > 1, 'plays in an <img>');
+
+    await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    await open(uri);
+    assert.equal(await evaluate('document.getAnimations().length'), 0, 'no animations under reduced motion');
+    const e = await shot();
+    await new Promise((r) => setTimeout(r, 700));
+    assert.equal(await boxDiff(e, await shot(), [0, 0, 400, 300]), 0, 'stands still');
+  });
+});
