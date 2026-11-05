@@ -976,7 +976,7 @@ export interface Cover {
 export interface RenderImageOptions {
   /** Default `'webp'`. */
   format?: 'webp' | 'png' | 'avif' | 'jpeg';
-  /** Default 90 for WebP, 72 for AVIF, 88 for JPEG (high enough to keep the grain; see README). */
+  /** Default 90 for WebP, 72 for AVIF, 88 for JPEG (high enough to keep the grain; see docs/performance.md). */
   quality?: number;
   /** Lossless WebP / AVIF (default: the recipe's preference, else lossy). */
   lossless?: boolean;

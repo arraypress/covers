@@ -49,7 +49,7 @@ export const LAYER_OPTIONS = {
 export const COMMON = {
   opacity: '0–1.', blend: 'A CSS mix-blend-mode.', seed: "This layer's own random stream.",
   transform: '{ translate, rotate, scale, skewX, skewY, mirror: x | y, origin } (on text, a case keyword is still the case).',
-  effects: '[{ kind, mask, colorSpace, … }]: filters, pixel effects and copies, in order (see the README\'s Effects table; kinds in EFFECTS).',
+  effects: '[{ kind, mask, colorSpace, … }]: filters, pixel effects and copies, in order (see docs/effects.md; kinds in EFFECTS).',
   mask: 'Layers whose luminance masks this one (white shows).', knockout: 'Layers cut out of this one.', clip: 'Layers this one shows only inside.',
   area: 'trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box.',
   motion: 'A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS).',

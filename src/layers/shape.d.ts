@@ -3,7 +3,7 @@ import type { Color, Length, BaseLayer, Anchor } from '../index.js';
 import type { RenderContext, Markup } from '../render/context.js';
 import type { Paint } from '../paint/index.js';
 
-/** One exact shape (see the README's `shape` table). */
+/** One exact shape (see the `shape` row in docs/layers.md). */
 export interface ShapeSpec {
   kind?: 'rect' | 'circle' | 'ellipse' | 'line' | 'polygon' | 'polyline' | 'star' | 'burst' | 'scallop' | 'rays' | 'ring' | 'sector' | 'arch' | 'wave' | 'path' | 'cut';
   x?: Length | `${number}%`; y?: Length | `${number}%`; width?: Length | `${number}%`; height?: Length | `${number}%`;

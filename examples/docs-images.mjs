@@ -1,5 +1,5 @@
 /**
- * Render the README's recipe images into `docs/`: each recipe, light and
+ * Render the recipe images in `docs/`: each recipe, light and
  * dark side by side.
  *
  *   node examples/docs-images.mjs

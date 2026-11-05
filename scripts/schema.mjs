@@ -51,7 +51,7 @@ export function buildSchema() {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     $id: 'https://unpkg.com/@arraypress/covers/schema/recipe.schema.json',
     title: '@arraypress/covers recipe',
-    description: 'A cover style as data: params, vars and a stack of layers. See the README, "JSON recipes".',
+    description: 'A cover style as data: params, vars and a stack of layers. See docs/json-recipes.md.',
     type: 'object',
     required: ['layers'],
     additionalProperties: false,
