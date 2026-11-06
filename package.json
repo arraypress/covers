@@ -1,6 +1,6 @@
 {
   "name": "@arraypress/covers",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Covers, flyers, posters, release art, social formats and print stationery from one seed and a stack of layers: mesh gradients, grain, riso inks and halftones, knockout and justified type, torn paper, barcodes, safe zones and bleed, as SVG or WebP/PNG/AVIF/JPEG. Recipes are JSON. Runs in Node, browsers and Cloudflare Workers.",
   "type": "module",
   "main": "src/index.js",

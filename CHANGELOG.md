@@ -5,6 +5,12 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] — 2026-11-06
+
+### Changed
+
+- **`fluted-poster`** keeps the name readable: with `subject: 'name'` (or no mark) and no `preset`, the glass is gentler (12 convex ribs at refraction 0.15, little defocus, chroma 0.2), so the word steps at the rib edges but never doubles. A `preset` given is used as it is; the mark keeps the `fluted` preset. `preset` now defaults to `''` (the subject's default).
+
 ## [1.5.0] — 2026-11-06
 
 Three more posters on the 400-wide grid, and the layers they stand on. Every published recipe renders as before (157 SVGs, flyers at 4:5 and as release covers, the release styles and the built-ins, byte-identical to 1.4.0).

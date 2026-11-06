@@ -1,11 +1,11 @@
 {
   "$schema": "../../schema/recipe.schema.json",
   "name": "fluted-poster",
-  "description": "Fluted glass poster: the mark (or the name, set huge) in white on black, seen through reeded glass (@logomarks/image-effects' fluted effect: preset fluted, concave and legible, or reeded-deep, reeded-prism, reeded-soft), with a soft light in one accent colour behind it (none with accent \"\"). Over the glass, small Swiss type stays vector: the year stacked large top-left, the series top-right, a two-line title bottom-left with a glitched || ornament of plain bars right of it in the accent, credits and an edition line along the foot. The glass is rastered at the output size and embedded; the type is outlines. Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1, 9:16 and A-series portrait alike; the ornament's glitch follows the seed.",
+  "description": "Fluted glass poster: the mark (or the name, set huge) in white on black, seen through reeded glass (@logomarks/image-effects' fluted effect: by default its fluted preset for a mark, and gentler glass for the name, 12 wide convex ribs at light refraction (0.15) and little defocus, so the word steps at the rib edges but never doubles; a preset given, fluted, reeded-deep, reeded-prism or reeded-soft, is used as it is), with a soft light in one accent colour behind it (none with accent \"\"). Over the glass, small Swiss type stays vector: the year stacked large top-left, the series top-right, a two-line title bottom-left with a glitched || ornament of plain bars right of it in the accent, credits and an edition line along the foot. The glass is rastered at the output size and embedded; the type is outlines. Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1, 9:16 and A-series portrait alike; the ornament's glitch follows the seed.",
   "params": {
     "name": "Kestrel",
     "subject": "mark",
-    "preset": "fluted",
+    "preset": "",
     "title": ["Through", "the glass"],
     "year": "2026",
     "series": "",
@@ -31,7 +31,7 @@
       "type": "group",
       "viewBox": [0, 0, 400, "$h"],
       "fit": "contain",
-      "effects": [{ "kind": "fluted", "preset": "{preset}" }],
+      "effects": [{ "kind": "fluted", "preset": { "if": "preset", "then": "{preset}", "else": "fluted" }, "profile": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": "convex" }, "ribs": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": 12 }, "refraction": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": 0.15 }, "stretch": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": "0.4vmin" }, "chroma": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": 0.2 } }],
       "layers": [
         { "id": "light", "type": "radial", "when": "accent", "x": 0.5, "y": 0.47, "colors": ["{accent}", "{ground}"], "radius": "52vmin", "opacity": 0.75 },
         { "id": "mark", "type": "outline", "when": { "all": ["mark", { "not": { "subject": "name" } }] }, "markup": "{mark}", "lines": 0, "x": 70, "y": { "sub": [{ "mul": ["$h", 0.47] }, 130] }, "width": 260, "height": 260, "color": "{ink}" },

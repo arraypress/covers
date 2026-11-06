@@ -409,3 +409,17 @@ test('series-card: solid or contour; ten cards differ only in their number and c
     assert.ok(text.number.x + text.number.width <= 124, `card ${i + 1}: number in its column`);
   }
 });
+
+test('fluted-poster: the name gets gentle glass by default (no doubling); a given preset, and the mark, keep theirs', async () => {
+  const r = recipe('fluted-poster');
+  const glassFx = (o) => cover({ recipe: r, seed: 'f', name: 'Halden', width: 400, height: 500, ...o }).layers.find((l) => l.id === 'glass').effects[0];
+  const clean = (fx) => Object.fromEntries(Object.entries(fx).filter(([, v]) => v !== undefined && v !== null));
+  assert.deepEqual(clean(glassFx({ subject: 'name', mark: MARK })), { kind: 'fluted', preset: 'fluted', profile: 'convex', ribs: 12, refraction: 0.15, stretch: '0.4vmin', chroma: 0.2 });
+  assert.deepEqual(clean(glassFx({})), clean(glassFx({ subject: 'name' })), 'no mark: the name, gently');
+  assert.deepEqual(clean(glassFx({ subject: 'name', preset: 'fluted' })), { kind: 'fluted', preset: 'fluted' }, 'a given preset as it is');
+  assert.deepEqual(clean(glassFx({ subject: 'name', preset: 'reeded-prism' })), { kind: 'fluted', preset: 'reeded-prism' });
+  assert.deepEqual(clean(glassFx({ mark: MARK })), { kind: 'fluted', preset: 'fluted' }, 'the mark: the fluted preset');
+  const o = { recipe: r, seed: 'f', mark: MARK, width: 400, height: 500 };
+  assert.equal(await renderSvg(o), await renderSvg({ ...o, preset: 'fluted' }), 'the mark\'s default is the fluted preset');
+  assert.notEqual(await renderSvg({ ...o, subject: 'name' }), await renderSvg({ ...o, subject: 'name', preset: 'fluted' }), 'the name\'s default is gentler');
+});
