@@ -1,0 +1,60 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "logofolio",
+  "description": "Logofolio, a collection sheet: a dark ground (or any colour), a small sub-title and a meta line across the top over a hairline, a big title fitted to the width, and the marks on an even grid of square cells, every mark optically sized the same (by its real bounds and how much it inks, not its 512 grid), centred so the margins match; columns and rows come from the count (3 × 3 up to 10 × 7) unless given. An optional footer line and the count sit under a second hairline. Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1 and A-series portrait alike. For presenting a set, or a grid of marks for social.",
+  "requires": ["marks"],
+  "params": {
+    "title": "Logofolio",
+    "subtitle": "Selected work — Logo collection",
+    "meta": "Selected symbols 2020–2026",
+    "marks": [],
+    "cols": 0,
+    "rows": 0,
+    "footer": "",
+    "ground": "#0e0e0f",
+    "ink": "#f2efe8"
+  },
+  "vars": {
+    "h": { "mul": [400, { "div": ["@height", "@width"] }] },
+    "count": { "length": "{marks}" }
+  },
+  "layers": [
+    { "id": "ground", "type": "solid", "color": "{ground}" },
+    {
+      "id": "sheet",
+      "type": "group",
+      "viewBox": [0, 0, 400, "$h"],
+      "fit": "contain",
+      "layers": [
+        { "id": "subtitle", "type": "text", "content": "{subtitle}", "when": "subtitle", "font": "Inter Tight", "weight": 500, "size": 7.5, "letterSpacing": 0, "x": 16, "y": 24, "maxWidth": 200, "maxLines": 1, "color": "{ink}" },
+        { "id": "meta", "type": "text", "content": "{meta}", "when": "meta", "font": "Inter Tight", "weight": 500, "size": 7.5, "letterSpacing": 0, "x": 384, "y": 24, "align": "right", "maxWidth": 160, "maxLines": 1, "color": "{ink}", "opacity": 0.7 },
+        { "id": "rules", "type": "shape", "stroke": "{ink}", "strokeWidth": 0.5, "opacity": 0.35, "items": [
+          { "kind": "line", "x1": 16, "y1": 33, "x2": 384, "y2": 33 },
+          { "kind": "line", "x1": 16, "y1": { "sub": ["$h", 36] }, "x2": 384, "y2": { "sub": ["$h", 36] } }
+        ] },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "transform": "uppercase",
+          "font": "Inter Tight",
+          "weight": 800,
+          "size": 60,
+          "lineHeight": 0.92,
+          "letterSpacing": -0.045,
+          "fit": "width",
+          "maxWidth": 368,
+          "maxHeight": 64,
+          "anchor": "top-left",
+          "margin": 0,
+          "offset": { "x": 16, "y": 46 },
+          "color": "{ink}"
+        },
+        { "id": "marks", "type": "marks", "marks": "{marks}", "cols": "{cols}", "rows": "{rows}", "x": 16, "y": 128, "width": 368, "height": { "sub": ["$h", 176] }, "size": 0.42, "color": "{ink}" },
+        { "id": "footer", "type": "text", "content": "{footer}", "when": "footer", "font": "Inter Tight", "weight": 500, "size": 7.5, "letterSpacing": 0, "x": 16, "y": { "sub": ["$h", 18] }, "maxWidth": 260, "maxLines": 1, "color": "{ink}" },
+        { "id": "count", "type": "text", "content": { "join": [["(", "$count", ")"], ""] }, "font": "Inter Tight", "weight": 500, "size": 7.5, "letterSpacing": 0, "x": 384, "y": { "sub": ["$h", 18] }, "align": "right", "color": "{ink}", "opacity": 0.7 }
+      ]
+    },
+    { "id": "print", "type": "grain", "amount": 0.035, "size": 1.5 }
+  ]
+}

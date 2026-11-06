@@ -1,0 +1,58 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "pixel-mosaic",
+  "description": "Pixel mosaic poster: a greyscale portrait full-bleed (or a grainy grey field with no photo), the mark enlarged to about 80% of the width and rastered into big square cells in one neon ink (lime by default) that follow the mark's own shape (@logomarks/core's pixelate), the photo showing between the cells and through a seeded few left out, a small asterisk or dot in one empty cell beside it, the name huge and bold across the foot fitted to the width, and a small meta row under it: a ® (or the mark, small), two short labels and a volume, right-aligned. Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1 and 9:16; which cells drop out follows the seed.",
+  "params": {
+    "name": "Kestrel",
+    "labels": ["Visual identity", "Pixel series"],
+    "volume": "Vol. 116",
+    "badge": "®",
+    "neon": "#c8ff2e",
+    "ink": "#ffffff",
+    "cells": 11,
+    "drop": 0.12,
+    "accent": "asterisk"
+  },
+  "vars": {
+    "h": { "mul": [400, { "div": ["@height", "@width"] }] }
+  },
+  "layers": [
+    { "id": "photo", "type": "image", "when": "photo", "src": "{photo}", "fit": "cover", "grayscale": true },
+    { "id": "shade", "type": "linear", "when": "photo", "angle": 180, "colors": ["#000000", "#000000"], "opacities": [0, 0.55] },
+    { "id": "field", "type": "radial", "when": { "not": "photo" }, "colors": ["#6b6b6b", "#3a3a3a", "#141414"], "radius": "100vmax" },
+    { "id": "fieldGrain", "type": "grain", "when": { "not": "photo" }, "amount": 0.18, "vary": "edges" },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [0, 0, 400, "$h"],
+      "fit": "contain",
+      "layers": [
+        { "id": "mosaic", "type": "mosaic", "when": "mark", "markup": "{mark}", "x": 40, "y": 28, "width": 320, "height": { "sub": ["$h", 164] }, "cells": "{cells}", "drop": "{drop}", "accent": "{accent}", "color": "{neon}" },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{name}",
+          "transform": "uppercase",
+          "font": "Inter Tight",
+          "weight": 900,
+          "size": 80,
+          "lineHeight": 0.9,
+          "letterSpacing": -0.05,
+          "fit": "width",
+          "maxWidth": 368,
+          "maxHeight": 92,
+          "anchor": "bottom-left",
+          "margin": 0,
+          "offset": { "x": 16, "y": -34 },
+          "color": "{ink}"
+        },
+        { "id": "badge", "type": "text", "when": { "all": ["badge", { "not": { "badge": "mark" } }] }, "content": "{badge}", "font": "Inter Tight", "weight": 600, "size": 9, "letterSpacing": 0, "x": 16, "y": { "sub": ["$h", 16] }, "color": "{ink}" },
+        { "id": "badgeMark", "type": "icon", "when": { "all": ["mark", { "badge": "mark" }] }, "markup": "{mark}", "x": 15, "y": { "sub": ["$h", 25.5] }, "size": 11, "color": "{ink}" },
+        { "id": "label1", "type": "text", "content": "{labels.0}", "when": "labels.0", "transform": "uppercase", "font": "Inter Tight", "weight": 600, "size": 6.5, "letterSpacing": 0.04, "x": 108, "y": { "sub": ["$h", 16] }, "maxWidth": 86, "maxLines": 1, "color": "{ink}" },
+        { "id": "label2", "type": "text", "content": "{labels.1}", "when": "labels.1", "transform": "uppercase", "font": "Inter Tight", "weight": 600, "size": 6.5, "letterSpacing": 0.04, "x": 200, "y": { "sub": ["$h", 16] }, "maxWidth": 86, "maxLines": 1, "color": "{ink}" },
+        { "id": "volume", "type": "text", "content": "{volume}", "when": "volume", "transform": "uppercase", "font": "Inter Tight", "weight": 600, "size": 6.5, "letterSpacing": 0.04, "x": 384, "y": { "sub": ["$h", 16] }, "align": "right", "maxWidth": 86, "maxLines": 1, "color": "{ink}" }
+      ]
+    },
+    { "id": "print", "type": "grain", "amount": 0.05, "size": 1.5 }
+  ]
+}

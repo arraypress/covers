@@ -59,7 +59,7 @@ With sharp installed the image is cropped and resized before embedding, at the p
 `amount` (0.08), `size` (px per grain, 1), `monochrome` (`true`), `vary` (`'edges'`: heavier toward the edges and corners, like spray paint), `blend` (`'overlay'`; also `'soft-light'`, `'multiply'`, `'screen'`, `'normal'`).
 
 ## `pattern`
-`kind`: `'grid'` (default), `'dots'`, `'lines'` (+ `angle`), `'rings'`, `'waves'` (+ `wavelength`, `amplitude`). `size` (cell; `'8.33vmin'`), `stroke`, `color` (`text`), `opacity` (0.14), `center` (rings and grid alignment), `fade` (`'none'`, `'radial'`, `'edges'`, `'top'`, `'bottom'`, `'left'`, `'right'`), `dash` (`'dashed'`, `'dotted'` or `[on, off]`), `divisions` (grid/lines: N equal cells, inner lines only, instead of `size`), `gaps` (regions the lines break around), `region`.
+`kind`: `'grid'` (default), `'dots'`, `'lines'` (+ `angle`), `'rings'`, `'waves'` (+ `wavelength`, `amplitude`). `size` (cell; `'8.33vmin'`), `stroke`, `color` (`text`), `opacity` (0.14), `center` (rings and grid alignment), `fade` (`'none'`, `'radial'`, `'edges'`, `'top'`, `'bottom'`, `'left'`, `'right'`), `dash` (`'dashed'`, `'dotted'` or `[on, off]`), `divisions` (grid/lines: N equal cells, inner lines only, instead of `size`; `[cols, rows]` for a design grid), `gaps` (regions the lines break around), `region`.
 
 Grid lines are drawn across the canvas, not as an SVG `<pattern>` (which clips a line on a tile edge to half its width), and centred.
 
@@ -145,15 +145,15 @@ The `text` layer takes these as well. Any of them switches it to the poster type
 | `x`, `y` | The first baseline, like SVG `<text x y>`; `align` acts as the anchor (`'right'` sets the end at `x`). No wrapping unless `maxWidth` is given. |
 | `width` | Justify every line to exactly this width (`textLength`). `lengthAdjust: 'spacing'` opens the letter-spacing instead of scaling the glyphs. `justify: true` uses `maxWidth`. |
 | `fit` | `'width'`: size the block so its widest line fills `width`; `'lines'`: size every line on its own to fill it (the stacked full-width headline); `'words'`: a word a line, the widest filling `width`; `'wrap'`: wrap at the width, then size every line so the widest fills it; `'shrink'`: shrink before wrapping. `split: 'words'` puts a word on each line without fitting; `maxHeight` shrinks a block taller than it. |
-| `spans` | `[{ content, font, weight, style, axes, scale, size, color, letterSpacing, dy }]` instead of `content`: mixed runs on the same lines (a `\n` starts a new one). |
+| `spans` | `[{ content, font, weight, bold, style, axes, scale, size, color, letterSpacing, dy }]` instead of `content`: mixed runs on the same lines (a `\n` starts a new one). `bold: true` sets a span at `boldWeight` (700). |
 | `glyphs` | Per-glyph arrays, cycled and counted across the block (spaces skipped): `scale`, `scaleX`, `scaleY`, `dx`, `dy`, `rotate`, `color`; `origin: 'center' \| 'baseline'`; a scaled glyph takes its scaled width unless `advance: false`. Bulging 70s type is one layer. |
 | `font: 'pixel'` | A built-in 5×7 pixel face (A–Z, 0–9, punctuation), drawn as merged cells; everything else here works on it. |
-| `fallback` | A family (or list) for characters the font lacks; then fonts registered with `fallback: true`; then built-in shapes for ✺ ✦ ✶ ★ ☆ ♥ ♡ ▶ ◀ ● ◆ ■ ♪. |
+| `fallback` | A family (or list) for characters the font lacks; then fonts registered with `fallback: true`; then built-in shapes for ✺ ✦ ✶ ★ ☆ ♥ ♡ ▶ ◀ ● ◆ ■ ♪ ≠. |
 | `extrude` | A depth, or `{ depth, angle, color, to, steps }`: block extrusion (the [`extrude`](effects.md) effect). |
 | `dash` | Dashes on `stroke` (and `dash` on each of `strokes`): stitching. |
 | `stretch` | `[sx, sy]` (or `sy`) about the first baseline: condensed and stretched display type. |
 | `axes` | Variable-font axes: `{ wdth: 50 }`, `{ SOFT: 100, WONK: 1, opsz: 144 }`, `{ YEAR: 1979 }`. A variable font's `wght` follows `weight`. |
-| `content` | An array is one line per item. |
+| `content` | An array is one line per item; an item may be a span, so a headline's lines can change weight: `[{ content: 'Signal', bold: true }, 'over the', { content: 'noise', bold: true }]` with `weight: 300, boldWeight: 800`. |
 | `fill`, `stroke`, `strokeWidth` | `fill: 'none'` with a `stroke` is outline type; `fill` takes gradients. |
 | `strokes` | `[{ color, width, dash }]`: keylines under the fill, widest first (varsity lettering). A preset paint (`fill: { preset: 'chrome' }`) brings its own. |
 | `path` | Text on a path: `{ kind: 'circle' \| 'arc' \| 'ellipse' \| 'wave', cx, cy, r, start, end, direction }` or `{ d }`. `startOffset` (0–1 or px; 0.5 centres), `fitPath` (space it round a ring; a length leaves a gap), `dy`. |
@@ -177,5 +177,7 @@ Coordinates in px of the layer's canvas (or its group's `viewBox`), or `'50%'`. 
 | `perforation` | A tear-off line | `kind` (holes, dashes, notches), `x1` `y1` `x2` `y2`, `size`, `gap`; punches holes inside a `knockout` |
 | `tear` | Paper torn on a jagged line | `from`, `to`, `side`, `color`, `rip`, `fibres`, `step`, `jitter` (same `seed` on two layers: one tear) |
 | `texture` | Surfaces | `kind` (paper, creases, concrete, speck, wood, folds, dust), `color`, `frequency`, `region` |
+| `mosaic` | A mark rastered into big square cells, each drawn apart (`@logomarks/core`'s pixelate, so they follow the mark's shape) | `markup`, `x` `y` `width` `height`, `cells` (across, 10), `gap`, `radius`, `drop` (a seeded share left out), `color`, `accent` (`'asterisk'`, `'dot'`), `accentColor` |
+| `marks` | A set of marks on an even grid, optically sized the same (by their real bounds and ink, held to their cells) | `marks`, `cols` `rows` (from the count: 3 × 3 to 10 × 7), `x` `y` `width` `height`, `size`, `optical`, `color` |
 
 `icon` also takes `markup` (a mark's paths on a 512 grid) and `x`, `y`; `image` takes `x` `y` `width` `height`, `fit: 'stretch'` and URLs where fetching is allowed. A cut-out subject is another `image` above the masthead.

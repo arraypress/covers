@@ -14,12 +14,12 @@ import type { RepeatLayer } from './layers/repeat.js';
 import type { TextSpan } from './type/spans.js';
 import type { GlyphControl } from './type/glyphs.js';
 import type { Cut } from './formats/cut.js';
-import type { ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer } from './layers/index.js';
+import type { ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, MosaicLayer, MarksLayer } from './layers/index.js';
 import type { Zones, PrintInfo, FormatName } from './formats/index.js';
 import type { Motion, MotionPreset, Easing } from './animate/index.js';
 
 export type { RepeatLayer, DefsLayer, UseLayer, TextSpan, GlyphControl, Cut, Motion, MotionPreset, Easing };
-export type { Color, Length, Rng, LayerTransform, EffectKind, Paint, TextPath, GroupLayer, ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, Zones, PrintInfo, FormatName };
+export type { Color, Length, Rng, LayerTransform, EffectKind, Paint, TextPath, GroupLayer, ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, MosaicLayer, MarksLayer, Zones, PrintInfo, FormatName };
 export type { ShapeSpec, TableCell } from './layers/index.js';
 export type { Format } from './formats/index.js';
 export type { LintIssue } from './lint/index.js';
@@ -310,8 +310,8 @@ export interface PatternLayer extends BaseLayer {
   fade?: 'none' | 'radial' | 'edges' | 'top' | 'bottom' | 'left' | 'right';
   /** Dashed or dotted lines (or `[on, off]` lengths). */
   dash?: 'dashed' | 'dotted' | true | [Length, Length];
-  /** Grid / lines: N equal cells (inner lines only) instead of `size`. */
-  divisions?: number;
+  /** Grid / lines: N equal cells (inner lines only) instead of `size`; `[cols, rows]` for a design grid. */
+  divisions?: number | [number, number];
   /** Regions (fractions) the lines break around. */
   gaps?: Region[];
   region?: Region;
@@ -415,8 +415,8 @@ export interface TextLabel {
 
 export interface TextLayer extends Omit<BaseLayer, 'transform'> {
   type: 'text';
-  /** The text; an array is one line per item. (Optional with `spans`.) */
-  content?: string | string[];
+  /** The text; an array is one line per item, and an item may be a span (`{ content, bold }`: a headline whose lines change weight). (Optional with `spans`.) */
+  content?: string | (string | TextSpan)[];
   /** First baseline x (px or `'%'`): places the text like SVG `<text x y>`, `align` acting as the anchor. */
   x?: Length | `${number}%`;
   y?: Length | `${number}%`;
@@ -470,6 +470,8 @@ export interface TextLayer extends Omit<BaseLayer, 'transform'> {
   font?: string;
   /** Default 600. */
   weight?: number;
+  /** The weight of spans and lines marked `bold: true`. Default 700. */
+  boldWeight?: number;
   style?: 'normal' | 'italic';
   /** Default 6% of the design unit (`sqrt(width × height)`). */
   size?: Length;
@@ -718,7 +720,7 @@ export interface RuleLayer extends BaseLayer {
 }
 
 export type Layer =
-  | GroupLayer | ShapeLayer | SvgLayer | TableLayer | BarcodeLayer | PerforationLayer | TearLayer | TextureLayer
+  | GroupLayer | ShapeLayer | SvgLayer | TableLayer | BarcodeLayer | PerforationLayer | TearLayer | TextureLayer | MosaicLayer | MarksLayer
   | InkLayer | DitherLayer | ContourLayer | WaveformLayer | TilesLayer | RuleLayer
   | DiagramLayer | PaperLayer | ScribbleLayer
   | SolidLayer | LinearLayer | RadialLayer | MeshLayer | StripesLayer | ImageLayer

@@ -2,7 +2,7 @@
  * Glyph fallback: characters the chosen font lacks are shaped in a
  * fallback font (the layer's `fallback`, then any font registered with
  * `fallback: true`), and failing those drawn from the built-in symbols
- * (✺ ✦ ✶ ★ ☆ ♥ ♡ ▶ ◀ ● ◆ ■ ♪). Text the font covers shapes exactly as
+ * (✺ ✦ ✶ ★ ☆ ♥ ♡ ▶ ◀ ● ◆ ■ ♪ ≠). Text the font covers shapes exactly as
  * before (one HarfBuzz run).
  *
  * @module type/fallback

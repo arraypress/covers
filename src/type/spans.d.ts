@@ -8,6 +8,8 @@ import type { Length, Color } from '../index.js';
 export interface TextSpan {
   content: string;
   font?: string; weight?: number; style?: 'normal' | 'italic'; axes?: Record<string, number>;
+  /** Set at the layer's `boldWeight` (default 700) when `weight` isn't given. */
+  bold?: boolean;
   /** Size relative to the layer's (default 1). */
   scale?: number;
   /** Size outright. */
@@ -24,7 +26,9 @@ export interface TextSpan {
 export interface Span { text: string; face: LoadedFont; scale: number; tracking: number; paint: string | undefined; dy: number }
 
 /** Resolve a layer's spans (faces loaded, sizes relative to `size`). */
-export function loadSpans(layer: { spans: (TextSpan | string)[]; font?: string; weight?: number; style?: string; axes?: Record<string, number>; letterSpacing?: number; transform?: string }, ctx: RenderContext, size: number): Promise<Span[]>;
+export function loadSpans(layer: { spans: (TextSpan | string)[]; font?: string; weight?: number; boldWeight?: number; style?: string; axes?: Record<string, number>; letterSpacing?: number; transform?: string }, ctx: RenderContext, size: number): Promise<Span[]>;
+/** A `content` array as spans, one a line, when any item is a span object; else `undefined`. */
+export function lineSpans(content: unknown): TextSpan[] | undefined;
 /** Spans as lines (split at `\n`, wrapped at `maxWidth`). */
 export function spanLines(spans: Span[], size: number, maxWidth: number, fallbacks: LoadedFont[]): Span[][];
 /** Shape a line of spans as one run. */

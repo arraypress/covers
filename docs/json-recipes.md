@@ -54,6 +54,7 @@ A layer is any [layer](layers.md) plus an optional `id` and `when`. Its option v
 | `{ "gradientUnder": [colors, angle, size] }` | The colours a centred square of `size` covers in a linear gradient (five samples, eased as drawn). Pair it with `readable`. |
 | `{ "pick": [...] }`, `{ "range": [min, max] }`, `{ "int": [min, max] }` | Seeded choices. |
 | `{ "add" / "sub" / "mul" / "div" / "min" / "max": [...] }` | Arithmetic. Lengths (`"54vw"`, `"12vmin"`) become px first. |
+| `{ "round" / "floor" / "ceil": x }` | A whole number: a grid's row count from the canvas (`{ "round": { "div": ["@height", 62.5] } }`). |
 | `{ "ramp": [from, to, steps, amount?] }` | `steps` colours from `from` toward `to` (`amount` of the way). |
 | `{ "taper": [ratio, steps] }` | `[1, ratio, ratio², …]`, e.g. stripe widths. |
 | `{ "length": value }` | Characters in a string (a number's digits) or items in an array. |

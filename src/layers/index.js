@@ -12,4 +12,7 @@ export { code128 } from './code128.js';
 export { perforation } from './perforation.js';
 export { tear } from './tear.js';
 export { texture } from './texture.js';
+export { mosaic, mosaicGrid } from './mosaic.js';
+export { marks, sheetGrid } from './marks.js';
+export { markGeometry } from './mark-geometry.js';
 export { expandRepeat } from './repeat.js';

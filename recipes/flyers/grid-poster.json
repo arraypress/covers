@@ -1,0 +1,91 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "grid-poster",
+  "description": "Swiss grid poster: a moody full-bleed photo washed in one strong colour (or, with no photo, a grainy gradient field in it), a hairline grid of five columns over the whole sheet, tiny meta hung in its cells (series, handle and year across the top; a label, a code and coordinates on the middle row; the credit and a save prompt along the foot), the mark small on a white tile in one cell, and a big uppercase headline whose lines alternate bold and light, fitted to the four columns right of the first column line, with a small sub-line under it. The grid is drawn on a 400-wide design grid as tall as the canvas, so its rows follow the aspect: eight at 4:5, six at 1:1, eleven at 9:16. Headline lines are strings or { content, bold }.",
+  "params": {
+    "name": "Kestrel",
+    "headline": [
+      { "content": "Signal", "bold": true },
+      { "content": "over the", "bold": false },
+      { "content": "noise", "bold": true }
+    ],
+    "sub": "Visibility ≠ Clarity",
+    "series": "",
+    "handle": "",
+    "year": "©2026",
+    "label": "Edition",
+    "code": "Nº 014",
+    "coords": "51.5072° N\n0.1276° W",
+    "credit": "",
+    "save": "Save this for later",
+    "wash": "#ff5a1f",
+    "ink": "#ffffff",
+    "tile": "#ffffff",
+    "markColor": ""
+  },
+  "vars": {
+    "h": { "mul": [400, { "div": ["@height", "@width"] }] },
+    "rows": { "max": [4, { "round": { "div": ["$h", 62.5] } }] },
+    "rowH": { "div": ["$h", "$rows"] },
+    "mid": { "floor": { "div": [{ "sub": ["$rows", 1] }, 2] } },
+    "midTop": { "mul": ["$mid", "$rowH"] },
+    "footTop": { "sub": ["$h", "$rowH"] },
+    "deep": { "readable": ["{ink}", { "tone": ["{wash}", { "l": [0.5, 0.58] }] }, { "tone": ["{wash}", { "l": [0.12, 0.2] }] }] },
+    "glow": { "tone": ["{wash}", { "l": [0.72, 0.8] }] },
+    "markInk": { "if": "markColor", "then": "{markColor}", "else": { "tone": ["{wash}", { "l": [0.3, 0.58] }] } }
+  },
+  "layers": [
+    { "id": "photo", "type": "image", "when": "photo", "src": "{photo}", "fit": "cover", "duotone": ["$deep", "{wash}"] },
+    { "id": "field", "type": "radial", "when": { "not": "photo" }, "colors": ["$glow", "{wash}", "$deep"], "radius": "110vmax" },
+    { "id": "fieldGrain", "type": "grain", "when": { "not": "photo" }, "amount": 0.16, "vary": "edges" },
+    {
+      "id": "poster",
+      "type": "group",
+      "viewBox": [0, 0, 400, "$h"],
+      "fit": "contain",
+      "layers": [
+        { "id": "grid", "type": "pattern", "kind": "grid", "divisions": [5, "$rows"], "color": "{ink}", "stroke": 0.5, "opacity": 0.12 },
+        { "id": "tile", "type": "shape", "kind": "rect", "x": 6, "y": { "add": ["$rowH", 6] }, "width": 68, "height": { "sub": ["$rowH", 12] }, "fill": "{tile}", "when": "mark" },
+        {
+          "id": "mark",
+          "type": "icon",
+          "when": "mark",
+          "markup": "{mark}",
+          "size": { "mul": ["$rowH", 0.56] },
+          "x": { "sub": [40, { "mul": ["$rowH", 0.28] }] },
+          "y": { "mul": ["$rowH", 1.22] },
+          "color": "$markInk"
+        },
+        { "id": "series", "type": "text", "content": { "if": "series", "then": "{series}", "else": "{name} — Series" }, "font": "Inter Tight", "weight": 700, "size": 7, "letterSpacing": 0, "lineHeight": 1.25, "x": 6, "y": 12, "maxWidth": 68, "color": "{ink}" },
+        { "id": "handle", "type": "text", "content": { "if": "handle", "then": "{handle}", "else": { "join": [["@@", { "lower": "{name}" }], ""] } }, "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "lineHeight": 1.25, "x": 200, "y": 12, "align": "center", "maxWidth": 68, "color": "{ink}" },
+        { "id": "year", "type": "text", "content": "{year}", "when": "year", "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "lineHeight": 1.25, "x": 394, "y": 12, "align": "right", "maxWidth": 68, "color": "{ink}" },
+        { "id": "label", "type": "text", "content": "{label}", "when": "label", "font": "Inter Tight", "weight": 700, "size": 7, "letterSpacing": 0, "lineHeight": 1.25, "x": 6, "y": { "add": ["$midTop", 12] }, "maxWidth": 68, "color": "{ink}" },
+        { "id": "code", "type": "text", "content": "{code}", "when": "code", "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "lineHeight": 1.25, "x": 86, "y": { "add": ["$midTop", 12] }, "maxWidth": 68, "color": "{ink}" },
+        { "id": "coords", "type": "text", "content": "{coords}", "when": "coords", "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "lineHeight": 1.25, "x": 394, "y": { "add": ["$midTop", 12] }, "align": "right", "maxWidth": 68, "color": "{ink}" },
+        {
+          "id": "headline",
+          "type": "text",
+          "content": "{headline}",
+          "transform": "uppercase",
+          "font": "Inter Tight",
+          "weight": 300,
+          "boldWeight": 800,
+          "size": 60,
+          "lineHeight": 0.92,
+          "letterSpacing": -0.035,
+          "fit": "width",
+          "maxWidth": 308,
+          "maxHeight": { "sub": [{ "mul": [{ "sub": ["$rows", { "add": ["$mid", 2] }] }, "$rowH"] }, 12] },
+          "anchor": "bottom-left",
+          "margin": 0,
+          "offset": { "x": 86, "y": { "mul": [-1, { "add": ["$rowH", 6] }] } },
+          "color": "{ink}"
+        },
+        { "id": "credit", "type": "text", "content": { "if": "credit", "then": "{credit}", "else": "Made by {name}" }, "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "lineHeight": 1.25, "x": 6, "y": { "add": ["$footTop", 12] }, "maxWidth": 68, "color": "{ink}" },
+        { "id": "sub", "type": "text", "content": "{sub}", "when": "sub", "font": "Inter Tight", "weight": 600, "size": 10, "letterSpacing": -0.01, "lineHeight": 1.15, "x": 86, "y": { "add": ["$footTop", 13.5] }, "maxWidth": 228, "color": "{ink}" },
+        { "id": "save", "type": "text", "content": "{save}", "when": "save", "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "lineHeight": 1.25, "x": 394, "y": { "add": ["$footTop", 12] }, "align": "right", "maxWidth": 68, "color": "{ink}" }
+      ]
+    },
+    { "id": "print", "type": "grain", "amount": 0.05, "size": 1.5 }
+  ]
+}

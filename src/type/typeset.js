@@ -24,7 +24,8 @@
  * - **Live text**: `render: 'live'` writes `<text>` with the font embedded
  *   by `@font-face` (or linked by URL), laid out the same way, for in-browser
  *   speed and selectable text.
- * - **Mixed runs**: `spans`, each with its own font, weight, size, colour.
+ * - **Mixed runs**: `spans`, each with its own font, weight, size, colour;
+ *   or `content` lines as span objects (`{ content, bold }`), one a line.
  * - **Per-glyph control**: `glyphs: { scale, dx, dy, rotate, color }` arrays.
  * - **Fallback**: characters the font lacks come from `fallback`, fonts
  *   registered with `fallback: true`, or the built-in symbols.
@@ -52,7 +53,7 @@ import { fontFace } from './live.js';
 import { autoColor } from './auto-color.js';
 import { fallbackFaces, shapeText } from './fallback.js';
 import { controlGlyphs, glyphCount } from './glyphs.js';
-import { loadSpans, spanLines, shapeSpans, spanText } from './spans.js';
+import { loadSpans, spanLines, shapeSpans, spanText, lineSpans } from './spans.js';
 import { recordLayout } from './layout-ref.js';
 import { marquee } from '../animate/marquee.js';
 
@@ -83,6 +84,9 @@ export function wantsType(layer) {
  * @returns {Promise<import('../layers.js').Markup>}
  */
 export async function typeset(layer, ctx) {
+  // Lines given as span objects (a headline whose lines change weight) are spans.
+  const perLine = lineSpans(layer.content);
+  if (perLine) layer = { ...layer, content: undefined, spans: perLine };
   const rawContent = Array.isArray(layer.content) ? layer.content.join('\n') : layer.content && typeof layer.content === 'object' ? layer.content.content : layer.content;
   const kase = layer.transform === 'uppercase' || layer.transform === 'lowercase' ? layer.transform : undefined;
   let content = layer.spans ? '' : caseText(String(rawContent ?? ''), kase);

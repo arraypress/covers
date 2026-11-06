@@ -31,6 +31,7 @@
  * | `{ "gradientUnder": [colors, angle, size] }` | the colours a centred square of `size` covers in a linear gradient |
  * | `{ "pick": [...] }`, `{ "range": [min, max] }`, `{ "int": [min, max] }` | seeded choices |
  * | `{ "add" \| "sub" \| "mul" \| "div" \| "min" \| "max": [a, b, …] }` | arithmetic; lengths like `"54vw"` become pixels |
+ * | `{ "round" \| "floor" \| "ceil": x }` | to a whole number (a grid's row count from the canvas) |
  * | `{ "ramp": [from, to, steps, amount?] }` | `steps` colours from `from` toward `to` |
  * | `{ "taper": [ratio, steps] }` | `[1, ratio, ratio², …]` |
  * | `{ "length": value }` | characters in a string (or a number's digits), items in an array |
@@ -77,6 +78,7 @@ const CANVAS = ['width', 'height', 'u', 'bleed', 'safe', 'mm', 'dpi', 'trimWidth
 const OPS = /** @type {Record<string, [number, number]>} */ ({
   mix: [3, 4], readable: [1, 3], gradientUnder: [3, 3], tone: [2, 2], length: [1, 1], pick: [1, Infinity], range: [2, 2], int: [2, 2],
   add: [1, Infinity], sub: [2, Infinity], mul: [1, Infinity], div: [2, 2], min: [1, Infinity], max: [1, Infinity],
+  round: [1, 1], floor: [1, 1], ceil: [1, 1],
   ramp: [3, 4], taper: [2, 2], reverse: [1, 1],
   join: [1, 2], upper: [1, 1], lower: [1, 1], slice: [2, 3],
 });
@@ -390,6 +392,9 @@ function op(s, name, raw) {
     case 'div': { const [a, b] = nums(); return a / b; }
     case 'min': return Math.min(...nums());
     case 'max': return Math.max(...nums());
+    case 'round': return Math.round(nums()[0]);
+    case 'floor': return Math.floor(nums()[0]);
+    case 'ceil': return Math.ceil(nums()[0]);
     case 'ramp': {
       const [from, to, steps, amount = 1] = args;
       return Array.from({ length: steps }, (_, i) => mixOklab(toHex(from), toHex(to), (i / steps) * amount));

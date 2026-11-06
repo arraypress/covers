@@ -3,9 +3,11 @@
  * style, axes, size, colour, tracking and baseline shift, set one after
  * another on the same lines (a `\n` in a span starts a new line).
  *
- * `spans: [{ content, font, weight, style, axes, scale, size, color, letterSpacing, dy }]`;
+ * `spans: [{ content, font, weight, bold, style, axes, scale, size, color, letterSpacing, dy }]`;
  * anything a span leaves out comes from the layer. `scale` sizes a span
- * relative to the layer (`size` gives it outright).
+ * relative to the layer (`size` gives it outright); `bold: true` sets it at
+ * the layer's `boldWeight` (700). A `content` array with span objects in it
+ * is one span a line (`lineSpans`): a headline whose lines change weight.
  *
  * @module type/spans
  */
@@ -37,7 +39,8 @@ export async function loadSpans(layer, ctx, size) {
   const out = [];
   for (const given of layer.spans) {
     const s = typeof given === 'string' ? { content: given } : given;
-    const face = await faceFor(ctx, { font: s.font ?? layer.font, weight: s.weight ?? layer.weight, style: s.style ?? layer.style, axes: { ...layer.axes, ...s.axes } });
+    const weight = s.weight ?? (s.bold ? layer.boldWeight ?? 700 : layer.weight);
+    const face = await faceFor(ctx, { font: s.font ?? layer.font, weight, style: s.style ?? layer.style, axes: { ...layer.axes, ...s.axes } });
     const kase = s.transform ?? layer.transform;
     const raw = String(s.content ?? '').replace(/[\t\r ]+/g, ' ');
     out.push({
@@ -50,6 +53,26 @@ export async function loadSpans(layer, ctx, size) {
     });
   }
   return out;
+}
+
+/**
+ * A `content` array as spans, one a line, when any item is a span object
+ * (`{ content, bold, weight, … }`); otherwise `undefined` (plain lines stay
+ * content).
+ *
+ * @param {unknown} content - A text layer's `content`.
+ * @returns {import('./spans.js').TextSpan[] | undefined}
+ *
+ * @example
+ * lineSpans([{ content: 'Signal', bold: true }, 'over the']);
+ * // [{ content: 'Signal\n', bold: true }, { content: 'over the' }]
+ */
+export function lineSpans(content) {
+  if (!Array.isArray(content) || !content.some((x) => x && typeof x === 'object')) return undefined;
+  return content.map((item, i) => {
+    const s = item && typeof item === 'object' ? item : { content: item };
+    return { ...s, content: `${s.content ?? ''}${i < content.length - 1 ? '\n' : ''}` };
+  });
 }
 
 /**

@@ -29,7 +29,7 @@ import { paper, scribble } from './handmade.js';
 import { ink, dither, contour, waveform, tiles, rule } from './print.js';
 import { typeset, wantsType } from './type/index.js';
 import { recordLayout } from './type/layout-ref.js';
-import { shape, svg, table, barcode, perforation, tear, texture } from './layers/index.js';
+import { shape, svg, table, barcode, perforation, tear, texture, mosaic, marks } from './layers/index.js';
 import { pos, layerAttrs } from './layers/util.js';
 import { paint } from './paint/index.js';
 import { imageSize } from './lint/image-size.js';
@@ -620,10 +620,11 @@ export function pattern(layer, ctx) {
     const d = [];
     if (angle === 0) {
       // Rows and columns: every `size` from the centre, or `divisions` equal
-      // cells (inner lines only); broken wherever they cross a `gaps` region.
-      const n = layer.divisions;
-      const ys = n ? Array.from({ length: n - 1 }, (_, k) => ((k + 1) * h) / n) : range(cy % size, h, size);
-      const xs = kind !== 'grid' ? [] : n ? Array.from({ length: n - 1 }, (_, k) => ((k + 1) * w) / n) : range(cx % size, w, size);
+      // cells (inner lines only; `[cols, rows]` for a design grid); broken
+      // wherever they cross a `gaps` region.
+      const [nx, ny] = Array.isArray(layer.divisions) ? layer.divisions.map((d) => Math.max(1, Math.round(d))) : [layer.divisions, layer.divisions];
+      const ys = ny ? Array.from({ length: ny - 1 }, (_, k) => ((k + 1) * h) / ny) : range(cy % size, h, size);
+      const xs = kind !== 'grid' ? [] : nx ? Array.from({ length: nx - 1 }, (_, k) => ((k + 1) * w) / nx) : range(cx % size, w, size);
       const gaps = (layer.gaps ?? []).map((g) => regionPx(g, ctx.canvas));
       d.push(gridPath(xs, ys, w, h, gaps));
       shapes = `<path${attrs({ d: d.join(''), fill: 'none', stroke: col, 'stroke-width': stroke, ...dashAttrs })}/>`;
@@ -1037,4 +1038,4 @@ function group() {
   throw new TypeError('A group layer is drawn by renderSvg()/renderImage(), not on its own');
 }
 
-export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame, diagram, paper, scribble, ink, dither, contour, waveform, tiles, rule, group, shape, svg, table, barcode, perforation, tear, texture, repeat: group, defs: group, use: group });
+export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame, diagram, paper, scribble, ink, dither, contour, waveform, tiles, rule, group, shape, svg, table, barcode, perforation, tear, texture, mosaic, marks, repeat: group, defs: group, use: group });

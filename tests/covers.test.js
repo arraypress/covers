@@ -115,6 +115,8 @@ const every = [
   { type: 'texture', kind: 'creases' },
   { type: 'repeat', rows: 2, cols: 3, layer: { type: 'shape', kind: 'circle', cx: 20, cy: 20, r: '{#10 + col * 4}' } },
   { type: 'group', layers: [{ type: 'defs', layers: [{ id: 'dot', type: 'shape', kind: 'circle', cx: 0, cy: 0, r: 30 }] }, { type: 'use', ref: 'dot', x: 100, y: 100 }, { type: 'use', ref: 'dot', x: 200, y: 100, scale: 0.5 }] },
+  { type: 'mosaic', markup: '<path d="M256 48 464 464H48z"/>', x: 100, y: 20, width: 200, height: 260, accent: 'dot' },
+  { type: 'marks', marks: ['<path d="M256 48 464 464H48z"/>', '<circle cx="256" cy="256" r="200"/>'], x: 20, y: 20, width: 360, height: 260 },
 ];
 // defs and use draw together (defs alone draws nothing).
 const pairsOnly = new Set(['defs', 'use']);

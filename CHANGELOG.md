@@ -5,6 +5,24 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] — 2026-11-06
+
+Three flyers that set on any canvas, and the layers they stand on. Every published recipe renders as before (185 SVGs, flyers at 4:5 and as release covers plus the built-ins, byte-identical to 1.3.1).
+
+### Added
+
+- **Three flyers**, drawn on a 400-wide grid as tall as the canvas, so they set at 4:5, 1:1, 9:16 and A-series portrait alike: `grid-poster` (a Swiss grid poster: a photo washed in one colour or a grainy field, a hairline grid of five columns whose rows follow the aspect, meta in its cells, the mark on a tile in one cell, a two-weight headline fitted to four columns), `logofolio` (a collection sheet: a title and meta over a grid of up to 70 marks, optically sized the same) and `pixel-mosaic` (the mark rastered into big neon cells over a greyscale photo, a few left out by seed, the name huge across the foot).
+- **`mosaic` layer**: a mark rastered into square cells drawn apart, following its shape (`@logomarks/core`'s pixelate); `cells`, `gap`, `drop` (a seeded share left out), `accent` (an asterisk or dot in one empty cell).
+- **`marks` layer**: a set of marks on an even grid, each optically sized by its real bounds and ink and held to its cell; columns and rows from the count (3 × 3 to 10 × 7).
+- **Text lines as spans**: a `content` array may hold span objects, one a line (`[{ content: 'Signal', bold: true }, 'over the']`); `bold: true` on any span sets it at the layer's `boldWeight` (700).
+- **JSON**: `round`, `floor` and `ceil` operators (a grid's row count from the canvas).
+- `pattern` takes `divisions: [cols, rows]` for a design grid.
+- `≠` in the built-in symbols, for fonts whose Latin subset lacks it.
+
+### Changed
+
+- Depends on `@logomarks/core` `^0.1.5` (pixelate without a canvas).
+
 ## [1.3.1] — 2026-11-06
 
 ### Changed

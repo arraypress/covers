@@ -122,7 +122,7 @@ Layers `bg`, `mesh` or `photo`, `grain` (+ `title`). The palette of a photo (`im
 A brand on every format, the default for [`kit`](formats.md#brand-kit): avatars (the mark, or an initial), headers and banners (mark and name in the safe zone), posts and stories, business cards (front: mark and name; back: `person`, `role`, `lines`), letterhead and compliment slips, tickets (with a Code 128 `ticket` number), passes and stickers. Options: `name`, `tagline`, `mark`, `photo`, `lines`, `person`, `role`, `ticket`, `compliments`.
 
 ## Flyers and release covers
-The package ships 84 more recipes beside the built-ins, each drawn on a design grid in a `group` so it renders at any `format`: `recipes/flyers/` (52 flyers: aura, Neo-Swiss, acid, riso, kinetic, festival, varsity, ephemera, Bauhaus, 70s, lo-fi, zine, wheatpaste, and eight `-motion` ones that move; each re-composes for a 3000×3000 cover with `format: 'release'`), `recipes/release/` (20 cover-only styles) and `recipes/release/series/` (12 more for a series). Import one as JSON, or load it by path:
+The package ships 87 more recipes beside the built-ins, each drawn on a design grid in a `group` so it renders at any `format`: `recipes/flyers/` (55 flyers: aura, Neo-Swiss, acid, riso, kinetic, festival, varsity, ephemera, Bauhaus, 70s, lo-fi, zine, wheatpaste, and eight `-motion` ones that move; each re-composes for a 3000×3000 cover with `format: 'release'`; three more draw on a grid as tall as the canvas, so they set at 4:5, 1:1, 9:16 or A4 alike: `grid-poster`, `logofolio` and `pixel-mosaic`, below), `recipes/release/` (20 cover-only styles) and `recipes/release/series/` (12 more for a series). Import one as JSON, or load it by path:
 
 ```js
 import bloomfall from '@arraypress/covers/recipes/flyers/bloomfall.json' with { type: 'json' };
@@ -131,6 +131,12 @@ const svg = await renderSvg({ recipe: defineRecipe(bloomfall), seed: 'gig', mark
 ```
 
 They fill slots from the options (`{name}`, `{mark}`, `{photo}`, `{cutout}`…; each file's `params` has defaults), and their `$schema` points at the bundled schema.
+
+| Flyer | Options (beside `mark`, `photo`, `name`) |
+|---|---|
+| `grid-poster` | A Swiss grid poster: the photo washed in one colour (or a grainy field in it), a hairline 5-column grid whose rows follow the aspect (8 at 4:5, 6 at 1:1, 11 at 9:16), meta in its cells, the mark on a tile in one cell, a two-weight headline fitted to four columns. `headline` (lines: strings or `{ content, bold }`), `sub`, `series`, `handle`, `year`, `label`, `code`, `coords`, `credit`, `save`, `wash`, `ink`, `tile`, `markColor`. |
+| `logofolio` | A collection sheet: a title, a sub-title and meta line, and `marks` (paths) on an even grid, optically sized the same; `cols` and `rows` from the count (3 × 3 to 10 × 7). `title`, `subtitle`, `meta`, `footer`, `ground`, `ink`. |
+| `pixel-mosaic` | A greyscale photo (or grainy field) under the mark rastered into big cells in one neon ink (`@logomarks/core`'s pixelate), a few left out by seed, an accent in one cell, the name huge across the foot and a meta row. `neon`, `ink`, `cells` (8–14), `drop`, `accent` (`'asterisk'`, `'dot'`, `false`), `badge` (`'®'` or `'mark'`), `labels`, `volume`. |
 
 ## Your own
 

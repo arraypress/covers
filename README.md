@@ -36,7 +36,7 @@ await writeFile('public/covers/introducing-covers.webp', webp);
 - [API](https://github.com/arraypress/covers/blob/main/docs/api.md): every export and cover option
 - [Layers](https://github.com/arraypress/covers/blob/main/docs/layers.md): mesh, grain, text, diagrams, riso inks, dithers, poster type and more
 - [Effects](https://github.com/arraypress/covers/blob/main/docs/effects.md): filters and pixel effects on any layer, masks, paints
-- [Recipes](https://github.com/arraypress/covers/blob/main/docs/recipes.md): seventeen built-ins, 84 flyers and release covers, your own
+- [Recipes](https://github.com/arraypress/covers/blob/main/docs/recipes.md): seventeen built-ins, 87 flyers and release covers, your own
 - [JSON recipes](https://github.com/arraypress/covers/blob/main/docs/json-recipes.md): a cover style as data, with no JavaScript
 - [Palettes](https://github.com/arraypress/covers/blob/main/docs/palettes.md): presets, one accent, a theme's tokens
 - [Formats, print and brand kits](https://github.com/arraypress/covers/blob/main/docs/formats.md): social sizes with safe zones, print with bleed, `kit`, `lint`

@@ -1,6 +1,6 @@
 /**
  * A built-in face of a few symbols type often wants and fonts often lack
- * (✺ ✦ ✶ ★ ☆ ♥ ♡ ▶ ◀ ● ◆ ■ ♪), drawn as shapes. The last fallback when a
+ * (✺ ✦ ✶ ★ ☆ ♥ ♡ ▶ ◀ ● ◆ ■ ♪ ≠), drawn as shapes. The last fallback when a
  * text layer's font has no glyph for a character.
  *
  * @module type/symbols
@@ -38,6 +38,23 @@ function heart(k) {
 /** @param {number} r @param {number} [n=48] @returns {[number, number][]} */
 const circle = (r, n = 48) => Array.from({ length: n }, (_, i) => /** @type {[number, number]} */ ([CX + r * Math.sin((i / n) * Math.PI * 2), CY + r * Math.cos((i / n) * Math.PI * 2)]));
 
+/**
+ * Not-equal, on a narrower advance (`NARROW`): two bars and a slash, one
+ * contour each, all wound alike so they fill as one.
+ *
+ * @returns {string}
+ */
+function notEqual() {
+  const cx = NARROW / 2;
+  const [half, bar, gap, lean, stem] = [230, 62, 112, 150, 31];
+  const rect = (/** @type {number} */ y) => poly([[cx - half, y + bar / 2], [cx + half, y + bar / 2], [cx + half, y - bar / 2], [cx - half, y - bar / 2]]);
+  const slash = poly([[cx + lean - stem, CY + 300], [cx + lean + stem, CY + 300], [cx - lean + stem, CY - 300], [cx - lean - stem, CY - 300]]);
+  return rect(CY + gap) + rect(CY - gap) + slash;
+}
+
+/** Advance of the narrow symbols (≠), font units. */
+const NARROW = 600;
+
 /** Outlines by character. An inner contour runs the other way (a hole). */
 const SHAPES = /** @type {Record<string, string>} */ ({
   '✺': poly(star(16, 0.5)),
@@ -53,6 +70,7 @@ const SHAPES = /** @type {Record<string, string>} */ ({
   '◆': poly([[CX, CY + R], [CX + R * 0.8, CY], [CX, CY - R], [CX - R * 0.8, CY]]),
   '■': poly([[CX - R * 0.75, CY + R * 0.75], [CX + R * 0.75, CY + R * 0.75], [CX + R * 0.75, CY - R * 0.75], [CX - R * 0.75, CY - R * 0.75]]),
   '♪': poly([[CX - 40, CY + R], [CX + 220, CY + R * 0.7], [CX + 220, CY + R * 0.45], [CX + 20, CY + R * 0.72], [CX + 20, CY - R * 0.55], [CX - 40, CY - R * 0.55]]) + poly(circle(110).map(([x, y]) => /** @type {[number, number]} */ ([x - 120, y - R * 0.6]))),
+  '≠': notEqual(),
 });
 
 const CHARS = Object.keys(SHAPES);
@@ -80,7 +98,7 @@ export function symbolFace() {
     variations: {},
     source: { name: 'symbols', src: 'covers:symbols', weight: 400 },
     glyphToPath: (/** @type {number} */ gid) => SHAPES[CHARS[gid - 1]] ?? '',
-    shapeRun: (/** @type {string} */ text) => Array.from(text).map((ch, i) => ({ gid: CHARS.indexOf(ch) + 1, cluster: i, xAdvance: ADV, xOffset: 0, yOffset: 0 })),
+    shapeRun: (/** @type {string} */ text) => Array.from(text).map((ch, i) => ({ gid: CHARS.indexOf(ch) + 1, cluster: i, xAdvance: ch === '≠' ? NARROW : ADV, xOffset: 0, yOffset: 0 })),
   };
   return face;
 }
