@@ -5,6 +5,13 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] — 2026-11-06
+
+### Changed
+
+- **`fluted-poster`**: `subject: 'name'` now sets the name's initial huge behind the glass, filling the height between the year and the title (stretched taller on tall canvases), the way a single letter stays legible and glassy behind ribs; the full name stays in the title and corner type. `initial` overrides the letter (one or two characters). The whole name across the width is `subject: 'word'`. With no mark, the initial is drawn.
+- The gentle convex glass 1.5.1 gave the name is gone: every subject uses the `fluted` preset unless `preset` names another.
+
 ## [1.5.1] — 2026-11-06
 
 ### Changed

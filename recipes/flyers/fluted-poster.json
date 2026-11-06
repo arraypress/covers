@@ -1,11 +1,12 @@
 {
   "$schema": "../../schema/recipe.schema.json",
   "name": "fluted-poster",
-  "description": "Fluted glass poster: the mark (or the name, set huge) in white on black, seen through reeded glass (@logomarks/image-effects' fluted effect: by default its fluted preset for a mark, and gentler glass for the name, 12 wide convex ribs at light refraction (0.15) and little defocus, so the word steps at the rib edges but never doubles; a preset given, fluted, reeded-deep, reeded-prism or reeded-soft, is used as it is), with a soft light in one accent colour behind it (none with accent \"\"). Over the glass, small Swiss type stays vector: the year stacked large top-left, the series top-right, a two-line title bottom-left with a glitched || ornament of plain bars right of it in the accent, credits and an edition line along the foot. The glass is rastered at the output size and embedded; the type is outlines. Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1, 9:16 and A-series portrait alike; the ornament's glitch follows the seed.",
+  "description": "Fluted glass poster: a subject in white on black, seen through reeded glass (@logomarks/image-effects' fluted effect, its fluted preset unless preset names another: reeded-deep, reeded-prism, reeded-soft): the mark (subject 'mark', the default), the name's initial set huge, filling the height between the year and the title (about two thirds of a 4:5 poster, three quarters of a 9:16 one, stretched taller there) (subject 'name', or with no mark; initial overrides it, one or two characters), or the whole name across the width (subject 'word'). A soft light in one accent colour sits behind it (none with accent \"\"). Over the glass, small Swiss type stays vector: the year stacked large top-left, the series top-right, a two-line title bottom-left with a glitched || ornament of plain bars right of it in the accent, credits and an edition line along the foot. The glass is rastered at the output size and embedded; the type is outlines. Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1, 9:16 and A-series portrait alike; the ornament's glitch follows the seed.",
   "params": {
     "name": "Kestrel",
     "subject": "mark",
     "preset": "",
+    "initial": "",
     "title": ["Through", "the glass"],
     "year": "2026",
     "series": "",
@@ -31,14 +32,23 @@
       "type": "group",
       "viewBox": [0, 0, 400, "$h"],
       "fit": "contain",
-      "effects": [{ "kind": "fluted", "preset": { "if": "preset", "then": "{preset}", "else": "fluted" }, "profile": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": "convex" }, "ribs": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": 12 }, "refraction": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": 0.15 }, "stretch": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": "0.4vmin" }, "chroma": { "if": { "all": [{ "any": [{ "subject": "name" }, { "not": "mark" }] }, { "not": "preset" }] }, "then": 0.2 } }],
+      "effects": [{ "kind": "fluted", "preset": { "if": "preset", "then": "{preset}", "else": "fluted" } }],
       "layers": [
         { "id": "light", "type": "radial", "when": "accent", "x": 0.5, "y": 0.47, "colors": ["{accent}", "{ground}"], "radius": "52vmin", "opacity": 0.75 },
-        { "id": "mark", "type": "outline", "when": { "all": ["mark", { "not": { "subject": "name" } }] }, "markup": "{mark}", "lines": 0, "x": 70, "y": { "sub": [{ "mul": ["$h", 0.47] }, 130] }, "width": 260, "height": 260, "color": "{ink}" },
+        { "id": "mark", "type": "outline", "when": { "all": ["mark", { "subject": "mark" }] }, "markup": "{mark}", "lines": 0, "x": 70, "y": { "sub": [{ "mul": ["$h", 0.47] }, 130] }, "width": 260, "height": 260, "color": "{ink}" },
+        {
+          "id": "initial",
+          "type": "group",
+          "when": { "any": [{ "subject": "name" }, { "all": [{ "not": "mark" }, { "subject": "mark" }] }] },
+          "transform": { "scale": [1, "$tall"], "origin": [200, { "div": [{ "sub": ["$h", 36] }, 2] }] },
+          "layers": [
+            { "id": "letter", "type": "text", "content": { "if": "initial", "then": { "slice": ["{initial}", 0, 2] }, "else": { "slice": ["{name}", 0, 1] } }, "transform": "uppercase", "font": "Inter Tight", "weight": 800, "size": 400, "lineHeight": 0.73, "letterSpacing": -0.04, "fit": "width", "maxWidth": 330, "maxHeight": { "div": [{ "sub": ["$h", 164] }, "$tall"] }, "anchor": "center", "margin": 0, "offset": { "x": 0, "y": -18 }, "color": "{ink}" }
+          ]
+        },
         {
           "id": "word",
           "type": "group",
-          "when": { "any": [{ "subject": "name" }, { "not": "mark" }] },
+          "when": { "subject": "word" },
           "transform": { "scale": [1, "$tall"], "origin": [200, { "mul": ["$h", 0.47] }] },
           "layers": [
             { "id": "name", "type": "text", "content": "{name}", "transform": "uppercase", "font": "Inter Tight", "weight": 800, "size": 120, "lineHeight": 0.9, "letterSpacing": -0.05, "fit": "width", "maxWidth": 360, "maxHeight": { "div": [{ "mul": ["$h", 0.42] }, "$tall"] }, "anchor": "center", "margin": 0, "offset": { "x": 0, "y": { "mul": ["$h", -0.03] } }, "color": "{ink}" }

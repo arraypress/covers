@@ -410,16 +410,35 @@ test('series-card: solid or contour; ten cards differ only in their number and c
   }
 });
 
-test('fluted-poster: the name gets gentle glass by default (no doubling); a given preset, and the mark, keep theirs', async () => {
+test('fluted-poster: the name is its initial, huge, behind the fluted preset; word sets the whole name; a given preset is used as it is', async () => {
   const r = recipe('fluted-poster');
-  const glassFx = (o) => cover({ recipe: r, seed: 'f', name: 'Halden', width: 400, height: 500, ...o }).layers.find((l) => l.id === 'glass').effects[0];
-  const clean = (fx) => Object.fromEntries(Object.entries(fx).filter(([, v]) => v !== undefined && v !== null));
-  assert.deepEqual(clean(glassFx({ subject: 'name', mark: MARK })), { kind: 'fluted', preset: 'fluted', profile: 'convex', ribs: 12, refraction: 0.15, stretch: '0.4vmin', chroma: 0.2 });
-  assert.deepEqual(clean(glassFx({})), clean(glassFx({ subject: 'name' })), 'no mark: the name, gently');
-  assert.deepEqual(clean(glassFx({ subject: 'name', preset: 'fluted' })), { kind: 'fluted', preset: 'fluted' }, 'a given preset as it is');
-  assert.deepEqual(clean(glassFx({ subject: 'name', preset: 'reeded-prism' })), { kind: 'fluted', preset: 'reeded-prism' });
-  assert.deepEqual(clean(glassFx({ mark: MARK })), { kind: 'fluted', preset: 'fluted' }, 'the mark: the fluted preset');
-  const o = { recipe: r, seed: 'f', mark: MARK, width: 400, height: 500 };
-  assert.equal(await renderSvg(o), await renderSvg({ ...o, preset: 'fluted' }), 'the mark\'s default is the fluted preset');
-  assert.notEqual(await renderSvg({ ...o, subject: 'name' }), await renderSvg({ ...o, subject: 'name', preset: 'fluted' }), 'the name\'s default is gentler');
+  const base = { recipe: r, seed: 'f', name: 'Halden', mark: MARK, width: 400, height: 500 };
+  const glass = (o) => cover({ ...base, ...o }).layers.find((l) => l.id === 'glass');
+  const fx = (o) => Object.fromEntries(Object.entries(glass(o).effects[0]).filter(([, v]) => v != null));
+  const ids = (o) => glass(o).layers.map((l) => l.id);
+  // Name and mark both use the fluted preset unless one is given.
+  for (const subject of ['mark', 'name', 'word']) assert.deepEqual(fx({ subject }), { kind: 'fluted', preset: 'fluted' }, subject);
+  assert.deepEqual(fx({ subject: 'name', preset: 'reeded-prism' }), { kind: 'fluted', preset: 'reeded-prism' });
+  assert.equal(await renderSvg({ ...base, subject: 'name' }), await renderSvg({ ...base, subject: 'name', preset: 'fluted' }));
+  // What sits behind the glass.
+  assert.deepEqual(ids({ subject: 'mark' }), ['light', 'mark']);
+  assert.deepEqual(ids({ subject: 'name' }), ['light', 'initial']);
+  assert.deepEqual(ids({ subject: 'word' }), ['light', 'word']);
+  assert.deepEqual(ids({ mark: undefined }), ['light', 'initial'], 'no mark: the initial');
+  const letter = (o) => glass(o).layers.find((l) => l.id === 'initial').layers[0].content;
+  assert.equal(letter({ subject: 'name' }), 'H');
+  assert.equal(letter({ subject: 'name', initial: 'Kx!' }), 'Kx', 'an override, two characters at most');
+  assert.equal(glass({ subject: 'word' }).layers.find((l) => l.id === 'word').layers[0].content, 'Halden');
+  // The letter, huge: the height between the year and the title at every aspect (stretched on tall canvases), clear of both.
+  for (const [aspect, [w, h]] of Object.entries(SIZES)) {
+    const o = { recipe: r, seed: 'f', name: 'Halden', subject: 'name', width: w, height: h };
+    const { text } = await rendered(o);
+    const { effects, ...bare } = cover(o).layers.find((l) => l.id === 'glass');
+    const glassSvg = await renderSvg({ width: w, height: h, layers: [{ ...bare, layers: bare.layers.filter((l) => l.id !== 'light') }] });
+    const box = union(ringBoxes([...glassSvg.matchAll(/<path d="([^"]+)"/g)].map((m) => m[1]).join('')));
+    const tall = Math.min(2, Math.max(1, h / 380));
+    const [top, bottom] = [box.y, box.y + box.height].map((y) => (h - 36) / 2 + (y - (h - 36) / 2) * tall);
+    assert.ok(bottom - top > Math.max(0.55 * h, h - 175) && bottom - top <= h - 160, `${aspect}: the letter ${Math.round(((bottom - top) / h) * 100)}% of the height`);
+    assert.ok(top > text.year.y + text.year.height && bottom < text.title.y, `${aspect}: clear of the year and the title`);
+  }
 });
