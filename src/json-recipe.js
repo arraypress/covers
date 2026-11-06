@@ -66,6 +66,7 @@ import { EFFECT_OPTIONS, EFFECT_COMMON, MASK_GRADIENTS } from '@logomarks/image-
 import { shapesOnly } from './layers/svg.js';
 import { LAYOUT_FIELDS } from './type/layout-ref.js';
 import { MOTION_PRESETS } from './animate/timing.js';
+import { checkControls } from './params.js';
 
 /** Options every recipe can read without declaring them. */
 const CONTENT = ['title', 'label', 'icon', 'image', 'name', 'mark', 'photo', 'cutout', 'date', 'dates', 'time', 'venue', 'address', 'lines', 'lineup', 'tracklist', 'price', 'meta', 'page'];
@@ -93,7 +94,7 @@ const MARKUP = ['markup', 'defs'];
 const LAYER_META = new Set(['id', 'type', 'when']);
 
 /** Top-level keys of a recipe document. */
-const TOP = new Set(['$schema', 'name', 'description', 'params', 'requires', 'vars', 'output', 'layers', 'pages', 'fonts']);
+const TOP = new Set(['$schema', 'name', 'description', 'params', 'controls', 'requires', 'vars', 'output', 'layers', 'pages', 'fonts']);
 
 /** Recipes defined from the same JSON object are reused. */
 const defined = new WeakMap();
@@ -537,6 +538,7 @@ export function validate(json) {
 
   for (const [k, v] of Object.entries(json.params ?? {})) checkValue(`params.${k}`, v);
   for (const r of json.requires ?? []) checkName('requires', r);
+  if (json.controls !== undefined) checkControls(json.controls, names, fail);
   for (const [k, v] of Object.entries(json.vars ?? {})) {
     checkValue(`vars.${k}`, v);
     vars.add(k);

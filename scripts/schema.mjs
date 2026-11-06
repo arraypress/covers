@@ -13,6 +13,7 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { LAYER_OPTIONS, COMMON, MOTION_OPTIONS } from '../src/layer-options.js';
 import { MOTION_PRESETS } from '../src/animate/timing.js';
+import { PARAM_TYPES } from '../src/params.js';
 import { EFFECT_OPTIONS, EFFECT_COMMON } from '@logomarks/image-effects';
 
 /** Operators: name → [description, argument schema]. */
@@ -63,6 +64,23 @@ export function buildSchema() {
       name: { type: 'string', description: 'Shown in error messages.' },
       description: { type: 'string' },
       params: { type: 'object', description: 'Options this recipe reads, with defaults. Cover options of the same name override them; use them as "{name}".', additionalProperties: { $ref: '#/$defs/value' } },
+      controls: {
+        type: 'object',
+        description: 'Hints for editors, by param (describeParams() reads them): an enum\'s choices, a slider\'s range, that an empty default is a colour.',
+        additionalProperties: {
+          type: 'object', additionalProperties: false,
+          properties: {
+            type: { enum: [...PARAM_TYPES], description: 'The control, where the default doesn\'t imply it.' },
+            label: { type: 'string' },
+            enum: { type: 'array', minItems: 1, items: { type: ['string', 'number'] }, description: 'The choices.' },
+            min: { type: 'number' },
+            max: { type: 'number' },
+            step: { type: 'number' },
+            help: { type: 'string' },
+            hidden: { type: 'boolean', description: 'Leave the param out of forms.' },
+          },
+        },
+      },
       requires: { type: 'array', items: { type: 'string' }, description: 'Options that must be set (e.g. "image").' },
       vars: { type: 'object', description: 'Named values, resolved in order (draws use the recipe stream); use them as "$name".', additionalProperties: { $ref: '#/$defs/value' } },
       output: { type: 'object', additionalProperties: false, description: 'The encoding this style prefers in renderImage (options passed to renderImage win).', properties: { lossless: { type: 'boolean', description: 'Lossless WebP/AVIF: for flat or 1-bit art (dither).' } } },

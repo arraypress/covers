@@ -801,6 +801,8 @@ export interface RecipeJson {
   description?: string;
   /** Options this recipe reads, with defaults; cover options of the same name override them. */
   params?: Record<string, RecipeValue>;
+  /** Hints for editors, by param: what a default can't say (an enum's choices, a slider's range, an empty colour). See {@link describeParams}. */
+  controls?: Record<string, ParamControl>;
   /** Options that must be set. */
   requires?: string[];
   /** The encoding this style prefers (renderImage options win). */
@@ -1044,6 +1046,61 @@ export function defineRecipe(json: RecipeJson): Recipe;
 
 /** Read and define a JSON recipe file (synchronous). */
 export function loadRecipe(path: string | URL): Recipe;
+
+/** The kinds of control a recipe param can take (see {@link describeParams}). */
+export type ParamType = 'text' | 'multiline' | 'lines' | 'rich-lines' | 'table' | 'color' | 'number' | 'boolean' | 'enum' | 'font' | 'image' | 'mark' | 'marks' | 'value';
+
+/** A recipe's hint for one param (`controls` in a JSON recipe). Every key is optional. */
+export interface ParamControl {
+  /** The control, where the default doesn't imply it (`'color'` for an empty-string colour). */
+  type?: ParamType;
+  /** A label for the form (default: the name, split into words). */
+  label?: string;
+  /** The choices; makes the param an `enum`. */
+  enum?: (string | number)[];
+  /** A number's range and step. */
+  min?: number;
+  max?: number;
+  step?: number;
+  /** A line of help. */
+  help?: string;
+  /** Leave the param out of forms. */
+  hidden?: boolean;
+}
+
+/** One editable param, as {@link describeParams} describes it. */
+export interface ParamSpec {
+  name: string;
+  /** A label for the form. */
+  label: string;
+  type: ParamType;
+  /** The recipe's default (undefined for an undeclared content option such as `photo` or `mark`). */
+  default: RecipeValue | undefined;
+  /** An `enum`'s choices. */
+  enum?: (string | number)[];
+  /** A `number`'s range and step (declared, or about three times the default). */
+  min?: number;
+  max?: number;
+  step?: number;
+  /** Its default is empty ('' or []): leaving it unset is fine, and usually means "automatic". */
+  optional?: boolean;
+  /** The recipe `requires` it. */
+  required?: boolean;
+  help?: string;
+}
+
+/** Every control type, in order. */
+export const PARAM_TYPES: readonly ParamType[];
+
+/**
+ * A JSON recipe's editable params, for building a form: each declared param (in order), then the content options its
+ * layers read undeclared (`photo`, `cutout`, `mark`), with a type from its default and its use, refined by the recipe's
+ * `controls`.
+ */
+export function describeParams(recipe: Recipe | RecipeJson): ParamSpec[];
+
+/** A param name as a label: `markColor` → `Mark color`. */
+export function paramLabel(name: string): string;
 
 /** Default encoder quality, by format. */
 export const DEFAULT_QUALITY: Readonly<{ webp: number; avif: number; jpeg: number; png: number }>;

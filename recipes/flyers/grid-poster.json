@@ -23,6 +23,13 @@
     "tile": "#ffffff",
     "markColor": ""
   },
+  "controls": {
+    "headline": { "help": "One line per row; bold lines set heavy, the rest light." },
+    "markColor": { "type": "color", "label": "Mark colour", "help": "Empty: a dark tone of the wash." },
+    "wash": { "label": "Wash" },
+    "series": { "help": "Empty: the name and \"Series\"." },
+    "handle": { "help": "Empty: @ and the name." }
+  },
   "vars": {
     "h": { "mul": [400, { "div": ["@height", "@width"] }] },
     "rows": { "max": [4, { "round": { "div": ["$h", 62.5] } }] },

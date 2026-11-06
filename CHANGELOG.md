@@ -5,6 +5,17 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] — 2026-11-07
+
+### Added
+
+- **`describeParams(recipe)`**: a JSON recipe's editable params, for building an editor's form from the recipe instead of by hand. Every declared param in order, then the content options the layers read undeclared (`photo`, `cutout`, `mark`, `marks`), each with a control type (`text`, `multiline`, `lines`, `rich-lines`, `table`, `color`, `number`, `boolean`, `enum`, `font`, `image`, `mark`, `marks`, `value`), its default, an enum's choices or a number's range, `optional` (an empty default) and `required`. Also `paramLabel(name)` and `PARAM_TYPES`.
+- **`controls`** in JSON recipes (and the schema): hints for editors by param (`type`, `label`, `enum`, `min`, `max`, `step`, `help`, `hidden`), validated like the rest. They don't change the render. The Swiss-grid posters (`grid-poster`, `logofolio`, `pixel-mosaic`, `construction`, `fluted-poster`, `series-card`, `dissolve-poster`, `terminal-poster`) and the neo-Swiss `grid-rest-rhythm` and `open-studio` declare theirs: the fluted glass presets and subjects, the dissolve's directions and dot screens, slider ranges, the colours whose default is empty.
+
+### Changed
+
+- Needs `@logomarks/image-effects` 0.4.1, which rasterises in pages whose CSP allows `data:` images but not `blob:` (the pixel effects and `renderBlob`).
+
 ## [1.7.0] — 2026-11-07
 
 ### Added

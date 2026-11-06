@@ -12,6 +12,11 @@
     "ground": "#f3c9b8",
     "ink": "#1c1b19"
   },
+  "controls": {
+    "style": { "enum": ["contour", "solid"], "label": "Mark style" },
+    "lines": { "min": 2, "max": 8, "step": 1, "label": "Contour lines" },
+    "gap": { "min": 0.02, "max": 0.12, "step": 0.005, "label": "Contour gap" }
+  },
   "vars": {
     "h": { "mul": [400, { "div": ["@height", "@width"] }] }
   },

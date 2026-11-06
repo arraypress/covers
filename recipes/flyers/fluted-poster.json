@@ -16,6 +16,12 @@
     "ground": "#000000",
     "ink": "#ffffff"
   },
+  "controls": {
+    "subject": { "enum": ["mark", "name", "word"], "help": "Behind the glass: the mark, the name's initial, or the whole name." },
+    "preset": { "enum": ["fluted", "reeded-deep", "reeded-prism", "reeded-soft"], "label": "Glass" },
+    "initial": { "help": "One or two characters for subject \"name\" (empty: the name's first letter)." },
+    "accent": { "help": "The light behind the glass; empty for none." }
+  },
   "vars": {
     "h": { "mul": [400, { "div": ["@height", "@width"] }] },
     "bar": { "if": "accent", "then": "{accent}", "else": "{ink}" },

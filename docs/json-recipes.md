@@ -67,6 +67,7 @@ Conditions (a layer's `when`, an `if`): `"title"` (the option is set; an overrid
 Layers nest (`group.layers`, `knockout`, `clip`, `mask`) and are validated the same way, `when` included. An `svg` layer's `markup` and `defs` are left alone except for `{{name}}` slots, which are filled from the options (escaped) and vars (`{{$name}}`); `{{@accent}}`, `{{id}}` and `{{seed}}` are filled when it's drawn.
 
 - **`params`** are the options a recipe reads, with defaults; a cover option of the same name overrides one. `title`, `label`, `icon` and `image` are always available. **`requires`** lists options that must be set (`["image"]`).
+- **`controls`** are hints for editors, by param: what a default can't say. `{ "preset": { "enum": ["fluted", "reeded-deep"] }, "cells": { "min": 5, "max": 24, "step": 1 }, "dots": { "type": "color", "help": "Empty: the ground." }, "focus": { "hidden": true } }`. Keys: `type`, `label`, `enum`, `min`, `max`, `step`, `help`, `hidden`. They change nothing in the render.
 - **`vars`** are resolved once, in order, before the layers; their draws use the cover's recipe stream. Draws inside a layer use that layer's own stream, so adding a layer never changes another's choices.
 - **`output`** (`{ "lossless": true }`) sets the encoding the style prefers in `renderImage`.
 - **`pages`** (`["front", "back"]`) makes the style two-sided (see [Two-sided pages](formats.md#print-pages)).
@@ -74,5 +75,20 @@ Layers nest (`group.layers`, `knockout`, `clip`, `mask`) and are validated the s
 - **Overrides by id** work exactly as for the built-ins (`grain: false`, `mesh: { blur: 30 }`), and so do extra `layers`.
 - **Validation** runs when the recipe is defined, and stops at the first problem with the recipe's name, the JSON path and what to do: `Recipe "house": layers[2] (grid).blurr: "pattern" layers have no option "blurr" (kind, size, …)`, `unknown token "@bgg"`, `unknown param "subtitle" (declare it in "params", or use "{opt.subtitle}")`.
 - The schema is exported as `@arraypress/covers/recipe.schema.json`, and the built-ins as `@arraypress/covers/recipes/<name>.json` to copy and edit.
+
+## Describing params for an editor
+
+`describeParams(recipe)` lists a JSON recipe's editable params, so a form can be built from the recipe rather than by hand: every declared param in order, then the content options its layers read without declaring them (an image layer's `{photo}` or `{cutout}`, a `{mark}` drawn as `markup`, `{marks}`).
+
+```js
+import { defineRecipe, describeParams } from '@arraypress/covers';
+describeParams(defineRecipe(json));
+// [{ name: 'headline', label: 'Headline', type: 'rich-lines', default: [...] },
+//  { name: 'wash', label: 'Wash', type: 'color', default: '#ff5a1f' },
+//  { name: 'cells', label: 'Cells', type: 'number', default: 11, min: 5, max: 24, step: 1 },
+//  { name: 'photo', label: 'Photo', type: 'image', default: undefined, optional: true }, …]
+```
+
+Each type comes from the default (a hex string is a `color`, a string with a line break `multiline`, an array of strings `lines`, lines that may be `{ content, bold }` `rich-lines`, rows of cells `table`, then `number`, `boolean`, `text`) or from how the layers use it (`image`, `mark`, `marks`), and `controls` refine it (`enum`, `font`, a colour with an empty default, a range). A number with no declared range gets 0 to about three times its default. `optional` marks an empty default (`''` or `[]`: usually "automatic"), `required` an option the recipe `requires`. The Swiss-grid posters and the neo-Swiss flyers declare their controls.
 
 All seventeen built-ins are JSON, with no JS fallback. The tests check that six of them render byte-identical SVG to JavaScript versions kept as a fixture, across palettes, aspects and options, object overrides included (the other ten were written as JSON from the start).

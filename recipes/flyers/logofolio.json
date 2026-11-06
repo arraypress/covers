@@ -14,6 +14,10 @@
     "ground": "#0e0e0f",
     "ink": "#f2efe8"
   },
+  "controls": {
+    "cols": { "min": 0, "max": 14, "step": 1, "help": "0: automatic." },
+    "rows": { "min": 0, "max": 14, "step": 1, "help": "0: automatic." }
+  },
   "vars": {
     "h": { "mul": [400, { "div": ["@height", "@width"] }] },
     "count": { "length": "{marks}" }

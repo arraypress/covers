@@ -13,6 +13,12 @@
     "drop": 0.12,
     "accent": "asterisk"
   },
+  "controls": {
+    "cells": { "min": 5, "max": 24, "step": 1, "help": "Cells across the mark." },
+    "drop": { "min": 0, "max": 0.4, "step": 0.01, "label": "Cells left out" },
+    "accent": { "enum": ["asterisk", "dot", ""], "help": "A small glyph in one empty cell (\"\":  none)." },
+    "neon": { "label": "Cells" }
+  },
   "vars": {
     "h": { "mul": [400, { "div": ["@height", "@width"] }] }
   },

@@ -1,5 +1,5 @@
 // Type-level usage check (`npm run typecheck`); never executed.
-import { cover, renderSvg, renderImage, derivePalette, recipes, defineRecipe, loadRecipe, type CoverOptions, type Layer, type RecipeJson } from '../src/index.js';
+import { cover, renderSvg, renderImage, derivePalette, recipes, defineRecipe, loadRecipe, describeParams, type CoverOptions, type Layer, type RecipeJson, type ParamSpec } from '../src/index.js';
 import { coverEndpoint, coverUrl } from '../src/astro.js';
 
 const layers: Layer[] = [
@@ -147,3 +147,8 @@ export async function motion() {
   const still: string = await renderSvg({ animate: false, layers: [{ type: 'solid', motion: ['drift', 'breathe'] }] }, { t: 2 });
   void [badPreset, badDirection, svg, still, MOTION_PRESETS.marquee.duration];
 }
+
+// describeParams: a form's controls from a JSON recipe
+const specs: ParamSpec[] = describeParams(defineRecipe({ params: { wash: '#f00', cells: 4 }, controls: { cells: { min: 2, max: 8 } }, layers: [{ type: 'solid', color: '{wash}' }] }));
+const firstType: 'color' | string = specs[0].type;
+void firstType;

@@ -26,6 +26,65 @@
         "$ref": "#/$defs/value"
       }
     },
+    "controls": {
+      "type": "object",
+      "description": "Hints for editors, by param (describeParams() reads them): an enum's choices, a slider's range, that an empty default is a colour.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "enum": [
+              "text",
+              "multiline",
+              "lines",
+              "rich-lines",
+              "table",
+              "color",
+              "number",
+              "boolean",
+              "enum",
+              "font",
+              "image",
+              "mark",
+              "marks",
+              "value"
+            ],
+            "description": "The control, where the default doesn't imply it."
+          },
+          "label": {
+            "type": "string"
+          },
+          "enum": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "description": "The choices."
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          },
+          "step": {
+            "type": "number"
+          },
+          "help": {
+            "type": "string"
+          },
+          "hidden": {
+            "type": "boolean",
+            "description": "Leave the param out of forms."
+          }
+        }
+      }
+    },
     "requires": {
       "type": "array",
       "items": {

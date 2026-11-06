@@ -17,6 +17,14 @@
     "cell": "2.2vmin",
     "focus": ""
   },
+  "controls": {
+    "dots": { "type": "color", "label": "Dot colour", "help": "Empty: the ground." },
+    "direction": { "enum": ["up", "down", "left", "right", "radial"] },
+    "fadeStart": { "type": "number", "min": 0, "max": 1, "step": 0.01, "label": "Fade start", "help": "Empty: automatic." },
+    "fadeEnd": { "type": "number", "min": 0, "max": 1, "step": 0.01, "label": "Fade end", "help": "Empty: automatic." },
+    "cell": { "enum": ["1.6vmin", "2.2vmin", "3vmin", "4vmin"], "label": "Dot screen" },
+    "focus": { "hidden": true }
+  },
   "vars": {
     "h": { "mul": [400, { "div": ["@height", "@width"] }] },
     "end": { "if": "fadeEnd", "then": "{fadeEnd}", "else": { "if": "title", "then": { "sub": [0.78, { "div": [40, "$h"] }] }, "else": 0.92 } },

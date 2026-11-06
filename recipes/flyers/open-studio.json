@@ -17,6 +17,9 @@
     "artist": "Bureau Ostrand",
     "release": "Open rooms."
   },
+  "controls": {
+    "numeralColor": { "label": "Numeral colour" }
+  },
   "layers": [
     { "id": "field", "type": "solid", "color": "{field}" },
     {

@@ -20,6 +20,9 @@
     "artist": "Felden",
     "release": "Grid, Rest, Rhythm."
   },
+  "controls": {
+    "markColor": { "label": "Mark colour" }
+  },
   "layers": [
     { "id": "field", "type": "solid", "color": "{field}" },
     {

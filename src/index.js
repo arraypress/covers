@@ -9,6 +9,7 @@
 export { cover, renderSvg, renderImage, renderPages, renderBlob, coverKey, safeBox, MIME, DEFAULT_QUALITY, VERSION } from './render.js';
 export { recipes } from './recipes.js';
 export { defineRecipe, loadRecipe } from './json-recipe.js';
+export { describeParams, paramLabel, PARAM_TYPES } from './params.js';
 export { palettes, resolvePalette, derivePalette } from './palette.js';
 export { toHex, toOklch, fromOklch, mixOklab, mixOklch, onBackground, gradientAt } from '@logomarks/image-effects/color';
 export { registerIcons } from './icons.js';

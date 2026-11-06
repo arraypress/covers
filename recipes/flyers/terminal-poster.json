@@ -3,6 +3,12 @@
   "name": "terminal-poster",
   "description": "Terminal launch poster: acid lime (any ink) on black, set like a HUD readout. A lime bar across the top with the terminal line, a small nested-square icon and a seeded code (480-A<3.56.7.128>); INIT in outline type; a small mono log under it (CORE REVIEW [START], CORE 1–6 … OK in three columns with dot leaders, CORES STABLE, RESULTS [PRNTD]); a big lime panel with chamfered corners, a tab and a notch along its top and foot, holding the mark large in the ground colour (or, with pixel: true, rastered into square cells, @logomarks/core's pixelCells), tiny serials mirrored in two corners and a 3 × 3 dot grid; a row of HUD glyphs (a barcode, a crosshair, an ×, a square target, two seeded two-digit numbers); the headline huge in a lime panel, fitted to its width; and a notched lime footer with the name. Short ticks run down both margins. The display face is font (Rubik Mono One by default: wide, mono, OFL; register it, or it falls back to Inter); the small type is mono (Space Mono). Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1, 9:16 and A-series portrait alike; the code, serial and numbers follow the seed.",
   "params": { "name": "Kestrel", "headline": "Launch", "init": "Init", "terminal": "Public access terminal", "code": "", "serial": "", "log": ["Core review [start]", "Cores stable", "Results [prntd]"], "core": "Core", "status": "OK", "signoff": "End of line", "pixel": false, "cells": 20, "font": "Rubik Mono One", "mono": "Space Mono", "ink": "#c8ff00", "ground": "#000000" },
+  "controls": {
+    "font": { "type": "font", "label": "Display face" },
+    "mono": { "type": "font", "label": "Mono face" },
+    "pixel": { "label": "Pixel mark" },
+    "cells": { "min": 8, "max": 40, "step": 1, "help": "Cells across a pixel mark." }
+  },
   "vars": {
     "h": { "mul": [400, { "div": ["@height", "@width"] }] },
     "tall": { "min": [1.45, { "max": [0.9, { "div": ["$h", 500] }] }] },

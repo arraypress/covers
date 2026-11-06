@@ -17,6 +17,7 @@
 | `coverKey(cover, options)` | The content-hash cache key (see [Caching](performance.md#caching)). |
 | `recipes` | The built-in recipes, by name. |
 | `defineRecipe(json)`, `loadRecipe(path)` | A recipe from a JSON document or file (see [JSON recipes](json-recipes.md)). |
+| `describeParams(recipe)`, `paramLabel(name)`, `PARAM_TYPES` | A JSON recipe's editable params, each with a control type, default, choices and range, to build an editor's form from (see [Describing params](json-recipes.md#describing-params-for-an-editor)). |
 | `palettes`, `resolvePalette(input)`, `derivePalette(tokens)` | Palettes (see [Palettes](palettes.md)). |
 | `registerIcons(iconifySet)` | Use an icon set without installing its package. |
 | `extractPalette(image, { count })` | A photo's dominant colours (k-means in OKLab; needs sharp). |
