@@ -5,6 +5,17 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] — 2026-11-06
+
+### Added
+
+- **`dissolve-poster`**, on the 400-wide grid (4:5, 1:1, 9:16): one flat strong ground (red `#e10a14` by default), the subject in the ink (a `cutout` or `photo` portrait, its tones mapped from the ink to the ground, or the mark large with no photo) dissolving into the ground through a growing diamond dot screen, tiny at the top of the fade and merging at its foot, a few seeded strays above. Small Swiss corner type (the name, a series or Vol. line, a credit, the year) and an optional big tight `title` along the foot sit over the dissolve; with a title the dots merge just above it. Options `ground`, `ink`, `dots` (default the ground), `direction`, `fadeStart`, `fadeEnd`, `cell`.
+- The `halftoneFade` effect from `@logomarks/image-effects` 0.4.0 on any layer, and in the schema.
+
+### Changed
+
+- Depends on `@logomarks/image-effects` `^0.4.0`.
+
 ## [1.5.2] — 2026-11-06
 
 ### Changed

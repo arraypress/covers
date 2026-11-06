@@ -1,0 +1,71 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "dissolve-poster",
+  "description": "Halftone dissolve poster: one flat strong ground (red by default), the subject in the ink over it (a portrait, cut out or plain, its tones mapped from the ink to the ground; or, with no photo, the mark large), dissolving into the ground through a growing dot screen (@logomarks/image-effects' halftoneFade): tiny dots at the top of the fade, growing and merging at its foot, a few strays above, in the ground colour unless dots names another. By default the dots begin at 45% and merge by 92% of the height; with a title they merge just above it, so the title stands on clear ground (fadeStart and fadeEnd, 0–1, set them). Over it, small Swiss type the dots never touch: the name and a Vol. line across the top, an optional big tight title along the foot, a credit and the year under it. Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1 and 9:16 alike; the strays follow the seed.",
+  "params": {
+    "name": "Kestrel",
+    "series": "Vol. 07 — Dissolve",
+    "year": "2026",
+    "credit": "",
+    "title": "",
+    "ground": "#e10a14",
+    "ink": "#0a0a0a",
+    "dots": "",
+    "direction": "up",
+    "fadeStart": "",
+    "fadeEnd": "",
+    "cell": "2.2vmin"
+  },
+  "vars": {
+    "h": { "mul": [400, { "div": ["@height", "@width"] }] },
+    "end": { "if": "fadeEnd", "then": "{fadeEnd}", "else": { "if": "title", "then": { "sub": [0.78, { "div": [40, "$h"] }] }, "else": 0.92 } },
+    "start": { "if": "fadeStart", "then": "{fadeStart}", "else": { "if": "title", "then": { "sub": ["$end", 0.32] }, "else": { "min": [0.45, { "sub": ["$end", 0.1] }] } } }
+  },
+  "layers": [
+    { "id": "ground", "type": "solid", "color": "{ground}" },
+    {
+      "id": "subject",
+      "type": "group",
+      "viewBox": [0, 0, 400, "$h"],
+      "fit": "contain",
+      "effects": [{ "kind": "halftoneFade", "color": { "if": "dots", "then": "{dots}", "else": "{ground}" }, "direction": "{direction}", "start": "$start", "end": "$end", "cell": "{cell}", "grid": "diamond", "shape": "dot", "jitter": 0.3 }],
+      "layers": [
+        { "id": "field", "type": "solid", "color": "{ground}" },
+        { "id": "cutout", "type": "image", "when": "cutout", "src": "{cutout}", "fit": "cover", "focus": "top", "x": 0, "y": { "mul": ["$h", 0.1] }, "width": 400, "height": { "mul": ["$h", 0.9] }, "duotone": ["{ink}", "{ground}"] },
+        { "id": "photo", "type": "image", "when": { "all": ["photo", { "not": "cutout" }] }, "src": "{photo}", "fit": "cover", "duotone": ["{ink}", "{ground}"] },
+        { "id": "mark", "type": "outline", "when": { "all": ["mark", { "not": "cutout" }, { "not": "photo" }] }, "markup": "{mark}", "lines": 0, "x": 40, "y": 60, "width": 320, "height": { "sub": ["$h", 120] }, "color": "{ink}" }
+      ]
+    },
+    {
+      "id": "type",
+      "type": "group",
+      "viewBox": [0, 0, 400, "$h"],
+      "fit": "contain",
+      "layers": [
+        { "id": "name", "type": "text", "content": "{name}", "when": "name", "font": "Inter Tight", "weight": 700, "size": 8, "letterSpacing": 0, "x": 16, "y": 24, "maxWidth": 180, "maxLines": 1, "color": "{ink}" },
+        { "id": "series", "type": "text", "content": "{series}", "when": "series", "font": "Inter Tight", "weight": 500, "size": 8, "letterSpacing": 0, "x": 384, "y": 24, "align": "right", "maxWidth": 180, "maxLines": 1, "color": "{ink}" },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "when": "title",
+          "transform": "uppercase",
+          "font": "Inter Tight",
+          "weight": 800,
+          "size": 80,
+          "lineHeight": 0.86,
+          "letterSpacing": -0.05,
+          "fit": "width",
+          "maxWidth": 368,
+          "maxHeight": { "mul": ["$h", 0.22] },
+          "anchor": "bottom-left",
+          "margin": 0,
+          "offset": { "x": 16, "y": -34 },
+          "color": "{ink}"
+        },
+        { "id": "credit", "type": "text", "content": { "if": "credit", "then": "{credit}", "else": "Design — {name}" }, "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "x": 16, "y": { "sub": ["$h", 16] }, "maxWidth": 200, "maxLines": 1, "color": "{ink}" },
+        { "id": "year", "type": "text", "content": "{year}", "when": "year", "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "x": 384, "y": { "sub": ["$h", 16] }, "align": "right", "maxWidth": 100, "maxLines": 1, "color": "{ink}" }
+      ]
+    }
+  ]
+}

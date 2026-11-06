@@ -739,6 +739,7 @@
             "vhs",
             "jpeg",
             "print",
+            "halftoneFade",
             "newsprint",
             "chromatic",
             "rgbSplit",
@@ -4308,6 +4309,97 @@
                 "uneven",
                 "squeeze",
                 "grain",
+                "seed",
+                "kind",
+                "mask",
+                "colorSpace",
+                "pad"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "halftoneFade"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "The dots: a colour, none (they erase), or the colour round the edge (default)."
+              },
+              "direction": {
+                "$ref": "#/$defs/value",
+                "description": "up (default: dissolves from the bottom) | down | left | right | radial (from the edges in)"
+              },
+              "angle": {
+                "$ref": "#/$defs/value",
+                "description": "Degrees the dissolve travels (0 along x, 90 down); wins over direction."
+              },
+              "start": {
+                "$ref": "#/$defs/value",
+                "description": "0–1 along the fade: where the dots begin. Default 0.45."
+              },
+              "end": {
+                "$ref": "#/$defs/value",
+                "description": "0–1: where they have merged into solid. Default 0.92."
+              },
+              "curve": {
+                "$ref": "#/$defs/value",
+                "description": "linear (default) | ease-in | ease-out | smooth"
+              },
+              "cell": {
+                "$ref": "#/$defs/value",
+                "description": "Length: the dot pitch. Default \"2.2vmin\"."
+              },
+              "grid": {
+                "$ref": "#/$defs/value",
+                "description": "diamond (default, a 45° screen) | square"
+              },
+              "shape": {
+                "$ref": "#/$defs/value",
+                "description": "dot (default) | square | diamond"
+              },
+              "jitter": {
+                "$ref": "#/$defs/value",
+                "description": "0–1: dot sizes varied, a few strays above start."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "Number or string."
+              },
+              "mask": {
+                "$ref": "#/$defs/value",
+                "description": "{ gradient: linear | radial | band, from, to, center, angle, aspect, invert, ease } or { layers, invert }: where the effect applies."
+              },
+              "colorSpace": {
+                "$ref": "#/$defs/value",
+                "description": "sRGB (default) | linearRGB: where filter primitives do their arithmetic."
+              },
+              "pad": {
+                "$ref": "#/$defs/value",
+                "description": "Filter region padding, a fraction of the canvas."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "color",
+                "direction",
+                "angle",
+                "start",
+                "end",
+                "curve",
+                "cell",
+                "grid",
+                "shape",
+                "jitter",
                 "seed",
                 "kind",
                 "mask",

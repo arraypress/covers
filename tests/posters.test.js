@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { renderSvg, loadRecipe, defineRecipe, cover } from '../src/index.js';
+import { renderSvg, renderImage, loadRecipe, defineRecipe, cover } from '../src/index.js';
 import { renderReport } from '../src/render.js';
 import { lineSpans } from '../src/type/spans.js';
 import { sheetGrid } from '../src/layers/marks.js';
@@ -441,4 +441,52 @@ test('fluted-poster: the name is its initial, huge, behind the fluted preset; wo
     assert.ok(bottom - top > Math.max(0.55 * h, h - 175) && bottom - top <= h - 160, `${aspect}: the letter ${Math.round(((bottom - top) / h) * 100)}% of the height`);
     assert.ok(top > text.year.y + text.year.height && bottom < text.title.y, `${aspect}: clear of the year and the title`);
   }
+});
+
+// ---------------------------------------------------------------------------
+// dissolve-poster
+// ---------------------------------------------------------------------------
+
+/** The dissolve's effect, as the recipe resolves it. */
+const dissolveFx = (o) => cover({ recipe: recipe('dissolve-poster'), seed: 'd', mark: SQUARE, width: 400, height: 500, ...o }).layers.find((l) => l.id === 'subject').effects[0];
+
+test('dissolve-poster: the dots default to the ground colour; the fade, cell and direction are options', () => {
+  const fx = dissolveFx({});
+  assert.equal(fx.kind, 'halftoneFade');
+  assert.equal(fx.color, '#e10a14', 'red by default, the ground');
+  assert.equal(dissolveFx({ ground: '#1f3dff' }).color, '#1f3dff', 'whatever the ground');
+  assert.equal(dissolveFx({ ground: '#1f3dff', dots: '#ffffff' }).color, '#ffffff', 'dots names another');
+  assert.deepEqual([fx.direction, fx.start, fx.end, fx.cell, fx.grid], ['up', 0.45, 0.92, '2.2vmin', 'diamond']);
+  const set = dissolveFx({ fadeStart: 0.2, fadeEnd: 0.6, cell: '3vmin', direction: 'left' });
+  assert.deepEqual([set.direction, set.start, set.end, set.cell], ['left', 0.2, 0.6, '3vmin']);
+});
+
+test('dissolve-poster: deterministic; the type is vector over the raster, and the dots merge above the title at every aspect', async () => {
+  const r = recipe('dissolve-poster');
+  for (const [aspect, [w, h]] of Object.entries(SIZES)) {
+    const o = { recipe: r, seed: 'd', mark: MARK, name: 'Kestrel', title: 'Kestrel', width: w, height: h };
+    const { svg, text } = await rendered(o);
+    assert.equal(svg, await renderSvg(o), `${aspect}: deterministic`);
+    assert.equal(svg.match(/<image /g).length, 1, `${aspect}: one raster, the dissolve`);
+    assert.ok(svg.lastIndexOf('<image ') < svg.indexOf('<path d="M'), `${aspect}: the type drawn after (over) it`);
+    const fx = dissolveFx({ title: 'Kestrel', width: w, height: h });
+    assert.ok(fx.end * h <= text.title.y, `${aspect}: solid ground (${fx.end * h}) before the title (${text.title.y})`);
+    assert.ok(fx.start < fx.end);
+    for (const id of ['name', 'series']) assert.ok(text[id].y + text[id].height <= 40, `${aspect}: ${id} along the top`);
+    assert.ok(text.title.x >= 15.4 && text.title.x + text.title.width <= 384.6 && text.title.y + text.title.height <= h - 33.4, `${aspect}: title along the foot`);
+    for (const id of ['credit', 'year']) assert.ok(text[id].y >= text.title.y + text.title.height && text[id].y + text[id].height <= h, `${aspect}: ${id} under the title`);
+  }
+});
+
+test('dissolve-poster: the subject melts into the ground through the dots', async () => {
+  const png = await renderImage({ recipe: recipe('dissolve-poster'), seed: 'd', mark: SQUARE, width: 400, height: 500, fadeStart: 0.4, fadeEnd: 0.75, series: '', name: '' }, { format: 'png' });
+  const { data, info } = await (await import('sharp')).default(png).raw().toBuffer({ resolveWithObject: true });
+  const at = (x, y) => [...data.subarray((y * info.width + x) * info.channels, (y * info.width + x) * info.channels + 3)];
+  const near = (a, b) => a.every((v, i) => Math.abs(v - b[i]) < 12);
+  assert.ok(near(at(200, 150), [10, 10, 10]), 'above the fade: the mark in the ink');
+  assert.ok(near(at(200, 420), [225, 10, 20]), 'past the fade: the ground');
+  // Mid-fade: both, in dots.
+  let ink = 0, ground = 0;
+  for (let x = 60; x < 340; x++) { const p = at(x, 290); if (near(p, [10, 10, 10])) ink++; else if (near(p, [225, 10, 20])) ground++; }
+  assert.ok(ink > 20 && ground > 20, `mid-fade: ${ink} ink and ${ground} ground pixels`);
 });
