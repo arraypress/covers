@@ -709,6 +709,7 @@
             "pinch",
             "fisheye",
             "glass",
+            "fluted",
             "displace",
             "kaleidoscope",
             "mirror",
@@ -737,6 +738,7 @@
             "crt",
             "vhs",
             "jpeg",
+            "print",
             "newsprint",
             "chromatic",
             "rgbSplit",
@@ -2593,6 +2595,97 @@
           "if": {
             "properties": {
               "kind": {
+                "const": "fluted"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "preset": {
+                "$ref": "#/$defs/value",
+                "description": "fluted (default) | reeded-soft | reeded-deep | reeded-prism"
+              },
+              "profile": {
+                "$ref": "#/$defs/value",
+                "description": "concave (flutes: squeezed upright, legible) | convex (reeds: turned over)"
+              },
+              "ribs": {
+                "$ref": "#/$defs/value",
+                "description": "Count across the frame."
+              },
+              "width": {
+                "$ref": "#/$defs/value",
+                "description": "Length: each rib (wins over ribs)."
+              },
+              "refraction": {
+                "$ref": "#/$defs/value",
+                "description": "How strongly each rib bends what is behind it: how far its edge looks, in rib widths (about 1 legible; convex past 2: deep)."
+              },
+              "stretch": {
+                "$ref": "#/$defs/value",
+                "description": "Length: the defocus, smeared along the ribs (a little across), mostly at rib edges."
+              },
+              "chroma": {
+                "$ref": "#/$defs/value",
+                "description": "0–1+: colours parted where bright content meets a rib edge."
+              },
+              "ridge": {
+                "$ref": "#/$defs/value",
+                "description": "0–1: a specular kiss down each rib, only over bright content (about 0.1)."
+              },
+              "grain": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "angle": {
+                "$ref": "#/$defs/value",
+                "description": "Degrees (0: upright ribs, 90: level)."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "Number or string."
+              },
+              "mask": {
+                "$ref": "#/$defs/value",
+                "description": "{ gradient: linear | radial | band, from, to, center, angle, aspect, invert, ease } or { layers, invert }: where the effect applies."
+              },
+              "colorSpace": {
+                "$ref": "#/$defs/value",
+                "description": "sRGB (default) | linearRGB: where filter primitives do their arithmetic."
+              },
+              "pad": {
+                "$ref": "#/$defs/value",
+                "description": "Filter region padding, a fraction of the canvas."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "preset",
+                "profile",
+                "ribs",
+                "width",
+                "refraction",
+                "stretch",
+                "chroma",
+                "ridge",
+                "grain",
+                "angle",
+                "seed",
+                "kind",
+                "mask",
+                "colorSpace",
+                "pad"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
                 "const": "displace"
               }
             },
@@ -4137,6 +4230,97 @@
           "if": {
             "properties": {
               "kind": {
+                "const": "print"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "finish": {
+                "$ref": "#/$defs/value",
+                "description": "letterpress (default) | riso | stamp"
+              },
+              "amount": {
+                "$ref": "#/$defs/value",
+                "description": "0–1+: scales breakup, specks, uneven, squeeze and grain. Default 1."
+              },
+              "rough": {
+                "$ref": "#/$defs/value",
+                "description": "Length: edge wobble."
+              },
+              "edge": {
+                "$ref": "#/$defs/value",
+                "description": "Length: how far in from the outline ink breaks up."
+              },
+              "breakup": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "specks": {
+                "$ref": "#/$defs/value",
+                "description": "0–1: holes in the body."
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Length: the speck and breakup scale."
+              },
+              "uneven": {
+                "$ref": "#/$defs/value",
+                "description": "0–1: coverage."
+              },
+              "squeeze": {
+                "$ref": "#/$defs/value",
+                "description": "0–1: a denser rim."
+              },
+              "grain": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "Number."
+              },
+              "mask": {
+                "$ref": "#/$defs/value",
+                "description": "{ gradient: linear | radial | band, from, to, center, angle, aspect, invert, ease } or { layers, invert }: where the effect applies."
+              },
+              "colorSpace": {
+                "$ref": "#/$defs/value",
+                "description": "sRGB (default) | linearRGB: where filter primitives do their arithmetic."
+              },
+              "pad": {
+                "$ref": "#/$defs/value",
+                "description": "Filter region padding, a fraction of the canvas."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "finish",
+                "amount",
+                "rough",
+                "edge",
+                "breakup",
+                "specks",
+                "size",
+                "uneven",
+                "squeeze",
+                "grain",
+                "seed",
+                "kind",
+                "mask",
+                "colorSpace",
+                "pad"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
                 "const": "newsprint"
               }
             },
@@ -4879,7 +5063,9 @@
             "tear",
             "texture",
             "mosaic",
-            "marks"
+            "marks",
+            "outline",
+            "construction"
           ]
         },
         "id": {
@@ -9371,6 +9557,282 @@
                 "size",
                 "optical",
                 "color",
+                "opacity",
+                "blend",
+                "seed",
+                "transform",
+                "effects",
+                "mask",
+                "knockout",
+                "clip",
+                "area",
+                "motion"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "outline"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "markup": {
+                "$ref": "#/$defs/value",
+                "description": "The mark's paths (512 grid)."
+              },
+              "x": {
+                "$ref": "#/$defs/value",
+                "description": "Box x, px or %."
+              },
+              "y": {
+                "$ref": "#/$defs/value",
+                "description": "Box y."
+              },
+              "width": {
+                "$ref": "#/$defs/value",
+                "description": "Box width (default the canvas)."
+              },
+              "height": {
+                "$ref": "#/$defs/value",
+                "description": "Box height."
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Share of the box's shorter side the whole takes. Default 1."
+              },
+              "lines": {
+                "$ref": "#/$defs/value",
+                "description": "Contour lines, 0–8: the outline and more round it (0: the mark solid). Default 4."
+              },
+              "gap": {
+                "$ref": "#/$defs/value",
+                "description": "Between lines, a share of the mark's longest side. Default 0.05."
+              },
+              "direction": {
+                "$ref": "#/$defs/value",
+                "description": "out (default) | in"
+              },
+              "stroke": {
+                "$ref": "#/$defs/value",
+                "description": "Line width. Default \"0.4vmin\"."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "Default @text."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              },
+              "transform": {
+                "$ref": "#/$defs/value",
+                "description": "{ translate, rotate, scale, skewX, skewY, mirror: x | y, origin } (on text, a case keyword is still the case)."
+              },
+              "effects": {
+                "$ref": "#/$defs/effects",
+                "description": "[{ kind, mask, colorSpace, … }]: filters, pixel effects and copies, in order (see docs/effects.md; kinds in EFFECTS)."
+              },
+              "mask": {
+                "$ref": "#/$defs/value",
+                "description": "Layers whose luminance masks this one (white shows)."
+              },
+              "knockout": {
+                "$ref": "#/$defs/value",
+                "description": "Layers cut out of this one."
+              },
+              "clip": {
+                "$ref": "#/$defs/value",
+                "description": "Layers this one shows only inside."
+              },
+              "area": {
+                "$ref": "#/$defs/value",
+                "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "markup",
+                "x",
+                "y",
+                "width",
+                "height",
+                "size",
+                "lines",
+                "gap",
+                "direction",
+                "stroke",
+                "color",
+                "opacity",
+                "blend",
+                "seed",
+                "transform",
+                "effects",
+                "mask",
+                "knockout",
+                "clip",
+                "area",
+                "motion"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "construction"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "markup": {
+                "$ref": "#/$defs/value",
+                "description": "The mark's paths (512 grid)."
+              },
+              "x": {
+                "$ref": "#/$defs/value",
+                "description": "Box x, px or %."
+              },
+              "y": {
+                "$ref": "#/$defs/value",
+                "description": "Box y."
+              },
+              "width": {
+                "$ref": "#/$defs/value",
+                "description": "Box width (default the canvas)."
+              },
+              "height": {
+                "$ref": "#/$defs/value",
+                "description": "Box height."
+              },
+              "size": {
+                "$ref": "#/$defs/value",
+                "description": "Share of the box's shorter side the mark's longest side takes. Default 0.6."
+              },
+              "grid": {
+                "$ref": "#/$defs/value",
+                "description": "Grid cells across the mark's longest side; 0 none. Default 8."
+              },
+              "circles": {
+                "$ref": "#/$defs/value",
+                "description": "The most circles read from its curves. Default 6."
+              },
+              "lines": {
+                "$ref": "#/$defs/value",
+                "description": "The most lines read from its straight edges. Default 6."
+              },
+              "color": {
+                "$ref": "#/$defs/value",
+                "description": "The guides. Default @accent."
+              },
+              "gridColor": {
+                "$ref": "#/$defs/value",
+                "description": "Default color."
+              },
+              "gridOpacity": {
+                "$ref": "#/$defs/value",
+                "description": "Default 0.3."
+              },
+              "markColor": {
+                "$ref": "#/$defs/value",
+                "description": "Default @text; \"none\" leaves the mark out."
+              },
+              "over": {
+                "$ref": "#/$defs/value",
+                "description": "The guides' opacity over the mark, 0–1. Default 0.4."
+              },
+              "stroke": {
+                "$ref": "#/$defs/value",
+                "description": "Guide width. Default \"0.15vmin\"."
+              },
+              "opacity": {
+                "$ref": "#/$defs/value",
+                "description": "0–1."
+              },
+              "blend": {
+                "$ref": "#/$defs/value",
+                "description": "A CSS mix-blend-mode."
+              },
+              "seed": {
+                "$ref": "#/$defs/value",
+                "description": "This layer's own random stream."
+              },
+              "transform": {
+                "$ref": "#/$defs/value",
+                "description": "{ translate, rotate, scale, skewX, skewY, mirror: x | y, origin } (on text, a case keyword is still the case)."
+              },
+              "effects": {
+                "$ref": "#/$defs/effects",
+                "description": "[{ kind, mask, colorSpace, … }]: filters, pixel effects and copies, in order (see docs/effects.md; kinds in EFFECTS)."
+              },
+              "mask": {
+                "$ref": "#/$defs/value",
+                "description": "Layers whose luminance masks this one (white shows)."
+              },
+              "knockout": {
+                "$ref": "#/$defs/value",
+                "description": "Layers cut out of this one."
+              },
+              "clip": {
+                "$ref": "#/$defs/value",
+                "description": "Layers this one shows only inside."
+              },
+              "area": {
+                "$ref": "#/$defs/value",
+                "description": "trim | safe | bleed, or { x, y, width, height } fractions: draw the layer in that box."
+              },
+              "motion": {
+                "$ref": "#/$defs/motion",
+                "description": "A motion, a preset name (drift | spin | breathe | blink | marquee), or a list: plays in the SVG as CSS keyframes (see MOTION_OPTIONS)."
+              }
+            },
+            "propertyNames": {
+              "enum": [
+                "type",
+                "id",
+                "when",
+                "markup",
+                "x",
+                "y",
+                "width",
+                "height",
+                "size",
+                "grid",
+                "circles",
+                "lines",
+                "color",
+                "gridColor",
+                "gridOpacity",
+                "markColor",
+                "over",
+                "stroke",
                 "opacity",
                 "blend",
                 "seed",

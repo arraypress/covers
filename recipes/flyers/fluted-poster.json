@@ -1,0 +1,95 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "fluted-poster",
+  "description": "Fluted glass poster: the mark (or the name, set huge) in white on black, seen through reeded glass (@logomarks/image-effects' fluted effect: preset fluted, concave and legible, or reeded-deep, reeded-prism, reeded-soft), with a soft light in one accent colour behind it (none with accent \"\"). Over the glass, small Swiss type stays vector: the year stacked large top-left, the series top-right, a two-line title bottom-left with a glitched || ornament of plain bars right of it in the accent, credits and an edition line along the foot. The glass is rastered at the output size and embedded; the type is outlines. Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1, 9:16 and A-series portrait alike; the ornament's glitch follows the seed.",
+  "params": {
+    "name": "Kestrel",
+    "subject": "mark",
+    "preset": "fluted",
+    "title": ["Through", "the glass"],
+    "year": "2026",
+    "series": "",
+    "credits": "",
+    "edition": "Posters / Series 03",
+    "accent": "#ff4d1a",
+    "ground": "#000000",
+    "ink": "#ffffff"
+  },
+  "vars": {
+    "h": { "mul": [400, { "div": ["@height", "@width"] }] },
+    "bar": { "if": "accent", "then": "{accent}", "else": "{ink}" },
+    "tall": { "min": [2, { "max": [1, { "div": ["$h", 380] }] }] },
+    "s1": { "range": [-3, 3] },
+    "s2": { "range": [-3, 3] },
+    "s3": { "range": [-3, 3] },
+    "cut": { "range": [0.3, 0.6] }
+  },
+  "layers": [
+    { "id": "ground", "type": "solid", "color": "{ground}" },
+    {
+      "id": "glass",
+      "type": "group",
+      "viewBox": [0, 0, 400, "$h"],
+      "fit": "contain",
+      "effects": [{ "kind": "fluted", "preset": "{preset}" }],
+      "layers": [
+        { "id": "light", "type": "radial", "when": "accent", "x": 0.5, "y": 0.47, "colors": ["{accent}", "{ground}"], "radius": "52vmin", "opacity": 0.75 },
+        { "id": "mark", "type": "outline", "when": { "all": ["mark", { "not": { "subject": "name" } }] }, "markup": "{mark}", "lines": 0, "x": 70, "y": { "sub": [{ "mul": ["$h", 0.47] }, 130] }, "width": 260, "height": 260, "color": "{ink}" },
+        {
+          "id": "word",
+          "type": "group",
+          "when": { "any": [{ "subject": "name" }, { "not": "mark" }] },
+          "transform": { "scale": [1, "$tall"], "origin": [200, { "mul": ["$h", 0.47] }] },
+          "layers": [
+            { "id": "name", "type": "text", "content": "{name}", "transform": "uppercase", "font": "Inter Tight", "weight": 800, "size": 120, "lineHeight": 0.9, "letterSpacing": -0.05, "fit": "width", "maxWidth": 360, "maxHeight": { "div": [{ "mul": ["$h", 0.42] }, "$tall"] }, "anchor": "center", "margin": 0, "offset": { "x": 0, "y": { "mul": ["$h", -0.03] } }, "color": "{ink}" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "type",
+      "type": "group",
+      "viewBox": [0, 0, 400, "$h"],
+      "fit": "contain",
+      "layers": [
+        { "id": "year", "type": "text", "when": "year", "content": [{ "slice": ["{year}", 0, 2] }, { "slice": ["{year}", 2] }], "font": "Inter Tight", "weight": 700, "size": 26, "lineHeight": 0.86, "letterSpacing": -0.04, "x": 15, "y": 36, "color": "{ink}" },
+        { "id": "series", "type": "text", "content": { "if": "series", "then": "{series}", "else": "{name}\nGlass series" }, "font": "Inter Tight", "weight": 500, "size": 7, "lineHeight": 1.25, "letterSpacing": 0, "x": 384, "y": 24, "align": "right", "maxWidth": 140, "maxLines": 3, "color": "{ink}" },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "when": "title",
+          "transform": "uppercase",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 24,
+          "lineHeight": 0.92,
+          "letterSpacing": -0.035,
+          "fit": "shrink",
+          "maxWidth": 300,
+          "maxLines": 2,
+          "anchor": "bottom-left",
+          "margin": 0,
+          "offset": { "x": 15, "y": -46 },
+          "color": "{ink}"
+        },
+        {
+          "id": "ornament",
+          "type": "shape",
+          "fill": "$bar",
+          "items": [
+            { "kind": "rect", "x": 362, "y": { "sub": ["$h", 90] }, "width": 5, "height": { "mul": [44, "$cut"] } },
+            { "kind": "rect", "x": { "add": [362, "$s1"] }, "y": { "add": [{ "sub": ["$h", 90] }, { "mul": [44, "$cut"] }, 1.5] }, "width": 5, "height": 5 },
+            { "kind": "rect", "x": 362, "y": { "add": [{ "sub": ["$h", 90] }, { "mul": [44, "$cut"] }, 8] }, "width": 5, "height": { "sub": [36, { "mul": [44, "$cut"] }] } },
+            { "kind": "rect", "x": 375, "y": { "sub": ["$h", 90] }, "width": 5, "height": { "sub": [36, { "mul": [44, "$cut"] }] } },
+            { "kind": "rect", "x": { "add": [375, "$s2"] }, "y": { "add": [{ "sub": ["$h", 90] }, { "sub": [36, { "mul": [44, "$cut"] }] }, 1.5] }, "width": 5, "height": 5 },
+            { "kind": "rect", "x": { "add": [375, { "mul": ["$s3", 0.5] }] }, "y": { "add": [{ "sub": ["$h", 90] }, { "sub": [36, { "mul": [44, "$cut"] }] }, 8] }, "width": 5, "height": { "mul": [44, "$cut"] } }
+          ]
+        },
+        { "id": "credits", "type": "text", "content": { "if": "credits", "then": "{credits}", "else": "Design — {name}\nSet in Inter Tight" }, "font": "Inter Tight", "weight": 500, "size": 6.5, "lineHeight": 1.3, "letterSpacing": 0, "x": 16, "y": { "sub": ["$h", 27] }, "maxWidth": 180, "maxLines": 2, "color": "{ink}", "opacity": 0.72 },
+        { "id": "edition", "type": "text", "content": "{edition}", "when": "edition", "font": "Inter Tight", "weight": 500, "size": 6.5, "letterSpacing": 0, "x": 384, "y": { "sub": ["$h", 18.5] }, "align": "right", "maxWidth": 180, "maxLines": 1, "color": "{ink}", "opacity": 0.72 }
+      ]
+    },
+    { "id": "print", "type": "grain", "amount": 0.035, "size": 1.5 }
+  ]
+}

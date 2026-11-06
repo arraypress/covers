@@ -1,0 +1,81 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "series-card",
+  "description": "Numbered series card, for a run of posts: one flat soft colour, a two-line uppercase title top-left, a large number bottom-left (\"01\"), and the mark large in the space left, solid or as contour lines (its outline and three to five more drawn round it, gap apart, merging where its parts meet). Set number and ground per post and keep the rest, and ten of them read as one series across a palette. An optional label top-right. Drawn on a 400-wide grid as tall as the canvas, so it sets at 1:1, 4:5, 9:16 and A-series portrait alike.",
+  "params": {
+    "title": ["Everything", "is connected"],
+    "number": "01",
+    "label": "",
+    "style": "contour",
+    "lines": 4,
+    "gap": 0.055,
+    "ground": "#f3c9b8",
+    "ink": "#1c1b19"
+  },
+  "vars": {
+    "h": { "mul": [400, { "div": ["@height", "@width"] }] }
+  },
+  "layers": [
+    { "id": "ground", "type": "solid", "color": "{ground}" },
+    {
+      "id": "card",
+      "type": "group",
+      "viewBox": [0, 0, 400, "$h"],
+      "fit": "contain",
+      "layers": [
+        {
+          "id": "mark",
+          "type": "outline",
+          "when": "mark",
+          "markup": "{mark}",
+          "lines": { "if": { "style": "solid" }, "then": 0, "else": "{lines}" },
+          "gap": "{gap}",
+          "stroke": 1.15,
+          "x": 124,
+          "y": 84,
+          "width": 260,
+          "height": { "sub": ["$h", 100] },
+          "color": "{ink}"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "content": "{title}",
+          "when": "title",
+          "transform": "uppercase",
+          "font": "Inter Tight",
+          "weight": 700,
+          "size": 21,
+          "lineHeight": 0.95,
+          "letterSpacing": -0.025,
+          "fit": "shrink",
+          "maxWidth": 250,
+          "maxLines": 2,
+          "anchor": "top-left",
+          "margin": 0,
+          "offset": { "x": 18, "y": 20 },
+          "color": "{ink}"
+        },
+        { "id": "label", "type": "text", "content": "{label}", "when": "label", "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "x": 382, "y": 27, "align": "right", "maxWidth": 110, "maxLines": 2, "color": "{ink}" },
+        {
+          "id": "number",
+          "type": "text",
+          "content": "{number}",
+          "when": "number",
+          "font": "Inter Tight",
+          "weight": 600,
+          "size": 92,
+          "lineHeight": 0.8,
+          "letterSpacing": -0.06,
+          "fit": "shrink",
+          "maxWidth": 104,
+          "maxLines": 1,
+          "anchor": "bottom-left",
+          "margin": 0,
+          "offset": { "x": 14, "y": -16 },
+          "color": "{ink}"
+        }
+      ]
+    }
+  ]
+}

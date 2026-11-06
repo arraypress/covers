@@ -1,0 +1,36 @@
+{
+  "$schema": "../../schema/recipe.schema.json",
+  "name": "construction",
+  "description": "Construction sheet: the mark large and centred over its own construction, read from its paths: a light dashed square grid behind (cells an eighth of the mark by default, centred on it), its bounding box, a centre cross, the circles inscribed in its box and round its outline, the circles its curves are drawn on (each centre marked) and the lines its straight edges lie on, run across the sheet, all in one thin accent (blue by default) and showing faintly over the mark. Small meta in the corners: a label and the name across the top, the grid's size and a ® (or any caption) along the foot. A dark ground by default; set ground and ink for a light one. Drawn on a 400-wide grid as tall as the canvas, so it sets at 4:5, 1:1, 9:16 and A-series portrait alike.",
+  "requires": ["mark"],
+  "params": {
+    "name": "Kestrel",
+    "meta": "Construction · v1.0",
+    "gridLabel": "",
+    "caption": "®",
+    "grid": 8,
+    "size": 0.58,
+    "ground": "#0b0b0c",
+    "ink": "#f2f1ec",
+    "accent": "#3b82f6"
+  },
+  "vars": {
+    "h": { "mul": [400, { "div": ["@height", "@width"] }] }
+  },
+  "layers": [
+    { "id": "ground", "type": "solid", "color": "{ground}" },
+    {
+      "id": "sheet",
+      "type": "group",
+      "viewBox": [0, 0, 400, "$h"],
+      "fit": "contain",
+      "layers": [
+        { "id": "construction", "type": "construction", "markup": "{mark}", "x": 16, "y": 40, "width": 368, "height": { "sub": ["$h", 80] }, "size": "{size}", "grid": "{grid}", "color": "{accent}", "markColor": "{ink}", "stroke": 0.55 },
+        { "id": "meta", "type": "text", "content": "{meta}", "when": "meta", "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "x": 16, "y": 24, "maxWidth": 200, "maxLines": 1, "color": "{ink}" },
+        { "id": "name", "type": "text", "content": "{name}", "when": "name", "font": "Inter Tight", "weight": 600, "size": 7, "letterSpacing": 0, "x": 384, "y": 24, "align": "right", "maxWidth": 160, "maxLines": 1, "color": "{ink}" },
+        { "id": "gridLabel", "type": "text", "content": { "if": "gridLabel", "then": "{gridLabel}", "else": { "join": [["Grid ", "{grid}", " × ", "{grid}"], ""] } }, "when": { "any": ["gridLabel", "grid"] }, "font": "Inter Tight", "weight": 500, "size": 7, "letterSpacing": 0, "x": 16, "y": { "sub": ["$h", 18] }, "maxWidth": 200, "maxLines": 1, "color": "{ink}", "opacity": 0.6 },
+        { "id": "caption", "type": "text", "content": "{caption}", "when": "caption", "font": "Inter Tight", "weight": 500, "size": 9, "letterSpacing": 0, "x": 384, "y": { "sub": ["$h", 17] }, "align": "right", "maxWidth": 160, "maxLines": 1, "color": "{ink}" }
+      ]
+    }
+  ]
+}

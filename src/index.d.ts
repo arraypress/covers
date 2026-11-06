@@ -14,12 +14,12 @@ import type { RepeatLayer } from './layers/repeat.js';
 import type { TextSpan } from './type/spans.js';
 import type { GlyphControl } from './type/glyphs.js';
 import type { Cut } from './formats/cut.js';
-import type { ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, MosaicLayer, MarksLayer } from './layers/index.js';
+import type { ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, MosaicLayer, MarksLayer, OutlineLayer, ConstructionLayer } from './layers/index.js';
 import type { Zones, PrintInfo, FormatName } from './formats/index.js';
 import type { Motion, MotionPreset, Easing } from './animate/index.js';
 
 export type { RepeatLayer, DefsLayer, UseLayer, TextSpan, GlyphControl, Cut, Motion, MotionPreset, Easing };
-export type { Color, Length, Rng, LayerTransform, EffectKind, Paint, TextPath, GroupLayer, ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, MosaicLayer, MarksLayer, Zones, PrintInfo, FormatName };
+export type { Color, Length, Rng, LayerTransform, EffectKind, Paint, TextPath, GroupLayer, ShapeLayer, SvgLayer, TableLayer, BarcodeLayer, PerforationLayer, TearLayer, TextureLayer, MosaicLayer, MarksLayer, OutlineLayer, ConstructionLayer, Zones, PrintInfo, FormatName };
 export type { ShapeSpec, TableCell } from './layers/index.js';
 export type { Format } from './formats/index.js';
 export type { LintIssue } from './lint/index.js';
@@ -720,7 +720,7 @@ export interface RuleLayer extends BaseLayer {
 }
 
 export type Layer =
-  | GroupLayer | ShapeLayer | SvgLayer | TableLayer | BarcodeLayer | PerforationLayer | TearLayer | TextureLayer | MosaicLayer | MarksLayer
+  | GroupLayer | ShapeLayer | SvgLayer | TableLayer | BarcodeLayer | PerforationLayer | TearLayer | TextureLayer | MosaicLayer | MarksLayer | OutlineLayer | ConstructionLayer
   | InkLayer | DitherLayer | ContourLayer | WaveformLayer | TilesLayer | RuleLayer
   | DiagramLayer | PaperLayer | ScribbleLayer
   | SolidLayer | LinearLayer | RadialLayer | MeshLayer | StripesLayer | ImageLayer

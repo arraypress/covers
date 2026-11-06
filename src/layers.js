@@ -29,7 +29,7 @@ import { paper, scribble } from './handmade.js';
 import { ink, dither, contour, waveform, tiles, rule } from './print.js';
 import { typeset, wantsType } from './type/index.js';
 import { recordLayout } from './type/layout-ref.js';
-import { shape, svg, table, barcode, perforation, tear, texture, mosaic, marks } from './layers/index.js';
+import { shape, svg, table, barcode, perforation, tear, texture, mosaic, marks, outline, construction } from './layers/index.js';
 import { pos, layerAttrs } from './layers/util.js';
 import { paint } from './paint/index.js';
 import { imageSize } from './lint/image-size.js';
@@ -1038,4 +1038,4 @@ function group() {
   throw new TypeError('A group layer is drawn by renderSvg()/renderImage(), not on its own');
 }
 
-export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame, diagram, paper, scribble, ink, dither, contour, waveform, tiles, rule, group, shape, svg, table, barcode, perforation, tear, texture, mosaic, marks, repeat: group, defs: group, use: group });
+export const LAYERS = Object.freeze({ solid, linear, radial, mesh, stripes, image, grain, pattern, shapes, icon, text, frame, diagram, paper, scribble, ink, dither, contour, waveform, tiles, rule, group, shape, svg, table, barcode, perforation, tear, texture, mosaic, marks, outline, construction, repeat: group, defs: group, use: group });

@@ -7,6 +7,8 @@ import { lineSpans } from '../src/type/spans.js';
 import { sheetGrid } from '../src/layers/marks.js';
 import { markGeometry } from '../src/layers/mark-geometry.js';
 import { SYMBOLS } from '../src/type/symbols.js';
+import { isolines } from '../src/layers/isolines.js';
+import { markGuides } from '../src/layers/guides.js';
 
 const root = new URL('..', import.meta.url);
 const photo = await readFile(new URL('examples/photo.jpg', root));
@@ -217,4 +219,193 @@ test('mark geometry: real bounds and ink density', () => {
   assert.ok(g.density > 0.95);
   assert.ok(markGeometry(RING).density < 0.4);
   assert.equal(markGeometry(''), null);
+});
+
+// ---------------------------------------------------------------------------
+// 1.5: the layers construction and series-card stand on
+// ---------------------------------------------------------------------------
+
+const SQUARE = '<path d="M96 96h320v320H96z"/>';
+const TRIANGLE = '<path d="M256 48 464 464H48z"/>';
+/** A circle of radius 200 drawn as four cubics, as most marks draw their curves. */
+const BEZIER_CIRCLE = (() => {
+  const k = 200 * 0.5523;
+  return `<path d="M256 56C${256 + k} 56 456 ${256 - k} 456 256C456 ${256 + k} ${256 + k} 456 256 456C${256 - k} 456 56 ${256 + k} 56 256C56 ${256 - k} ${256 - k} 56 256 56Z"/>`;
+})();
+
+/** The subpaths of path data, each as its box (from its coordinate pairs: lines and curves, not arcs). */
+const ringBoxes = (d) => d.split('M').filter(Boolean).map((part) => {
+  const pts = [...part.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map((m) => [+m[1], +m[2]]);
+  const xs = pts.map((p) => p[0]);
+  const ys = pts.map((p) => p[1]);
+  return { x: Math.min(...xs), y: Math.min(...ys), width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys) };
+});
+/** The box round several boxes. */
+const union = (boxes) => {
+  const x = Math.min(...boxes.map((b) => b.x));
+  const y = Math.min(...boxes.map((b) => b.y));
+  return { x, y, width: Math.max(...boxes.map((b) => b.x + b.width)) - x, height: Math.max(...boxes.map((b) => b.y + b.height)) - y };
+};
+/** Whether two boxes overlap. */
+const overlaps = (a, b) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+
+test('isolines: a closed line where the field crosses the level, joined exactly', () => {
+  const f = Array.from({ length: 81 }, (_, i) => Math.hypot((i % 9) - 4, Math.floor(i / 9) - 4));
+  const lines = isolines(f, 9, 9, 2.5);
+  assert.equal(lines.length, 1);
+  const [ring] = lines;
+  assert.deepEqual(ring[0], ring.at(-1), 'closed');
+  for (const [x, y] of ring) assert.ok(Math.abs(Math.hypot(x - 4, y - 4) - 2.5) < 0.2, `${x},${y} on the circle`);
+  assert.deepEqual(isolines(f, 9, 9, 99), [], 'nothing crosses');
+});
+
+test('outline: the outline and offsets a gap apart, the whole fitted in its box; solid with lines: 0; deterministic', async () => {
+  const draw = (o) => renderSvg({ width: 400, height: 400, layers: [{ type: 'outline', markup: SQUARE, width: 400, height: 400, color: '#112233', ...o }] });
+  const svg = await draw({ lines: 4, gap: 0.05 });
+  assert.equal(svg, await draw({ lines: 4, gap: 0.05 }), 'deterministic');
+  const rings = ringBoxes(svg.match(/<path d="([^"]+)" fill="none" stroke="#112233"/)[1]).sort((a, b) => a.width - b.width);
+  assert.equal(rings.length, 4, 'the outline and three more');
+  // The set is 320 + 2 × 3 × 16 = 416 mark units across, fitted to 400.
+  const k = 400 / 416;
+  rings.forEach((r, i) => {
+    assert.ok(Math.abs(r.width - (320 + 2 * i * 16) * k) < 1.5, `line ${i}: ${r.width}`);
+    assert.ok(Math.abs(r.x + r.width / 2 - 200) < 0.5 && Math.abs(r.y + r.height / 2 - 200) < 0.5, `line ${i} centred`);
+  });
+  const inward = ringBoxes((await draw({ lines: 3, direction: 'in' })).match(/<path d="([^"]+)" fill="none" stroke="#112233"/)[1]);
+  assert.equal(inward.length, 3);
+  assert.ok(inward.every((r) => r.width <= 400.5), 'inward lines stay in the outline');
+  const solid = await draw({ lines: 0 });
+  assert.match(solid, /<g fill="#112233"><path d="M0 0L400 0L400 400L0 400Z"\/><\/g>/, 'solid, fitted by its real bounds');
+});
+
+test('mark guides: circles from arcs and Béziers, lines from straight edges, not the box sides or corner rounds', () => {
+  const [c] = markGuides(BEZIER_CIRCLE).circles;
+  assert.ok(Math.abs(c.cx - 256) < 0.5 && Math.abs(c.cy - 256) < 0.5 && Math.abs(c.r - 200) < 1, JSON.stringify(c));
+  assert.ok(c.sweep > 6.2, 'all of it');
+  const ring = markGuides(RING).circles.map((x) => Math.round(x.r)).sort();
+  assert.deepEqual(ring, [136, 160]);
+  assert.ok(markGuides(MARK).circles.some((x) => Math.abs(x.r - 120) < 1 && Math.abs(x.cy - 262) < 1), 'the drop\'s round');
+  const tri = markGuides(TRIANGLE);
+  assert.equal(tri.circles.length, 0);
+  assert.equal(tri.lines.length, 2, 'the two slanted sides; the base is the box');
+  assert.ok(tri.lines.every((l) => Math.abs(Math.abs(Math.tan(l.angle)) - 416 / 208) < 0.01));
+  assert.equal(markGuides('<rect x="96" y="96" width="320" height="320" rx="10"/>').circles.length, 0, 'corner rounds are left out');
+  assert.equal(markGuides(SQUARE).inscribed, 160);
+  assert.ok(Math.abs(markGuides(SQUARE).circumscribed - 160 * Math.SQRT2) < 0.5);
+  assert.equal(markGuides(''), null);
+});
+
+// ---------------------------------------------------------------------------
+// construction
+// ---------------------------------------------------------------------------
+
+test('construction: deterministic; the mark centred in the sheet over its guides, meta in the corners, at every aspect', async () => {
+  const r = recipe('construction');
+  for (const [aspect, [w, h]] of Object.entries({ ...SIZES, a4: [400, 566] })) {
+    const o = { recipe: r, seed: 'c', mark: TRIANGLE, name: 'Kestrel', width: w, height: h };
+    const { svg, text } = await rendered(o);
+    assert.equal(svg, await renderSvg(o), `${aspect}: deterministic`);
+    assert.doesNotMatch(svg, /NaN|undefined/);
+    const field = { x: 16, y: 40, width: 368, height: h - 80 };
+    // The mark: 58% of the field's shorter side, centred in it.
+    const mark = union(ringBoxes(svg.match(/<g fill="#f2f1ec"><path d="([^"]+)"/)[1]));
+    assert.ok(Math.abs(mark.width - 0.58 * Math.min(368, h - 80)) < 0.5, `${aspect}: mark ${mark.width}`);
+    assert.ok(Math.abs(mark.x + mark.width / 2 - 200) < 0.5 && Math.abs(mark.y + mark.height / 2 - (40 + (h - 80) / 2)) < 0.5, `${aspect}: centred`);
+    // Its circles, dashed in the accent, and the grid.
+    assert.match(svg, /stroke="#3b82f6" stroke-width="[\d.]+" stroke-dasharray/);
+    assert.match(svg, /<clipPath id="[^"]+"><rect x="16" y="40" width="368"/);
+    for (const id of ['meta', 'name']) assert.ok(text[id].y + text[id].height <= field.y && text[id].y >= 0, `${aspect}: ${id} above the sheet`);
+    for (const id of ['gridLabel', 'caption']) assert.ok(text[id].y >= field.y + field.height && text[id].y + text[id].height <= h, `${aspect}: ${id} below the sheet`);
+    assert.ok(text.meta.x >= 15.4 && text.gridLabel.x >= 15.4, `${aspect}: left corners`);
+    assert.ok(text.name.x + text.name.width <= 384.6 && text.caption.x + text.caption.width <= 384.6, `${aspect}: right corners`);
+  }
+});
+
+test('construction: light and dark by ground and ink; the guides follow the mark', async () => {
+  const r = recipe('construction');
+  const light = await renderSvg({ recipe: r, seed: 'c', mark: TRIANGLE, width: 400, height: 500, ground: '#f3f2ee', ink: '#141414', accent: '#2563eb' });
+  assert.match(light, /<rect width="400" height="500" fill="#f3f2ee"\/>/);
+  assert.match(light, /<g fill="#141414"><path/);
+  assert.match(light, /stroke="#2563eb"/);
+  assert.doesNotMatch(light, /#3b82f6|#0b0b0c/);
+  const other = await renderSvg({ recipe: r, seed: 'c', mark: RING, width: 400, height: 500 });
+  const dashed = (svg) => svg.match(/<path fill="none" d="([^"]+)" stroke="#[0-9a-f]+" stroke-width="[\d.]+" stroke-dasharray="[^"]+"\/>/g);
+  assert.notDeepEqual(dashed(light), dashed(other), 'each mark its own guides');
+});
+
+// ---------------------------------------------------------------------------
+// fluted-poster
+// ---------------------------------------------------------------------------
+
+test('fluted-poster: the glass embedded as a raster, the type as vector outlines, deterministic', async () => {
+  const r = recipe('fluted-poster');
+  const o = { recipe: r, seed: 'f', mark: MARK, name: 'Kestrel', width: 400, height: 500 };
+  const { svg, text } = await rendered(o);
+  assert.equal(svg, await renderSvg(o), 'deterministic');
+  assert.equal(svg.match(/<image /g).length, 1, 'one raster: the glass');
+  assert.match(svg, /href="data:image\/png;base64,/);
+  assert.doesNotMatch(svg, /<text/);
+  for (const id of ['year', 'series', 'title', 'credits', 'edition']) assert.ok(text[id], `${id} drawn as type`);
+  // The subject and the preset change the glass; an unknown preset is refused.
+  const glass = (svg) => svg.match(/href="(data:image[^"]+)"/)[1];
+  assert.notEqual(glass(await renderSvg({ ...o, subject: 'name' })), glass(svg), 'the name instead of the mark');
+  assert.notEqual(glass(await renderSvg({ ...o, preset: 'reeded-deep' })), glass(svg), 'another preset');
+  await assert.rejects(renderSvg({ ...o, preset: 'nope' }), /Unknown fluted preset/);
+});
+
+test('fluted-poster: Swiss corners at every aspect; the ornament beside the title in the accent, or the ink with none', async () => {
+  const r = recipe('fluted-poster');
+  for (const [aspect, [w, h]] of Object.entries(SIZES)) {
+    const { svg, text } = await rendered({ recipe: r, seed: 'f', mark: MARK, width: w, height: h, title: ['Through', 'the glass'] });
+    assert.ok(text.year.x >= 14 && text.year.y >= 0 && text.year.y + text.year.height <= 70, `${aspect}: year top-left`);
+    assert.ok(text.series.x + text.series.width <= 384.6 && text.series.y + text.series.height <= 50, `${aspect}: series top-right`);
+    assert.ok(text.title.x >= 14.4 && text.title.y + text.title.height <= h - 45.4, `${aspect}: title bottom-left`);
+    assert.ok(text.credits.y >= text.title.y + text.title.height && text.credits.y + text.credits.height <= h, `${aspect}: credits under the title`);
+    assert.ok(text.edition.x + text.edition.width <= 384.6 && text.edition.y + text.edition.height <= h, `${aspect}: edition bottom-right`);
+    const bars = [...svg.matchAll(/<rect x="([\d.]+)" y="([\d.]+)" width="5" height="([\d.]+)" fill="#ff4d1a"/g)].map((m) => ({ x: +m[1], y: +m[2], width: 5, height: +m[3] }));
+    assert.equal(bars.length, 6, `${aspect}: two bars, cut in three`);
+    const orn = union(bars);
+    assert.ok(orn.x + orn.width <= 384.6 && orn.x >= text.title.x + text.title.width, `${aspect}: right of the title`);
+    assert.ok(Math.abs(orn.y + orn.height - (h - 46)) < 0.01, `${aspect}: on the title's foot`);
+  }
+  const plain = await renderSvg({ recipe: r, seed: 'f', mark: MARK, width: 400, height: 500, accent: '' });
+  assert.equal(plain.match(/width="5" height="[\d.]+" fill="#ffffff"/g).length, 6, 'no accent: the bars in the ink');
+});
+
+// ---------------------------------------------------------------------------
+// series-card
+// ---------------------------------------------------------------------------
+
+test('series-card: title top-left, number bottom-left, the mark large in the space left, at every aspect', async () => {
+  const r = recipe('series-card');
+  for (const [aspect, [w, h]] of Object.entries(SIZES)) {
+    const o = { recipe: r, seed: 's', mark: TRIANGLE, width: w, height: h };
+    const { svg, text } = await rendered(o);
+    assert.equal(svg, await renderSvg(o), `${aspect}: deterministic`);
+    const mark = union(ringBoxes(svg.match(/<path d="([^"]+)" fill="none" stroke="#1c1b19"/)[1]));
+    assert.ok(inside(mark, { x: 124, y: 84, width: 260, height: h - 100 }), `${aspect}: mark ${JSON.stringify(mark)} in its box`);
+    assert.ok(mark.width > 200 || mark.height > 200, `${aspect}: large`);
+    assert.ok(text.title.x >= 17.4 && text.title.y >= 19.4 && text.title.y + text.title.height <= 84, `${aspect}: title top-left`);
+    assert.ok(text.number.x >= 13.4 && text.number.y + text.number.height <= h - 15.4, `${aspect}: number bottom-left`);
+    for (const id of ['title', 'number']) assert.ok(!overlaps(text[id], mark), `${aspect}: ${id} clear of the mark`);
+  }
+});
+
+test('series-card: solid or contour; ten cards differ only in their number and colour', async () => {
+  const r = recipe('series-card');
+  const strokes = async (o) => (await renderSvg({ recipe: r, seed: 's', mark: SQUARE, width: 400, height: 400, ...o })).match(/<path d="([^"]+)" fill="none" stroke/)?.[1];
+  assert.equal(ringBoxes(await strokes({})).length, 4, 'four contour lines by default');
+  assert.equal(ringBoxes(await strokes({ lines: 5 })).length, 5);
+  const solid = await renderSvg({ recipe: r, seed: 's', mark: SQUARE, width: 400, height: 400, style: 'solid' });
+  assert.match(solid, /<g fill="#1c1b19"><path d=/);
+  assert.doesNotMatch(solid, /fill="none" stroke/);
+  const palette = ['#f3c9b8', '#cfdcc4', '#d6cdea', '#f2e3b3', '#c9dde8', '#f0c4d4', '#dfe6c8', '#e8d5c4', '#c8d8d0', '#e6cfe0'];
+  const cards = await Promise.all(palette.map((ground, i) => rendered({ recipe: r, seed: `card-${i}`, mark: MARK, width: 400, height: 400, ground, number: String(i + 1).padStart(2, '0') })));
+  const markOf = (svg) => svg.match(/<path d="([^"]+)" fill="none" stroke/)[1];
+  for (const [i, { svg, text }] of cards.entries()) {
+    assert.match(svg, new RegExp(`<rect width="400" height="400" fill="${palette[i]}"/>`));
+    assert.equal(markOf(svg), markOf(cards[0].svg), `card ${i + 1}: the same mark`);
+    assert.deepEqual(text.title, cards[0].text.title, `card ${i + 1}: the same title`);
+    assert.ok(text.number.x + text.number.width <= 124, `card ${i + 1}: number in its column`);
+  }
 });

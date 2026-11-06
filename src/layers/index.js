@@ -15,4 +15,7 @@ export { texture } from './texture.js';
 export { mosaic, mosaicGrid } from './mosaic.js';
 export { marks, sheetGrid } from './marks.js';
 export { markGeometry } from './mark-geometry.js';
+export { outline } from './outline.js';
+export { construction } from './construction.js';
+export { markGuides } from './guides.js';
 export { expandRepeat } from './repeat.js';

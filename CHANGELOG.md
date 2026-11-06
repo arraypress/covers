@@ -5,6 +5,21 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] — 2026-11-06
+
+Three more posters on the 400-wide grid, and the layers they stand on. Every published recipe renders as before (157 SVGs, flyers at 4:5 and as release covers, the release styles and the built-ins, byte-identical to 1.4.0).
+
+### Added
+
+- **Three posters**, drawn on a 400-wide grid as tall as the canvas, so they set at 4:5, 1:1, 9:16 and A-series portrait alike: `construction` (a construction sheet: the mark large over its own construction, read from its paths, a dashed grid, its box, a centre cross, the inscribed and circumscribed circles, the circles its curves are drawn on and the lines its straight edges lie on, in one thin accent; meta in the corners; dark or light by `ground` and `ink`), `fluted-poster` (the mark, or the name set huge, in white on black behind fluted glass, a soft light in one accent behind it, and vector Swiss type over it: the year stacked, the series, a two-line title with a glitched `||` of bars, credits and an edition line; `preset` picks the glass) and `series-card` (a numbered card for a run of posts: a flat soft colour, a two-line title, a large number and the mark solid or as contour lines).
+- **`construction` layer**: a mark over its construction guides (`markGuides`: circles fitted to its arcs and Béziers, lines along its straight edges, added up where several lie on one); `grid`, `size`, `circles`, `lines`, `color`, `gridColor`, `gridOpacity`, `markColor`, `over` (the guides shown faintly over the mark), `stroke`.
+- **`outline` layer**: a mark fitted by its real bounds and drawn as contour lines, its outline and `lines − 1` more `gap` apart (isolines of its signed distance field, from `@logomarks/core`'s raster fill and distance transform, measured exactly to its edges where the lines run, so parts merge as contours do and cusps stay sharp), out or `in`; `lines: 0` draws it solid.
+- The image effects of `@logomarks/image-effects` 0.2–0.3 on any layer, and in the schema: `fluted` (reeded glass; presets `fluted`, `reeded-deep`, `reeded-prism`, `reeded-soft`) and `print` (letterpress, riso and stamp finishes).
+
+### Changed
+
+- Depends on `@logomarks/image-effects` `^0.3.2`.
+
 ## [1.4.0] — 2026-11-06
 
 Three flyers that set on any canvas, and the layers they stand on. Every published recipe renders as before (185 SVGs, flyers at 4:5 and as release covers plus the built-ins, byte-identical to 1.3.1).
