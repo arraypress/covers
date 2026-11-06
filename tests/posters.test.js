@@ -526,3 +526,100 @@ test('dissolve-poster: the cut-out is centred on its head, its top off the edge;
   assert.ok(cut.x == null && cut.y == null, 'full bleed: a cropped top runs off the poster');
   assert.deepEqual(layer({ focus: [0.4, 0.2] }).focus, [0.4, 0.2]);
 });
+
+// ---------------------------------------------------------------------------
+// terminal-poster
+// ---------------------------------------------------------------------------
+
+/** The poster group's layers, as the recipe resolves them. */
+const terminalLayers = (o) => cover({ recipe: recipe('terminal-poster'), seed: 't', mark: MARK, width: 400, height: 500, ...o }).layers.find((l) => l.id === 'poster').layers;
+/** The headline's box as drawn: set unstretched (so it reports its box), then stretched about the panel's middle as the poster's group does. */
+async function terminalHeadline(o) {
+  const { transform, ...group } = terminalLayers(o).find((l) => l.id === 'stretch');
+  const { drawn } = await renderReport({ width: o.width, height: o.height, layers: [group] });
+  const b = drawn.find((e) => e.id === 'headline').box;
+  const [, sy] = transform.scale;
+  const mid = transform.origin[1];
+  return { x: b.x, y: mid + (b.y - mid) * sy, width: b.width, height: b.height * sy };
+}
+/** A polygon layer's bounding box, from its resolved points. */
+const polyBox = (layer) => union(layer.points.map(([x, y]) => ({ x, y, width: 0, height: 0 })));
+
+test('terminal-poster: deterministic for a seed; the code, serial and numbers follow it', async () => {
+  const r = recipe('terminal-poster');
+  for (const [aspect, [w, h]] of Object.entries(SIZES)) {
+    const o = { recipe: r, seed: 't', mark: MARK, width: w, height: h };
+    const a = await renderSvg(o);
+    assert.equal(a, await renderSvg(o), `${aspect}: the same bytes`);
+    assert.notEqual(a, await renderSvg({ ...o, seed: 'u' }), `${aspect}: another seed, another code`);
+  }
+  const code = (o) => terminalLayers(o).find((l) => l.id === 'code').content;
+  assert.match(code({}), /^\d{3}-[A-Z]<\d\.\d{2}\.\d\.\d{3}>$/, 'a seeded code like 480-A<3.56.7.128>');
+  assert.equal(code({}), code({}));
+  assert.equal(code({ code: '001-X<0.0.0.1>' }), '001-X<0.0.0.1>', 'or the one given');
+  const serials = terminalLayers({});
+  assert.equal(serials.find((l) => l.id === 'serial').content, serials.find((l) => l.id === 'mirror').layers[0].content, 'the mirrored serial matches');
+});
+
+test('terminal-poster: the type sits inside its panels at every aspect, in order down the page', async () => {
+  const r = recipe('terminal-poster');
+  for (const [aspect, [w, h]] of Object.entries({ ...SIZES, A4: [400, 566] })) {
+    const o = { recipe: r, seed: 't', mark: MARK, name: 'Kestrel', width: w, height: h };
+    const { text } = await rendered(o);
+    const layers = terminalLayers({ width: w, height: h });
+    const box = (id) => polyBox(layers.find((l) => l.id === id));
+    const band = box('band');
+    const panel = box('panel');
+    const head = box('headPanel');
+    const foot = box('footer');
+    // The band, the mark panel, the headline and the footer, top to bottom, none overlapping.
+    assert.ok(band.y + band.height < panel.y && panel.y + panel.height < head.y && head.y + head.height < foot.y && foot.y + foot.height <= h - 9, `${aspect}: panels in order`);
+    for (const id of ['terminal', 'code']) assert.ok(inside(text[id], band), `${aspect}: ${id} in the band`);
+    for (const id of ['init', 'start', 'core1', 'ok6', 'stable', 'results']) assert.ok(text[id].y > band.y + band.height && text[id].y + text[id].height < panel.y, `${aspect}: ${id} between the band and the panel`);
+    assert.ok(inside(text.serial, panel), `${aspect}: the serial in the panel`);
+    for (const id of ['name', 'signoff']) assert.ok(inside(text[id], foot), `${aspect}: ${id} in the footer`);
+    // The headline, stretched about the panel's middle on tall canvases, inside its panel.
+    const hl = await terminalHeadline({ width: w, height: h });
+    assert.ok(inside(hl, { ...head, y: head.y + 4, height: head.height - 4 }), `${aspect}: the headline in its panel`);
+    assert.ok(Math.abs(hl.y + hl.height / 2 - (head.y + 4 + (head.height - 4) / 2)) < 0.5, `${aspect}: centred in it`);
+    // The log's leaders run between each core and its status.
+    for (let i = 1; i <= 6; i++) assert.ok(text[`core${i}`].x + text[`core${i}`].width + 3 < text[`ok${i}`].x, `${aspect}: core ${i} clear of its OK`);
+  }
+});
+
+test('terminal-poster: the headline is fitted to the panel width, centred; a short one is held to its height', async () => {
+  for (const [aspect, [w, h]] of Object.entries(SIZES)) {
+    const long = await terminalHeadline({ headline: 'Mainnet launch', width: w, height: h });
+    assert.ok(Math.abs(long.width - 352) < 1, `${aspect}: ${long.width} wide`);
+    assert.ok(Math.abs(long.x - 24) < 1, `${aspect}: centred`);
+    const panel = polyBox(terminalLayers({ width: w, height: h }).find((l) => l.id === 'headPanel'));
+    const short = await terminalHeadline({ headline: 'Go', width: w, height: h });
+    assert.ok(short.width < 300 && Math.abs(short.x + short.width / 2 - 200) < 1, `${aspect}: a short headline centred`);
+    assert.ok(Math.abs(short.height - (panel.height - 4 - 18)) < 1, `${aspect}: and held to the panel's height less its padding`);
+  }
+});
+
+test('terminal-poster: pixel draws the mark as square cells (pixelCells), in the ground colour', async () => {
+  const ids = (o) => terminalLayers(o).map((l) => l.id).filter((id) => ['mark', 'pixels'].includes(id));
+  assert.deepEqual(ids({}), ['mark']);
+  assert.deepEqual(ids({ pixel: true }), ['pixels']);
+  assert.deepEqual(ids({ mark: undefined }), [], 'no mark: an empty panel');
+  const cells = terminalLayers({ pixel: true, cells: 12 }).find((l) => l.id === 'pixels');
+  assert.equal(cells.cells, 12);
+  const o = { recipe: recipe('terminal-poster'), seed: 't', mark: SQUARE, width: 400, height: 500 };
+  const svg = await renderSvg({ ...o, pixel: true });
+  assert.notEqual(svg, await renderSvg(o));
+  assert.equal(svg, await renderSvg({ ...o, pixel: true }));
+  // A square mark: a full grid of cells, each its own square subpath.
+  const d = svg.match(/<path d="([^"]+)" fill="#000000"\/>/g).map((m) => m.match(/d="([^"]+)"/)[1]).find((p) => (p.match(/M/g) ?? []).length >= 100);
+  assert.ok(d, 'one path of many square cells, in black');
+  const sq = ringBoxes(d);
+  assert.ok(sq.every((b) => Math.abs(b.width - b.height) < 0.01 && Math.abs(b.width - sq[0].width) < 0.01), 'equal squares');
+});
+
+test('terminal-poster: ink and ground recolour every panel and line', async () => {
+  const svg = await renderSvg({ recipe: recipe('terminal-poster'), seed: 't', mark: MARK, width: 400, height: 500, ink: '#ff5a1f', ground: '#0a0a14' });
+  assert.ok(!/#c8ff00/i.test(svg), 'no default lime left');
+  assert.match(svg, /#ff5a1f/);
+  assert.match(svg, /#0a0a14/);
+});

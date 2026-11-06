@@ -5,6 +5,12 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] — 2026-11-07
+
+### Added
+
+- **`terminal-poster`**, on the 400-wide grid (4:5, 1:1, 9:16 and A-series portrait): a terminal / crypto launch poster in acid lime (`#c8ff00`, any `ink`) on black (`ground`), set like a HUD readout. A lime bar across the top with the terminal line, a small nested-square icon and a seeded code (`480-A<3.56.7.128>`); `INIT` in outline type; a small mono log under it (`CORE REVIEW [START]`, `CORE 1`–`CORE 6 …… OK` in three columns with dot leaders, `CORES STABLE`, `RESULTS [PRNTD]`); a big lime panel with chamfered corners, a tab and a notch along its top and foot, holding the mark large in the ground colour (or, with `pixel: true`, rastered into square cells through `@logomarks/core`'s `pixelCells`, `cells` across), tiny serials mirrored in two corners and a 3 × 3 dot grid; a row of HUD glyphs (a barcode, a crosshair, an ×, a square target, two seeded two-digit numbers); the `headline` (`Launch`) huge in a lime panel, fitted to its width and stretched taller on tall canvases; a notched footer with the name and a sign-off; short ticks down both margins. Options `name`, `headline`, `ink`, `ground`, `pixel`, `cells`, and the meta strings `init`, `terminal`, `code`, `serial`, `log` (`[start, stable, results]`), `core`, `status`, `signoff`. The display face is `font` (`Rubik Mono One` by default, OFL, not bundled: register it, or Inter stands in), the small type `mono` (`Space Mono`). The code, serial and numbers follow the seed.
+
 ## [1.6.1] — 2026-11-06
 
 ### Added
