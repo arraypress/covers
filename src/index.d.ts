@@ -259,8 +259,8 @@ export interface ImageLayer extends BaseLayer {
   y?: Length | `${number}%`;
   width?: Length | `${number}%`;
   height?: Length | `${number}%`;
-  /** Crop focus: an anchor, or (with sharp) `'attention'` / `'entropy'`. Default `'center'`. */
-  focus?: Anchor | 'attention' | 'entropy';
+  /** Crop focus: an anchor, or (with sharp) `'attention'` / `'entropy'`; or (with sharp) a point centred in the box, `[x, y]` 0–1 in the photo, or `'subject'`, a cut-out's head centred across with its top at the box's top. Default `'center'`. */
+  focus?: Anchor | 'attention' | 'entropy' | 'subject' | [number, number];
   /** Default the whole canvas. */
   region?: Region;
   /** Map tones to two colours (shadows, highlights); `true` derives them from the palette. */

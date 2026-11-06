@@ -30,6 +30,7 @@ import { ink, dither, contour, waveform, tiles, rule } from './print.js';
 import { typeset, wantsType } from './type/index.js';
 import { recordLayout } from './type/layout-ref.js';
 import { shape, svg, table, barcode, perforation, tear, texture, mosaic, marks, outline, construction } from './layers/index.js';
+import { subjectFocus, focalBox, drawAt } from './layers/focal.js';
 import { pos, layerAttrs } from './layers/util.js';
 import { paint } from './paint/index.js';
 import { imageSize } from './lint/image-size.js';
@@ -423,7 +424,7 @@ export async function image(layer, ctx) {
   const focus = layer.focus ?? 'center';
   let bytes = typeof layer.src === 'string' || layer.src instanceof URL ? await readSource(layer.src) : await loadBytes(layer.src, 'image');
   let mime = imageMime(bytes);
-  let preserve = fit === 'stretch' ? 'none' : `${alignFor(focus)} ${fit === 'contain' ? 'meet' : 'slice'}`;
+  let preserve = fit === 'stretch' ? 'none' : `${alignFor(typeof focus === 'string' ? (focus === 'subject' ? 'top' : focus) : 'center')} ${fit === 'contain' ? 'meet' : 'slice'}`;
   let sharpBlurred = false;
 
   /** Source pixels and what was embedded, for lint. */
@@ -501,8 +502,13 @@ async function resample(ctx, bytes, box, fit, focus, layer) {
   if (cap && fit === 'stretch') { w = Math.min(w, sw); hgt = Math.min(hgt, sh); }
   w = Math.max(1, Math.round(w));
   hgt = Math.max(1, Math.round(hgt));
+  // A focus point ([x, y], or a cut-out's head) is centred in the box.
+  const head = focus === 'subject' ? await subjectFocus(sharp, bytes) : null;
+  const point = Array.isArray(focus) ? focus : head ? [head[0], 0] : null;
   const position = typeof focus === 'string' && ['attention', 'entropy'].includes(focus) ? focus : (POSITIONS[focus] ?? 'centre');
-  let img = sharp(bytes).rotate().resize(w, hgt, { fit: fit === 'stretch' ? 'fill' : fit, position, background: { r: 0, g: 0, b: 0, alpha: 0 } });
+  let img = point && fit !== 'stretch'
+    ? await drawAt(sharp, bytes, w, hgt, focalBox({ width: w, height: hgt }, sw, sh, fit, point, Boolean(meta.hasAlpha)))
+    : sharp(bytes).rotate().resize(w, hgt, { fit: fit === 'stretch' ? 'fill' : fit, position, background: { r: 0, g: 0, b: 0, alpha: 0 } });
   // Stretch the tones first, so a duotone spans both of its colours.
   if (layer.normalize ?? Boolean(layer.duotone || layer.grayscale)) img = img.normalise();
   // Blur here rather than in SVG: sharp clamps at the edges, where an SVG

@@ -51,7 +51,7 @@ Full-bleed fields of blurred colour: the mesh-gradient look.
 `direction` (`'vertical'` default, `'horizontal'`, `'diagonal'` + `angle`), `count` (8), `widths` (`'even'`, `'random'`, `'taper'` with `taper` ratio 0.78, or weights like `[3, 2, 1]`), `colors` (cycled), `gap`, `radius`, `region` (fractions; default the whole canvas), `regionRadius`.
 
 ## `image`
-`src` (a local path, a `data:` URI or bytes; URLs are refused), `fit` (`'cover'` / `'contain'`), `focus` (an anchor, or `'attention'` / `'entropy'` smart crops), `region`, `duotone` (`true` derives shadow and highlight from the palette, or `[shadow, highlight]`), `grayscale`, `normalize` (stretch tones first; on by default with duotone/grayscale), `tint` (a colour, or `{ color, amount, blend }`), `blur`.
+`src` (a local path, a `data:` URI or bytes; URLs are refused), `fit` (`'cover'` / `'contain'`), `focus` (an anchor, or `'attention'` / `'entropy'` smart crops; with sharp, `[x, y]` (0–1 in the photo) centres that point, and `'subject'` centres a cut-out's head across, found from its transparency, its top at the box's top; a cut-out moves freely sideways, an opaque photo keeps its box filled), `region`, `duotone` (`true` derives shadow and highlight from the palette, or `[shadow, highlight]`), `grayscale`, `normalize` (stretch tones first; on by default with duotone/grayscale), `tint` (a colour, or `{ color, amount, blend }`), `blur`.
 
 With sharp installed the image is cropped and resized before embedding, at the pixels it's drawn at (its box times any group and transform scale above it), never past the source's own pixels (the SVG scales it up instead). An unused alpha channel embeds as JPEG; PNG only where there's transparency. Without sharp, PNG, JPEG and SVG are embedded as they are.
 

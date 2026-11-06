@@ -8,6 +8,7 @@ import { sheetGrid } from '../src/layers/marks.js';
 import { markGeometry } from '../src/layers/mark-geometry.js';
 import { SYMBOLS } from '../src/type/symbols.js';
 import { isolines } from '../src/layers/isolines.js';
+import { subjectFocus, focalBox } from '../src/layers/focal.js';
 import { markGuides } from '../src/layers/guides.js';
 
 const root = new URL('..', import.meta.url);
@@ -456,7 +457,7 @@ test('dissolve-poster: the dots default to the ground colour; the fade, cell and
   assert.equal(fx.color, '#e10a14', 'red by default, the ground');
   assert.equal(dissolveFx({ ground: '#1f3dff' }).color, '#1f3dff', 'whatever the ground');
   assert.equal(dissolveFx({ ground: '#1f3dff', dots: '#ffffff' }).color, '#ffffff', 'dots names another');
-  assert.deepEqual([fx.direction, fx.start, fx.end, fx.cell, fx.grid], ['up', 0.45, 0.92, '2.2vmin', 'diamond']);
+  assert.deepEqual([fx.direction, fx.start, fx.end, fx.cell, fx.grid], ['up', 0.5, 0.92, '2.2vmin', 'diamond']);
   const set = dissolveFx({ fadeStart: 0.2, fadeEnd: 0.6, cell: '3vmin', direction: 'left' });
   assert.deepEqual([set.direction, set.start, set.end, set.cell], ['left', 0.2, 0.6, '3vmin']);
 });
@@ -489,4 +490,39 @@ test('dissolve-poster: the subject melts into the ground through the dots', asyn
   let ink = 0, ground = 0;
   for (let x = 60; x < 340; x++) { const p = at(x, 290); if (near(p, [10, 10, 10])) ink++; else if (near(p, [225, 10, 20])) ground++; }
   assert.ok(ink > 20 && ground > 20, `mid-fade: ${ink} ink and ${ground} ground pixels`);
+});
+
+test('focus: a cut-out is centred on its head; [x, y] centres that point; an opaque photo stays filling its box', async () => {
+  const sharp = (await import('sharp')).default;
+  // A cut-out in a 400 × 400 frame, left of centre: a head at (110, 120), shoulders under it.
+  const art = await sharp(Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle cx="110" cy="120" r="60" fill="#fff"/><rect x="20" y="190" width="180" height="210" fill="#fff"/></svg>')).png().toBuffer();
+  const head = await subjectFocus(sharp, art);
+  assert.ok(Math.abs(head[0] - 110 / 400) < 0.03, `head x ${head[0]}`);
+  assert.equal(await subjectFocus(sharp, await sharp(art).flatten({ background: '#000' }).jpeg().toBuffer()), null, 'no transparency: no subject');
+  /** The centre column of the white pixels in rows y0–y1 of a render. */
+  const centre = async (layer, y0, y1) => {
+    const png = await renderImage({ width: 400, height: 500, layers: [{ type: 'solid', color: '#000' }, { type: 'image', src: art, fit: 'cover', ...layer }] }, { format: 'png' });
+    const { data, info } = await sharp(png).raw().toBuffer({ resolveWithObject: true });
+    let n = 0, sx = 0;
+    for (let y = y0; y < y1; y++) for (let x = 0; x < info.width; x++) if (data[(y * info.width + x) * info.channels] > 128) { n++; sx += x; }
+    return sx / n;
+  };
+  assert.ok((await centre({}, 0, 200)) < 160, 'by its box: the head left of centre');
+  assert.ok(Math.abs((await centre({ focus: 'subject' }, 0, 260)) - 200) < 4, 'focus subject: the head on the centre line');
+  // A point given is the one centred: the head's own x centres it too; x 0.05 puts the head (0.225 of 500 to its right) at 312.
+  assert.ok(Math.abs((await centre({ focus: [0.275, 0.3] }, 0, 260)) - 200) < 4, 'a point given is centred');
+  assert.ok(Math.abs((await centre({ focus: [0.05, 0.3] }, 0, 260)) - 312.5) < 4, 'another point, the head off centre');
+  // The point lands on the box's centre: a cut-out moves freely sideways; cover keeps the box filled up and down.
+  assert.deepEqual(focalBox({ width: 400, height: 500 }, 400, 400, 'cover', [0.75, 0.3], true), { x: -175, y: 0, width: 500, height: 500 });
+  assert.deepEqual(focalBox({ width: 400, height: 500 }, 400, 400, 'cover', [0.75, 0.3]), { x: -100, y: 0, width: 500, height: 500 }, 'opaque: held to its overflow');
+  assert.deepEqual(focalBox({ width: 400, height: 500 }, 400, 400, 'cover', [0.5, 0.5]), { x: -50, y: 0, width: 500, height: 500 });
+});
+
+test('dissolve-poster: the cut-out is centred on its head, its top off the edge; focus overrides', () => {
+  const layer = (o) => cover({ recipe: recipe('dissolve-poster'), seed: 'd', cutout: new Uint8Array([1]), width: 400, height: 500, ...o }).layers.find((l) => l.id === 'subject').layers.find((l) => l.id === 'cutout');
+  const cut = layer({});
+  assert.equal(cut.focus, 'subject');
+  assert.equal(cut.fit, 'cover');
+  assert.ok(cut.x == null && cut.y == null, 'full bleed: a cropped top runs off the poster');
+  assert.deepEqual(layer({ focus: [0.4, 0.2] }).focus, [0.4, 0.2]);
 });

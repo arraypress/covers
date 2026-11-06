@@ -5,6 +5,16 @@ All notable changes to `@arraypress/covers` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] — 2026-11-06
+
+### Added
+
+- **`image` `focus` points** (with sharp): `[x, y]` (0–1 in the photo) centres that point in the box, and `'subject'` centres a cut-out's head across (the alpha-weighted centre of the top 45% of its opaque rows), its top at the box's top. A cut-out moves freely sideways, the ground showing round it; an opaque photo keeps its box filled. Without sharp, `'subject'` falls back to `'top'` and a point to `'center'`.
+
+### Changed
+
+- **`dissolve-poster`**: the cut-out runs full bleed and is centred on its face (`focus: 'subject'`; `focus: [x, y]` overrides), so a cropped top runs off the poster instead of showing a flat cut. The fade starts lower so the eyes stay clean: from 0.5 without a title, and 0.24 above the merge with one.
+
 ## [1.6.0] — 2026-11-06
 
 ### Added

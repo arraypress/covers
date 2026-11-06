@@ -5754,7 +5754,7 @@
               },
               "focus": {
                 "$ref": "#/$defs/value",
-                "description": "An anchor, attention or entropy."
+                "description": "An anchor, attention or entropy; [x, y] (0–1 in the photo) to centre that point; subject: a cut-out's head centred across, its top at the box's top."
               },
               "region": {
                 "$ref": "#/$defs/value",
